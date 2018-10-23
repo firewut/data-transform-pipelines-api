@@ -99,7 +99,84 @@ class PipelinesTestCase(BaseTestCase):
             _pipeline_data
         )
         self.assertEqual(response.status_code, 200, response.data)
-        self.assertEqual(
-            response.data['processors'],
-            [{'id': 'md5'}]
+        self.assertEqual(response.data['processors'][0]['id'], 'md5')
+
+    def test_processors_correct_order(self):
+        pipeline_data = {
+            "id": self.random_uuid(),
+            "title": self.random_string(),
+            "project": self.project_id,
+            "processors": [
+                {
+                    "id": "readability"
+                },
+                {
+                    "id": "get_object_property",
+                    "in_config": {
+                        "property": "content"
+                    }
+                },
+                {
+                    "id": "google_translate",
+                    "in_config": {
+                        "from": "en",
+                        "to": "ru",
+                        "api_key": "<YOUR_API_KEY>"
+                    }
+                }
+            ]
+        }
+
+        response = self.put_create(pipeline_data)
+        self.assertEqual(response.status_code, 201, response.data)
+
+    def test_processors_incorrect_order(self):
+        pipeline_data = {
+            "id": self.random_uuid(),
+            "title": self.random_string(),
+            "project": self.project_id,
+            "processors": [
+                {
+                    "id": "readability"
+                },
+                {
+                    "id": "google_translate",
+                    "in_config": {
+                        "from": "en",
+                        "to": "ru",
+                        "api_key": "<YOUR_API_KEY>"
+                    }
+                }
+            ]
+        }
+
+        response = self.put_create(pipeline_data)
+        self.assertEqual(response.status_code, 400, response.data)
+        self.assertIn(
+            "readability[0] is incompatible with next processor google_translate",
+            str(response.data),
+        )
+
+    def test_processors_incorrect_in_config(self):
+        pipeline_data = {
+            "id": self.random_uuid(),
+            "title": self.random_string(),
+            "project": self.project_id,
+            "processors": [
+                {
+                    "id": "random",
+                    "in_config": {
+                        "length": 101,
+                        "random_type": "string"
+                    }
+                }
+            ]
+        }
+
+        response = self.put_create(pipeline_data)
+        self.assertEqual(response.status_code, 400, response.data)
+        self.assertIn(
+            "random[0] has invalid in_config",
+            str(response.data),
+            response.data
         )

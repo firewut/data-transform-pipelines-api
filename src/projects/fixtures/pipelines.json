@@ -9,12 +9,8 @@
                 {
                     "id": "random",
                     "in_config": {
-                        "random_type": {
-                            "value": "string"
-                        },
-                        "length": {
-                            "value": 20
-                        }
+                        "random_type": "string",
+                        "length": 20
                     }
                 },
                 {
@@ -33,12 +29,8 @@
                 {
                     "id": "random",
                     "in_config": {
-                        "random_type": {
-                            "value": "string"
-                        },
-                        "length": {
-                            "value": 2000
-                        }
+                        "random_type": "string",
+                        "length": 2000
                     }
                 },
                 {
@@ -66,15 +58,9 @@
                 {
                     "id": "google_translate",
                     "in_config": {
-                        "from": {
-                            "value": "en"
-                        },
-                        "to": {
-                            "value": "ru"
-                        },
-                        "api_key": {
-                            "value": "<YOUR_API_KEY>"
-                        }
+                        "from": "en",
+                        "to": "ru",
+                        "api_key": "<YOUR_API_KEY>"
                     }
                 }
             ]
@@ -115,12 +101,10 @@
                 {
                     "id": "resize",
                     "in_config": {
-                        "size": {
-                            "value": [
-                                200,
-                                200
-                            ]
-                        }
+                        "size": [
+                            200,
+                            200
+                        ]
                     }
                 }
             ]
@@ -136,23 +120,17 @@
                 {
                     "id": "resize",
                     "in_config": {
-                        "size": {
-                            "value": [
-                                200,
-                                200
-                            ]
-                        }
+                        "size": [
+                            200,
+                            200
+                        ]
                     }
                 },
                 {
                     "id": "watermark",
                     "in_config": {
-                        "watermark_image": {
-                            "value": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ambox_important.svg/60px-Ambox_important.svg.png"
-                        },
-                        "gravity": {
-                            "value": "SouthEast"
-                        }
+                        "watermark_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ambox_important.svg/60px-Ambox_important.svg.png",
+                        "gravity": "SouthEast"
                     }
                 }
             ]
@@ -168,23 +146,17 @@
                 {
                     "id": "resize",
                     "in_config": {
-                        "size": {
-                            "value": [
-                                200,
-                                200
-                            ]
-                        }
+                        "size": [
+                            200,
+                            200
+                        ]
                     }
                 },
                 {
                     "id": "watermark",
                     "in_config": {
-                        "watermark_image": {
-                            "value": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ambox_important.svg/60px-Ambox_important.svg.png"
-                        },
-                        "gravity": {
-                            "value": "SouthEast"
-                        }
+                        "watermark_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ambox_important.svg/60px-Ambox_important.svg.png",
+                        "gravity": "SouthEast"
                     }
                 },
                 {

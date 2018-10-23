@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from projects.models import *
 from projects.serializers import *
@@ -25,6 +26,20 @@ class PipelineViewSet(viewsets.ModelViewSet):
         queryset = super().get_queryset()
 
         return queryset.order_by('-ctime')
+
+    @action(methods=['POST', 'PUT'], detail=True)
+    def process(self, request, pk=None, **kwargs):
+        instance = self.get_object()
+
+        response_data = {
+
+        }
+
+        return Response(
+            response_data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
 
 
 class ProcessorsViewSet(viewsets.ModelViewSet):
