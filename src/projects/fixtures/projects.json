@@ -1,0 +1,34 @@
+[
+    {
+        "pk": "2e7f2e3b-a5c5-4c6c-b57c-9439318b72fc",
+        "model": "projects.Project",
+        "fields": {
+            "title": "Randomized Pipelines",
+            "description": "Initial Values are Randomized"
+        }
+    },
+    {
+        "pk": "541e7ada-987d-4826-a183-358e55d836fa",
+        "model": "projects.Project",
+        "fields": {
+            "title": "HTML Examples",
+            "description": "Initial Value is an HTML Page Content"
+        }
+    },
+    {
+        "pk": "f043fc5c-7e89-4028-b530-2dc6a8ef4ec0",
+        "model": "projects.Project",
+        "fields": {
+            "title": "Image Examples",
+            "description": "Initial Value is an Image"
+        }
+    },
+    {
+        "pk": "aecf9c49-ad03-44ab-bea2-6c1f996c1728",
+        "model": "projects.Project",
+        "fields": {
+            "title": "Empty Project",
+            "description": "Empty Project"
+        }
+    }
+]

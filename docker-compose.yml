@@ -1,0 +1,14 @@
+version: '3'
+services:
+  postgres: 
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - ./var/lib/postgresql:/var/lib/postgresql
+    environment:
+      POSTGRES_DB: data_transform
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Eir4Ooquae
+  

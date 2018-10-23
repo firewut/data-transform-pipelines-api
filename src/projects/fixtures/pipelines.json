@@ -1,0 +1,196 @@
+[
+    {
+        "model": "projects.Pipeline",
+        "fields": {
+            "project": "2e7f2e3b-a5c5-4c6c-b57c-9439318b72fc",
+            "title": "MD5 of Random",
+            "description": "Generates a Random value and makes and MD5 of it",
+            "processors": [
+                {
+                    "id": "random",
+                    "in_config": {
+                        "random_type": {
+                            "value": "string"
+                        },
+                        "length": {
+                            "value": 20
+                        }
+                    }
+                },
+                {
+                    "id": "md5"
+                }
+            ]
+        }
+    },
+    {
+        "model": "projects.Pipeline",
+        "fields": {
+            "project": "2e7f2e3b-a5c5-4c6c-b57c-9439318b72fc",
+            "title": "Can machine be Sentimental ?",
+            "description": "Sentiment analysis from a Random String",
+            "processors": [
+                {
+                    "id": "random",
+                    "in_config": {
+                        "random_type": {
+                            "value": "string"
+                        },
+                        "length": {
+                            "value": 2000
+                        }
+                    }
+                },
+                {
+                    "id": "sentiment"
+                }
+            ]
+        }
+    },
+    {
+        "model": "projects.Pipeline",
+        "fields": {
+            "project": "541e7ada-987d-4826-a183-358e55d836fa",
+            "title": "Translate an HTML Page",
+            "description": "Extracts focus Content from an HTML and translates it to Specified Language",
+            "processors": [
+                {
+                    "id": "readability"
+                },
+                {
+                    "id": "get_object_property",
+                    "in_config": {
+                        "property": "content"
+                    }
+                },
+                {
+                    "id": "google_translate",
+                    "in_config": {
+                        "from": {
+                            "value": "en"
+                        },
+                        "to": {
+                            "value": "ru"
+                        },
+                        "api_key": {
+                            "value": "<YOUR_API_KEY>"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "model": "projects.Pipeline",
+        "fields": {
+            "project": "541e7ada-987d-4826-a183-358e55d836fa",
+            "title": "Make Markdown",
+            "description": "Extracts focus Content from an HTML and Makes Markdown",
+            "processors": [
+                {
+                    "id": "readability"
+                },
+                {
+                    "id": "get_object_property",
+                    "in_config": {
+                        "property": "content"
+                    }
+                },
+                {
+                    "id": "html_to_text"
+                },
+                {
+                    "id": "markdown"
+                }
+            ]
+        }
+    },
+    {
+        "model": "projects.Pipeline",
+        "fields": {
+            "project": "f043fc5c-7e89-4028-b530-2dc6a8ef4ec0",
+            "title": "Resize an Image",
+            "description": "Resize ANY Image using Patched ImageMagic",
+            "processors": [
+                {
+                    "id": "resize",
+                    "in_config": {
+                        "size": {
+                            "value": [
+                                200,
+                                200
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "model": "projects.Pipeline",
+        "fields": {
+            "project": "f043fc5c-7e89-4028-b530-2dc6a8ef4ec0",
+            "title": "Resize and Watermark Image",
+            "description": "Resize ANY Image using Patched ImageMagic",
+            "processors": [
+                {
+                    "id": "resize",
+                    "in_config": {
+                        "size": {
+                            "value": [
+                                200,
+                                200
+                            ]
+                        }
+                    }
+                },
+                {
+                    "id": "watermark",
+                    "in_config": {
+                        "watermark_image": {
+                            "value": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ambox_important.svg/60px-Ambox_important.svg.png"
+                        },
+                        "gravity": {
+                            "value": "SouthEast"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "model": "projects.Pipeline",
+        "fields": {
+            "project": "f043fc5c-7e89-4028-b530-2dc6a8ef4ec0",
+            "title": "Filters for Image",
+            "description": "Resize and apply A Few Filters",
+            "processors": [
+                {
+                    "id": "resize",
+                    "in_config": {
+                        "size": {
+                            "value": [
+                                200,
+                                200
+                            ]
+                        }
+                    }
+                },
+                {
+                    "id": "watermark",
+                    "in_config": {
+                        "watermark_image": {
+                            "value": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ambox_important.svg/60px-Ambox_important.svg.png"
+                        },
+                        "gravity": {
+                            "value": "SouthEast"
+                        }
+                    }
+                },
+                {
+                    "id": "grayscale"
+                }
+            ]
+        }
+    }
+]
