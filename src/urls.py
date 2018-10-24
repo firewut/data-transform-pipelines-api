@@ -19,7 +19,7 @@ router = DefaultRouter()
 router.register(r'projects', ProjectsViewSet, base_name='projects')
 router.register(r'pipelines', PipelineViewSet, base_name='pipelines')
 router.register(r'processors', ProcessorsViewSet, base_name='processors')
-
+router.register(r'pipeline_results', PipelineResultViewSet, base_name='pipeline_results')
 
 urlpatterns = [
     path('api/v1/free/', include(router.urls)),

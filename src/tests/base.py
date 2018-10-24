@@ -1,3 +1,4 @@
+import json
 import random
 import string
 import uuid
@@ -10,6 +11,7 @@ from rest_framework.test import APIRequestFactory
 from projects.views import (
     ProjectsViewSet
 )
+
 
 class TestMetaClass(type):
     def __new__(mcs, name, bases, dct):
@@ -85,49 +87,117 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
     def random_uuid(self):
         return str(uuid.uuid4())
 
-    def put_create(self, data: dict, user=None, viewset=None):
-        if viewset is None:
-            viewset = self.viewset
-
-        factory = APIRequestFactory()
-        created = viewset.as_view(actions={'put': 'create'})
-
-        request = factory.put("", data=data, format='json')
-        return created(request)
-
-    def put_update(self, pk: str, data: dict, user=None, viewset=None):
+    def put_create(self, data: dict, user=None, action='create', viewset=None):
         if viewset is None:
             viewset = self.viewset
 
         factory = APIRequestFactory()
         created = viewset.as_view(
             actions={
-                'put': 'update',
+                'put': action
             }
         )
 
         request = factory.put("", data=data, format='json')
-        return created(request, pk=pk)
+        response = created(request)
+        response.render()
 
-    def post_create(self, data: dict, user=None, viewset=None):
+        as_dict = None
+        try:
+            as_dict = json.loads(response.content)
+        except Exception as e:
+            pass
+        return response, as_dict
+
+    def put_update(self, pk: str, data: dict, action='update', user=None, viewset=None):
         if viewset is None:
             viewset = self.viewset
 
         factory = APIRequestFactory()
-        created = viewset.as_view(actions={'post': 'create'})
+        updated = viewset.as_view(
+            actions={
+                'put': action,
+            }
+        )
+
+        request = factory.put("", data=data, format='json')
+        response = updated(request, pk=pk)
+        response.render()
+
+        as_dict = None
+        try:
+            as_dict = json.loads(response.content)
+        except Exception as e:
+            pass
+        return response, as_dict
+
+    def post_create(self, data: dict, user=None, action='create', viewset=None):
+        if viewset is None:
+            viewset = self.viewset
+
+        factory = APIRequestFactory()
+        created = viewset.as_view(
+            actions={
+                'post': action
+            }
+        )
 
         request = factory.post("", data=data, format='json')
-        return created(request)
+        response = created(request)
+        response.render()
+
+        as_dict = None
+        try:
+            as_dict = json.loads(response.content)
+        except Exception as e:
+            pass
+        return response, as_dict
+
+    def get_item(self, data: dict, user=None, action='retrieve', viewset=None):
+        if not viewset:
+            viewset = self.viewset
+
+        request = self._get_request(data, user)
+
+        factory = APIRequestFactory()
+        retrieved = viewset.as_view(
+            actions={
+                'get': action
+            }
+        )
+
+        request = factory.get("")
+        response = retrieved(request)
+        response.render()
+
+        as_dict = None
+        try:
+            as_dict = json.loads(response.content)
+        except Exception as e:
+            pass
+        return response, as_dict
 
     def get_list(self, user=None, viewset=None):
         if viewset is None:
             viewset = self.viewset
 
         factory = APIRequestFactory()
-        listed = viewset.as_view(actions={'get': 'list'})
+        listed = viewset.as_view(
+            actions={
+                'get': 'list'
+            }
+        )
 
         request = factory.get("")
-        return listed(request)
+        response = listed(request)
+        response.render()
+
+        as_dict = None
+        try:
+            as_dict = json.loads(response.content)
+        except Exception as e:
+            pass
+        return response, as_dict
 
     def create_project(self, user=None, **kwargs):
         if not user:
@@ -149,11 +219,20 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             viewset = self.viewset
 
         factory = APIRequestFactory()
-        created = viewset.as_view(
+        patched = viewset.as_view(
             actions={
                 'patch': 'partial_update',
             }
         )
 
         request = factory.patch("", data=data, format='json')
-        return created(request, pk=pk)
+
+        response = patched(request, pk=pk)
+        response.render()
+
+        as_dict = None
+        try:
+            as_dict = json.loads(response.content)
+        except Exception as e:
+            pass
+        return response, as_dict

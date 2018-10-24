@@ -20,10 +20,10 @@ class ProjectsTestCase(BaseTestCase):
             'title': self.random_string(30),
             'description': self.random_string(100),
         }
-        response = self.create_project(data)
-        self.assertEqual(response.status_code, 201, response.data)
+        response, response_json = self.create_project(data)
+        self.assertEqual(response.status_code, 201, response_json)
         for k, v in data.items():
-            self.assertEqual(response.data[k], v)
+            self.assertEqual(response_json[k], v)
 
     def test_create_project_with_pipelines(self):
         data = {
@@ -35,15 +35,15 @@ class ProjectsTestCase(BaseTestCase):
                     "title": self.random_string(),
                     "processors": [
                         {
-                            "id":  "md5"
+                            "id": "md5"
                         }
                     ]
                 }
             ]
         }
-        response = self.create_project(data)
-        self.assertEqual(response.status_code, 201, response.data)
-        self.assertEqual(response.data.get('pipelines'), [], response.data)
+        response, response_json = self.create_project(data)
+        self.assertEqual(response.status_code, 201, response_json)
+        self.assertEqual(response_json.get('pipelines'), [], response_json)
 
     def test_list_projects(self):
         projects = []
@@ -55,14 +55,14 @@ class ProjectsTestCase(BaseTestCase):
             )
         self.assertEqual(len(projects), num_projects)
 
-        response = self.get_list(self.viewset)
+        response, response_json = self.get_list(self.viewset)
         self.assertEqual(response.status_code, 200)
 
         # Pagination
-        self.assertIn('pagination', response.data)
-        self.assertIn('results', response.data)
+        self.assertIn('pagination', response_json)
+        self.assertIn('results', response_json)
         self.assertEqual(
-            response.data['pagination']['count'],
+            response_json['pagination']['count'],
             num_projects + 4
         )
-        self.assertLess(len(response.data['results']), num_projects)
+        self.assertLess(len(response_json['results']), num_projects)

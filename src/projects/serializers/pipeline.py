@@ -4,8 +4,32 @@ from drf_queryfields import QueryFieldsMixin
 from projects.serializers.processor import *
 from projects.models import (
     Pipeline,
+    PipelineResult,
     Processor,
 )
+
+
+class PipelineResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
+    id = serializers.UUIDField()
+
+    class Meta:
+        model = PipelineResult
+        fields = (
+            'id',
+            'pipeline',
+            'ctime',
+            'error',
+            'result',
+            'is_finished',
+        )
+        read_only = (
+            'id',
+            'pipeline',
+            'ctime',
+            'error',
+            'result',
+            'is_finished',
+        )
 
 
 class PipelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):

@@ -61,3 +61,10 @@ class Processor(models.Model):
                 jsonschema.validate(in_config, in_config_schema)
 
         return
+
+    def check_input_data(self, data):
+        in_schema = self.schema['properties'].get('in')
+        if in_schema:
+            jsonschema.validate(data, in_schema)
+
+        return

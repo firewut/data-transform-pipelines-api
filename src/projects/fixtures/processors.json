@@ -62,8 +62,7 @@
                 "properties": {
                     "in": {
                         "type": [
-                            "string",
-                            "null"
+                            "string"
                         ],
                         "description": "Text to translate",
                         "maxLength": 5000
@@ -116,7 +115,6 @@
                 "properties": {
                     "in": {
                         "type": [
-                            "null",
                             "string"
                         ],
                         "description": "html to make a text from"
@@ -145,8 +143,7 @@
                 "properties": {
                     "in": {
                         "type": [
-                            "string",
-                            "null"
+                            "string"
                         ],
                         "description": "raw markdown"
                     },
@@ -171,8 +168,7 @@
                 "properties": {
                     "in": {
                         "type": [
-                            "string",
-                            "null"
+                            "string"
                         ],
                         "description": "string to hash"
                     },
@@ -199,7 +195,11 @@
                 ],
                 "properties": {
                     "in": {
-                        "type": "null",
+                        "type": [
+                            "null",
+                            "object"
+                        ],
+                        "additionalProperties": false,
                         "description": "takes no input data"
                     },
                     "in_config": {
@@ -268,8 +268,7 @@
                 "properties": {
                     "in": {
                         "type": [
-                            "string",
-                            "null"
+                            "string"
                         ],
                         "description": "html to make readable"
                     },
@@ -298,7 +297,6 @@
                     "in": {
                         "type": [
                             "file",
-                            "null",
                             "string"
                         ],
                         "title": "input data",
@@ -354,8 +352,7 @@
                 "properties": {
                     "in": {
                         "type": [
-                            "string",
-                            "null"
+                            "string"
                         ],
                         "description": "text to analyze"
                     },
@@ -384,7 +381,6 @@
                     "in": {
                         "type": [
                             "file",
-                            "null",
                             "string"
                         ],
                         "title": "input data",
@@ -400,7 +396,6 @@
                             "watermark_image": {
                                 "type": [
                                     "file",
-                                    "null",
                                     "string"
                                 ],
                                 "description": "Watermark to apply as file"
@@ -450,7 +445,6 @@
                     "in": {
                         "type": [
                             "file",
-                            "null",
                             "string"
                         ],
                         "title": "input data",
