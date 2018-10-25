@@ -55,10 +55,19 @@ class Processor(models.Model):
     def check_in_config(self, pipeline_processor):
         in_config_schema = self.schema['properties'].get('in_config')
 
+        if pipeline_processor is None:
+            raise jsonschema.exceptions.ValidationError(
+                "Pipeline Processor is Required"
+            )
+
         if isinstance(in_config_schema, dict):
             in_config = pipeline_processor.get('in_config', None)
             if in_config:
                 jsonschema.validate(in_config, in_config_schema)
+            else:
+                raise jsonschema.exceptions.ValidationError(
+                    "'in_config' is required"
+                )
 
         return
 

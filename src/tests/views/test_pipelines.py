@@ -1,14 +1,10 @@
 import copy
 
-from projects.views import (
-    PipelineViewSet
-)
+from projects.views import *
 from tests.base import BaseTestCase
 
 
-class PipelinesTestCase(BaseTestCase):
-    viewset = PipelineViewSet
-
+class PipelinesBaseTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
 
@@ -18,6 +14,10 @@ class PipelinesTestCase(BaseTestCase):
         })
         self.assertEqual(project_response.status_code, 201)
         self.project_id = response_json['id']
+
+
+class PipelinesTestCase(PipelinesBaseTestCase):
+    viewset = PipelineViewSet
 
     @BaseTestCase.cases(
         ('empty_processors', [], 201),
@@ -207,15 +207,75 @@ class PipelinesTestCase(BaseTestCase):
         response, response_json = self.put_update(
             pipeline_data.get('id'),
             in_data,
-            user=self.user,
             action='process'
         )
         self.assertEqual(response.status_code, 202, response_json)
         self.assertEqual(response_json['pipeline'], pipeline_data['id'])
 
         self.assertIn(
-            'pipeline_results/{}/'.format(
+            'pipeline_result/{}/'.format(
                 response_json.get('id')
             ),
             response['Location'],
         )
+
+
+class PipelinesProcessTestCase(PipelinesBaseTestCase):
+    viewset = PipelineResultViewSet
+
+    def setUp(self):
+        super().setUp()
+
+        pipeline_data = {
+            "id": self.random_uuid(),
+            "title": self.random_string(),
+            "project": self.project_id,
+            "processors": [
+                {
+                    "id": "get_object_property",
+                    "in_config": {
+                        "property": "save_me"
+                    }
+                }
+            ]
+        }
+        response, response_json = self.put_create(
+            pipeline_data,
+            viewset=PipelineViewSet
+        )
+        self.assertEqual(response.status_code, 201, response_json)
+        self.pipeline_id = response_json['id']
+
+    @BaseTestCase.cases(
+        ('string', 'test'),
+        ('float', 1.2),
+        ('int', 1),
+        ('bool', True),
+    )
+    def test_pipeline_process_invalid_data(self, value):
+        response, response_json = self.put_update(
+            self.pipeline_id,
+            data=value,
+            action='process',
+            viewset=PipelineViewSet
+        )
+        self.assertEqual(response.status_code, 400, response_json)
+        self.assertIn(" is not of type 'object'", response_json)
+
+    def test_pipeline_process_valid_data(self):
+        response, response_json = self.put_update(
+            self.pipeline_id,
+            {
+                "save_me": 123
+            },
+            action='process',
+            viewset=PipelineViewSet
+        )
+        self.assertEqual(response.status_code, 202, response_json)
+        self.assertEqual(response_json['pipeline'], self.pipeline_id)
+
+        response, response_json = self.get_item(
+            pk=response_json.get('id')
+        )
+        self.assertEqual(response.status_code, 200, response_json)
+        self.assertIsNone(response_json['error'])

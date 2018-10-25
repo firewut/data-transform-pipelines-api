@@ -12,3 +12,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Eir4Ooquae
   
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - 6379:6379
+    

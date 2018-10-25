@@ -4,10 +4,11 @@ from django.contrib.postgres.fields import (
     JSONField
 )
 from django.db import models
+import celery
 
+from core.models import WithDate
 from projects.models.project import Project
 from projects.models.processor import Processor
-from core.models import WithDate
 
 
 class Pipeline(WithDate, models.Model):
@@ -18,9 +19,19 @@ class Pipeline(WithDate, models.Model):
     is_active = models.BooleanField(blank=True, default=True)
     processors = JSONField(null=True, blank=True)
 
-    def create_result(self):
+    def create_result(self, data):
         result_object = PipelineResult.objects.create(
             pipeline=self
+        )
+
+        # Generate a task to queue processing
+        celery.current_app.send_task(
+            'projects.tasks.process',
+            kwargs={
+                'pipeline_result_id': result_object.pk,
+                'pipeline_processors': self.processors,
+                'data': data
+            }
         )
 
         return result_object

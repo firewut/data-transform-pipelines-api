@@ -16,10 +16,10 @@ API_DESCRIPTION = 'Simple Pipeline Based'
 
 
 router = DefaultRouter()
+router.register(r'processors', ProcessorsViewSet, base_name='processors')
 router.register(r'projects', ProjectsViewSet, base_name='projects')
 router.register(r'pipelines', PipelineViewSet, base_name='pipelines')
-router.register(r'processors', ProcessorsViewSet, base_name='processors')
-router.register(r'pipeline_results', PipelineResultViewSet, base_name='pipeline_results')
+router.register(r'pipeline_result', PipelineResultViewSet, base_name='pipeline_result')
 
 urlpatterns = [
     path('api/v1/free/', include(router.urls)),

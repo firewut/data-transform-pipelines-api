@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'projects',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -143,3 +144,5 @@ REST_FRAMEWORK = {
     )
 }
 PAGE_SIZE_QUERY_PARAM = 'page_size'
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'

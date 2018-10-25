@@ -87,7 +87,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
     def random_uuid(self):
         return str(uuid.uuid4())
 
-    def put_create(self, data: dict, user=None, action='create', viewset=None):
+    def put_create(self, data, user=None, action='create', viewset=None):
         if viewset is None:
             viewset = self.viewset
 
@@ -109,7 +109,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             pass
         return response, as_dict
 
-    def put_update(self, pk: str, data: dict, action='update', user=None, viewset=None):
+    def put_update(self, pk: str, data, action='update', user=None, viewset=None):
         if viewset is None:
             viewset = self.viewset
 
@@ -131,7 +131,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             pass
         return response, as_dict
 
-    def post_create(self, data: dict, user=None, action='create', viewset=None):
+    def post_create(self, data, user=None, action='create', viewset=None):
         if viewset is None:
             viewset = self.viewset
 
@@ -153,11 +153,9 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             pass
         return response, as_dict
 
-    def get_item(self, data: dict, user=None, action='retrieve', viewset=None):
+    def get_item(self, pk: str, data=None, user=None, action='retrieve', viewset=None):
         if not viewset:
             viewset = self.viewset
-
-        request = self._get_request(data, user)
 
         factory = APIRequestFactory()
         retrieved = viewset.as_view(
@@ -166,8 +164,8 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             }
         )
 
-        request = factory.get("")
-        response = retrieved(request)
+        request = factory.get("", data=data)
+        response = retrieved(request, pk=pk)
         response.render()
 
         as_dict = None
