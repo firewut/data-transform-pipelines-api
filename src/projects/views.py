@@ -42,7 +42,7 @@ class PipelineViewSet(viewsets.ModelViewSet):
 
         return queryset.order_by('-ctime')
 
-    @action(methods=['POST', 'PUT'], detail=True)
+    @action(methods=['POST'], detail=True)
     def process(self, request, pk=None, **kwargs):
         """
             Queues a Pipeline Processing. 
