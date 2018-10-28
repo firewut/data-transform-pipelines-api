@@ -279,3 +279,49 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
         )
         self.assertEqual(response.status_code, 200, response_json)
         self.assertIsNone(response_json['error'])
+        self.assertTrue(response_json['is_finished'], response_json)
+        self.assertEqual(response_json['result'], 123, response_json)
+
+    def test_pipeline_process_valid_data_multiple_processors(self):
+        pipeline_data = {
+            "id": self.random_uuid(),
+            "title": self.random_string(),
+            "project": self.project_id,
+            "processors": [
+                {
+                    "id": "get_object_property",
+                    "in_config": {
+                        "property": "markdown_here"
+                    }
+                },
+                {
+                    "id": "markdown"
+                }
+            ]
+        }
+        response, response_json = self.put_create(
+            pipeline_data,
+            viewset=PipelineViewSet
+        )
+        self.assertEqual(response.status_code, 201, response_json)
+
+        pipeline_id = response_json['id']
+
+        response, response_json = self.put_update(
+            pipeline_id,
+            {
+                "markdown_here": "**Hello World**"
+            },
+            action='process',
+            viewset=PipelineViewSet
+        )
+        self.assertEqual(response.status_code, 202, response_json)
+        self.assertEqual(response_json['pipeline'], pipeline_id)
+
+        response, response_json = self.get_item(
+            pk=response_json.get('id')
+        )
+        self.assertEqual(response.status_code, 200, response_json)
+        self.assertIsNone(response_json['error'])
+        self.assertTrue(response_json['is_finished'], response_json)
+        self.assertEqual(response_json['result'], "<p><strong>Hello World</strong></p>\n", response_json)

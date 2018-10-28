@@ -111,6 +111,7 @@ class PipelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
                 processors
             )
             self.check_processors(validated_data['processors'])
+
         return super().create(validated_data)
 
     def update(self, instance, validated_data):

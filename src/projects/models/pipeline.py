@@ -26,11 +26,12 @@ class Pipeline(WithDate, models.Model):
 
         # Generate a task to queue processing
         celery.current_app.send_task(
-            'projects.tasks.process',
+            'projects.tasks.process_pipeline',
             kwargs={
-                'pipeline_result_id': result_object.pk,
-                'pipeline_processors': self.processors,
-                'data': data
+                'result_id': result_object.pk,
+                'processors': self.processors,
+                'data': data,
+                'error': None,
             }
         )
 

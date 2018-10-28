@@ -96,7 +96,7 @@
                     },
                     "out": {
                         "type": "string",
-                        "title": "output data"
+                        "description": "output data"
                     }
                 }
             }
@@ -274,7 +274,7 @@
                     },
                     "out": {
                         "type": "object",
-                        "title": "output data"
+                        "description": "output data"
                     }
                 }
             }
@@ -332,7 +332,6 @@
                     },
                     "out": {
                         "type": "file",
-                        "title": "output data",
                         "description": "resized file"
                     }
                 }
@@ -357,8 +356,8 @@
                         "description": "text to analyze"
                     },
                     "out": {
-                        "type": "string",
-                        "title": "output data"
+                        "type": "number",
+                        "description": "output data"
                     }
                 }
             }
@@ -424,7 +423,6 @@
                     },
                     "out": {
                         "type": "file",
-                        "title": "output data",
                         "description": "watermarked image"
                     }
                 }
@@ -452,7 +450,6 @@
                     },
                     "out": {
                         "type": "file",
-                        "title": "output data",
                         "description": "grayscaled image"
                     }
                 }

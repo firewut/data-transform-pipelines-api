@@ -8,6 +8,9 @@ import django.db.models.deletion
 import uuid
 
 
+from projects import workers
+
+
 def load_processors_fixture(apps, schema_editor):
     old_get_model = python._get_model
 
@@ -103,6 +106,10 @@ class Migration(migrations.Migration):
         ),
         migrations.RunPython(
             load_processors_fixture,
+            lambda apps, schema_editor: None
+        ),
+        migrations.RunPython(
+            workers.import_registered_workers,
             lambda apps, schema_editor: None
         )
     ]

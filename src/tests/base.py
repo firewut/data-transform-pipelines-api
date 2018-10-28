@@ -1,13 +1,14 @@
 import json
+import importlib
 import random
-import string
-import uuid
 
 from django.conf import settings
 from django.test import TestCase
-
 from rest_framework.test import APIRequestFactory
+import celery
+import mock
 
+from core.utils import *
 from projects.views import (
     ProjectsViewSet
 )
@@ -77,15 +78,37 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
     def setUp(self):
         super().setUp()
 
+        def send_task_apply(*args, **kwargs):
+            task_name = args[0].split('.')[-1]
+            module = importlib.import_module(
+                '.'.join(args[0].split('.')[:-1])
+            )
+
+            task = getattr(module, task_name).s(
+                **kwargs['kwargs']
+            ).apply()
+
+            if task.status == 'FAILURE':
+                raise Exception(
+                    "{}.{} {}".format(
+                        module,
+                        task_name,
+                        task.result
+                    )
+                )
+
+        mock.patch.object(
+            celery.current_app,
+            'send_task',
+            side_effect=send_task_apply,
+            return_value=True,
+        ).start()
+
     def random_string(self, N=10):
-        return ''.join(
-            random.choice(
-                string.ascii_letters + string.digits
-            ) for x in range(N)
-        )
+        return random_string(N)
 
     def random_uuid(self):
-        return str(uuid.uuid4())
+        return random_uuid4()
 
     def put_create(self, data, user=None, action='create', viewset=None):
         if viewset is None:

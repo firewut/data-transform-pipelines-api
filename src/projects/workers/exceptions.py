@@ -1,0 +1,2 @@
+class WorkerNoInputException(Exception):
+    pass

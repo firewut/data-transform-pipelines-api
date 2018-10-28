@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-
 import jsonschema
+
+from core import json_schema
 
 
 class ProcessorManager(models.Manager):
@@ -29,6 +30,12 @@ class Processor(models.Model):
 
     objects = ProcessorManager()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Beware - Extended JSONSchema used here
+        self.jsonschema = json_schema.PJSONSchema
+
     def can_send_result(self, processor):
         out_type = self.schema['properties']['out']['type']
         in_type = processor.schema['properties']['in']['type']
@@ -52,8 +59,11 @@ class Processor(models.Model):
 
         return len(intersection) > 0
 
+    def get_in_config_schema(self):
+        return self.schema['properties'].get('in_config')
+
     def check_in_config(self, pipeline_processor):
-        in_config_schema = self.schema['properties'].get('in_config')
+        in_config_schema = self.get_in_config_schema()
 
         if pipeline_processor is None:
             raise jsonschema.exceptions.ValidationError(
@@ -63,7 +73,7 @@ class Processor(models.Model):
         if isinstance(in_config_schema, dict):
             in_config = pipeline_processor.get('in_config', None)
             if in_config:
-                jsonschema.validate(in_config, in_config_schema)
+                self.jsonschema(in_config_schema).validate(in_config)
             else:
                 raise jsonschema.exceptions.ValidationError(
                     "'in_config' is required"
@@ -74,6 +84,17 @@ class Processor(models.Model):
     def check_input_data(self, data):
         in_schema = self.schema['properties'].get('in')
         if in_schema:
-            jsonschema.validate(data, in_schema)
+            self.jsonschema(in_schema).validate(data)
 
         return
+
+
+class PipelineProcessor(object):
+    id = None
+    in_config = {}
+    out_config = {}
+
+    def __init__(self, data: {}):
+        self.id = data.get('id')
+        self.in_config = data.get('in_config', {})
+        self.out_config = data.get('out_config', {})
