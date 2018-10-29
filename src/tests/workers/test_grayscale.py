@@ -4,6 +4,7 @@ import os
 
 from django.conf import settings
 
+from projects.models.pipeline import *
 from projects.workers.grayscale import Grayscale
 from tests.base import BaseTestCase
 
@@ -50,10 +51,13 @@ class GrayscaleTestCase(BaseTestCase):
         ),
     )
     def test_worker(self, value):
-        result = self.worker_class().process(
+        result = self.worker_class().execute(
             value
         )
-        file_id = result
+        file_id = result.id
+        self.assertTrue(
+            isinstance(result, PipelineResultFile)
+        )
 
         self.assertTrue(
             filecmp.cmp(

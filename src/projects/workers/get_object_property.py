@@ -47,8 +47,6 @@ class GetObjectProperty(Worker):
     }
 
     def process(self, data):
-        self.processor.check_input_data(data)
-
         _property = self.pipeline_processor.in_config.get(
             'property'
         )

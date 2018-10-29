@@ -16,7 +16,7 @@ class RandomTestCase(BaseTestCase):
             pipeline_processor={
                 'in_config': in_config
             }
-        ).process()
+        ).execute()
         self.assertTrue(
             isinstance(result, expectation_class)
         )

@@ -25,6 +25,4 @@ class Markdown(Worker):
     }
 
     def process(self, data):
-        self.processor.check_input_data(data)
-
         return markdown2.markdown(data)

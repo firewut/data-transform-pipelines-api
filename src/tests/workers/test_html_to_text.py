@@ -28,5 +28,5 @@ class HTMLToTextTestCase(BaseTestCase):
         ),
     )
     def test_worker(self, value, expectation):
-        result = self.worker_class().process(value)
+        result = self.worker_class().execute(value)
         self.assertEqual(result, expectation)

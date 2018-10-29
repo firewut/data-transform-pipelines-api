@@ -34,38 +34,14 @@ class Grayscale(Worker):
     }
 
     def process(self, data):
-        self.processor.check_input_data(data)
-
-        # Base64 image
-        image = None
-        if isinstance(data, str):
-            image = Image.open(
-                io.BytesIO(
-                    base64.b64decode(data)
-                )
-            ).convert('LA')
-
-        # File like object
-        if isinstance(data, io.BufferedReader):
-            image = Image.open(
-                data
-            ).convert('LA')
-
+        image = Image.open(data).convert('LA')
         if image is None:
             raise WorkerNoInputException(
                 'File Object or Base64 String Input required'
             )
 
-        file_id = random_uuid4()
-        file_path = os.path.join(
-            settings.MEDIA_ROOT,
-            file_id,
-        )
-
-        image.save(
-            file_path,
-            'png'
-        )
+        _file = self.request_file()
+        image.save(_file.path, 'png')
         image.close()
 
-        return file_id
+        return _file

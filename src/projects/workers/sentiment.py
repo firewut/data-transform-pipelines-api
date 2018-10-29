@@ -25,8 +25,6 @@ class Sentiment(Worker):
     }
 
     def process(self, data):
-        self.processor.check_input_data(data)
-
         blobbed = TextBlob(data)
         sentiment = blobbed.sentiment
 

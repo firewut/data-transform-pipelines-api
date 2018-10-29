@@ -54,8 +54,6 @@ class GoogleTranslate(Worker):
     }
 
     def process(self, data):
-        self.processor.check_input_data(data)
-
         result = ""
 
         return result

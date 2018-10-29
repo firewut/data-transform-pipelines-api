@@ -1,5 +1,8 @@
+import hashlib
+import os
 import uuid
 
+from django.conf import settings
 from django.contrib.postgres.fields import (
     JSONField
 )
@@ -7,6 +10,7 @@ from django.db import models
 import celery
 
 from core.models import WithDate
+from core.utils import random_uuid4
 from projects.models.project import Project
 from projects.models.processor import Processor
 
@@ -52,3 +56,25 @@ class PipelineResult(models.Model):
     error = JSONField(null=True, blank=True)
     result = JSONField(null=True, blank=True)
     is_finished = models.BooleanField(blank=True, default=False)
+
+
+class PipelineResultFile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    path = models.CharField(max_length=666, null=False, blank=False)
+    pipeline_result = models.ForeignKey(PipelineResult, on_delete=models.CASCADE, editable=False)
+    md5_hash = models.CharField(max_length=16, editable=False)
+    ctime = models.DateTimeField(null=True, blank=True, auto_now_add=True)
+
+    def __init__(self, *args, **kwargs):
+        self.id = random_uuid4()
+        self.path = os.path.join(
+            settings.MEDIA_ROOT,
+            self.id
+        )
+
+    def post_process(self, pipeline_result):
+        self.md5_hash = hashlib.md5(
+            self.path
+        ).digest()
+        self.pipeline_result = pipeline_result
+        self.save()

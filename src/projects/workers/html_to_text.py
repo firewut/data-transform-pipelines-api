@@ -28,8 +28,6 @@ class HTMLToText(Worker):
     }
 
     def process(self, data):
-        self.processor.check_input_data(data)
-
         return re.sub(
             re.compile('<.*?>'),
             '',

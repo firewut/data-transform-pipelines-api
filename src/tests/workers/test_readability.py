@@ -6,7 +6,7 @@ class ReadabilityTestCase(BaseTestCase):
     worker_class = Readability
 
     def test_worker(self):
-        result = self.worker_class().process(example_com)
+        result = self.worker_class().execute(example_com)
         self.assertNotIn(
             '<title>',
             result,

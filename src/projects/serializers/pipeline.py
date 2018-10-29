@@ -1,12 +1,35 @@
-from rest_framework import serializers
+from django.conf import settings
 from drf_queryfields import QueryFieldsMixin
+from rest_framework import serializers
 
 from projects.serializers.processor import *
 from projects.models import (
     Pipeline,
     PipelineResult,
+    PipelineResultFile,
     Processor,
 )
+
+
+class PipelineResultFileSerializer(QueryFieldsMixin, serializers.ModelSerializer):
+    id = serializers.UUIDField()
+
+    class Meta:
+        model = PipelineResultFile
+        fields = (
+            'id',
+            'pipeline_result',
+            'md5_hash',
+            'ctime',
+        )
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['url'] = os.path.join(
+            settings.MEDIA_URL,
+            instance.id
+        )
+        return representation
 
 
 class PipelineResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):

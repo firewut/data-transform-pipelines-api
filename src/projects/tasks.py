@@ -13,13 +13,14 @@ def process_pipeline(
     data=None,
     error=None,
 ):
+
+    result = PipelineResult.objects.get(
+        pk=result_id,
+    )
+
     if not processors or \
             len(processors) == 0 \
             or error:
-
-        result = PipelineResult.objects.get(
-            pk=result_id,
-        )
         result.result = data
         result.error = error
         result.is_finished = True
@@ -30,13 +31,14 @@ def process_pipeline(
     for REGISTERED_WORKER_CLASS in REGISTERED_WORKER_CLASSES:
         if pipeline_processor.get('id') == REGISTERED_WORKER_CLASS.id:
             worker_instance = REGISTERED_WORKER_CLASS(
+                pipeline_result=result,
                 pipeline_processor=pipeline_processor
             )
 
             error = None
             result = data
             try:
-                result = worker_instance.process(
+                result = worker_instance.execute(
                     data
                 )
             except jsonschema.exceptions.ValidationError as e:

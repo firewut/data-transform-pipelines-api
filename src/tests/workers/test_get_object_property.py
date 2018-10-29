@@ -30,7 +30,7 @@ class GetObjectPropertyTestCase(BaseTestCase):
             pipeline_processor={
                 'in_config': in_config
             }
-        ).process(
+        ).execute(
             obj
         )
         self.assertEqual(result, expectation)

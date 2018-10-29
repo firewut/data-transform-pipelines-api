@@ -4,6 +4,7 @@ import os
 
 from django.conf import settings
 
+from projects.models.pipeline import *
 from projects.workers.resize import Resize
 from tests.base import BaseTestCase
 
@@ -58,10 +59,13 @@ class ResizeTestCase(BaseTestCase):
                 'id': 'resize',
                 'in_config': in_config
             }
-        ).process(
+        ).execute(
             value
         )
-        file_id = result
+        file_id = result.id
+        self.assertTrue(
+            isinstance(result, PipelineResultFile)
+        )
 
         self.assertTrue(
             filecmp.cmp(

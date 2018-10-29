@@ -25,8 +25,6 @@ class Md5(Worker):
     }
 
     def process(self, data):
-        # self.processor.check_input_data(data)
-
         str_data = str(data)
         return hashlib.md5(
             str_data.encode('utf-8')

@@ -25,6 +25,4 @@ class Readability(Worker):
     }
 
     def process(self, data):
-        self.processor.check_input_data(data)
-
         return Document(data).summary()

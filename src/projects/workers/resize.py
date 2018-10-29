@@ -66,38 +66,20 @@ class Resize(Worker):
     }
 
     def process(self, data):
-        self.processor.check_input_data(data)
-
-        in_config = self.pipeline_processor.in_config
-        size = in_config.get('size')
-
-        # Base64 image
-        image = None
-        if isinstance(data, str):
-            image = Image.open(
-                io.BytesIO(
-                    base64.b64decode(data)
-                )
-            )
-
-        # File like object
-        if isinstance(data, io.BufferedReader):
-            image = Image.open(data)
-
+        image = Image.open(data)
         if image is None:
             raise WorkerNoInputException(
                 'File Object or Base64 String Input required'
             )
 
-        img = resizeimage.resize_thumbnail(image, size)
-
-        file_id = random_uuid4()
-        file_path = os.path.join(
-            settings.MEDIA_ROOT,
-            file_id,
+        in_config = self.pipeline_processor.in_config
+        img = resizeimage.resize_thumbnail(
+            image,
+            in_config.get('size')
         )
 
-        img.save(file_path, img.format)
+        _file = self.request_file()
+        img.save(_file.path, img.format)
         image.close()
 
-        return file_id
+        return _file

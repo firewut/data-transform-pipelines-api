@@ -12,5 +12,5 @@ class Md5TestCase(BaseTestCase):
         ('dict', {1: 2}, '58df22b654b41dfbb0add72d96ce9982'),
     )
     def test_worker(self, value, expectation):
-        result = self.worker_class().process(value)
+        result = self.worker_class().execute(value)
         self.assertEqual(result, expectation)

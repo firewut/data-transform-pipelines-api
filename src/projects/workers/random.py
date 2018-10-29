@@ -74,7 +74,7 @@ class Random(Worker):
         }
     }
 
-    def process(self):
+    def process(self, data=None):
         result = ''
         in_config = self.pipeline_processor.in_config
 
