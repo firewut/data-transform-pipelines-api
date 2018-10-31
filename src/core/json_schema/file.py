@@ -1,13 +1,40 @@
-from jsonschema import validators
+import io
+
+from django.core.files.uploadedfile import (
+    InMemoryUploadedFile
+)
+import jsonschema
+
+FILE_TYPE_SCHEMA = {
+    'type': 'object',
+    'properties': {
+        'id': {
+            'type': 'string'
+        },
+    },
+    'additionalProperties': True
+}
 
 
-def extend_with_file(validator_class):
-    def is_file(validator, value, instance, schema):
-        pass
+def file_checker(checker, instance):
+    if not isinstance(
+        instance, (
+            # Base64
+            str,
+            # internally provided
+            io.BufferedReader,
+            # file upload
+            InMemoryUploadedFile,
+            # JSON in case if file uploaded recently
+            dict,
+        )
+    ):
+        return False
 
-    return validators.extend(
-        validator_class,
-        {
-            "type": is_file
-        }
-    )
+    if isinstance(instance, dict):
+        try:
+            jsonschema.validate(instance, FILE_TYPE_SCHEMA)
+        except jsonschema.exceptions.ValidationError:
+            return False
+
+    return True

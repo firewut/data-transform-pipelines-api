@@ -96,7 +96,7 @@
         "fields": {
             "project": "f043fc5c-7e89-4028-b530-2dc6a8ef4ec0",
             "title": "Resize an Image",
-            "description": "Resize ANY Image using Patched ImageMagic",
+            "description": "Resize ANY Image",
             "processors": [
                 {
                     "id": "resize",
@@ -115,7 +115,7 @@
         "fields": {
             "project": "f043fc5c-7e89-4028-b530-2dc6a8ef4ec0",
             "title": "Resize and Watermark Image",
-            "description": "Resize ANY Image using Patched ImageMagic",
+            "description": "Resize ANY Image",
             "processors": [
                 {
                     "id": "resize",

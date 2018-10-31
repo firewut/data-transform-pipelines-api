@@ -1,4 +1,7 @@
 import copy
+import os
+
+from django.conf import settings
 
 from projects.views import *
 from tests.base import BaseTestCase
@@ -210,13 +213,72 @@ class PipelinesTestCase(PipelinesBaseTestCase):
             action='process'
         )
         self.assertEqual(response.status_code, 202, response_json)
-        self.assertEqual(response_json['pipeline'], pipeline_data['id'])
-
+        self.assertEqual(
+            response_json['pipeline'],
+            pipeline_data['id'],
+        )
         self.assertIn(
             'pipeline_result/{}/'.format(
                 response_json.get('id')
             ),
             response['Location'],
+        )
+
+    def test_resize_and_grayscale(self):
+        pipeline_data = {
+            "id": self.random_uuid(),
+            "title": self.random_string(),
+            "project": self.project_id,
+            "processors": [
+                {
+                    "id": "resize",
+                    "in_config": {
+                        "size": [100, 100]
+                    }
+                },
+                {
+                    "id": "grayscale"
+                }
+            ]
+        }
+        response, response_json = self.put_create(pipeline_data)
+        self.assertEqual(response.status_code, 201, response_json)
+
+        image_as_file = open(
+            os.path.join(
+                os.path.dirname(__file__),
+                '../',
+                'data',
+                'image.png'
+            ),
+            'rb'
+        )
+
+        response, response_json = self.put_update(
+            pipeline_data.get('id'),
+            data={
+                'file': image_as_file
+            },
+            action='process',
+            _format='multipart',
+        )
+        self.assertEqual(response.status_code, 202, response_json)
+
+        # Check result
+        response, response_json = self.get_item(
+            pk=response_json.get('id'),
+            viewset=PipelineResultViewSet,
+        )
+        self.assertEqual(response.status_code, 200, response_json)
+        self.assertIsNone(response_json['error'])
+        self.assertTrue(response_json['is_finished'], response_json)
+        self.assertEqual(
+            response_json['result']['url'],
+            os.path.join(
+                settings.MEDIA_URL,
+                response_json['result']['id'],
+            ),
+            response_json
         )
 
 

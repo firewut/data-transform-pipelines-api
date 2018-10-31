@@ -1,6 +1,11 @@
 import abc
 import base64
+import copy
 import io
+
+from django.core.files.uploadedfile import (
+    InMemoryUploadedFile
+)
 
 from projects.models import *
 from projects.serializers.pipeline import (
@@ -37,13 +42,18 @@ class Worker(metaclass=abc.ABCMeta):
         return self.processor.check_input_data(data)
 
     def request_file(self):
-        return PipelineResultFile()
+        _file = PipelineResultFile()
+        _file.prepare()
+        return _file
 
     def prepare_output_data(self, data):
-        if isintance(data, PipelineResultFile):
-            _file = data
+        if isinstance(data, PipelineResultFile):
+            _file = copy.deepcopy(data)
             _file.post_process(self.pipeline_result)
-            data = PipelineResultFileSerializer(data=_file).data
+            serializer = PipelineResultFileSerializer(
+                instance=_file
+            )
+            data = serializer.data
 
         return data
 
@@ -52,36 +62,12 @@ class Worker(metaclass=abc.ABCMeta):
             If Processor Input is a File this should convert
                 Input Data into a `file descriptor` object
         """
-        converted_data = data
+        converted_data = copy.deepcopy(data)
 
-        in_type = self.processor.schema['properties']['in']['type']
-        if not isinstance(in_type, list):
-            in_type = [in_type, ]
-
-        in_types = set(in_type)
-        if 'file' in in_types:
-            # base64 encoded data
-            if isinstance(data, str):
-                converted_data = io.BytesIO(
-                    base64.b64decode(data)
-                )
-
-            # already prepared
-            if isinstance(data, io.BufferedReader):
-                pass
-
-            # API File Interface
-            if isinstance(data, dict):
-                if 'id' in data:
-                    try:
-                        result_file = PipelineResultFile.objects.get(
-                            pk=data['id']
-                        )
-                        converted_data = open(
-                            result_file.path, 'rb'
-                        )
-                    except Exception as e:
-                        pass
+        if self.processor.accepts_file():
+            converted_data = self.pipeline_result.open_file(
+                data
+            )
 
         return converted_data
 
@@ -93,4 +79,6 @@ class Worker(metaclass=abc.ABCMeta):
         self.check_input_data(data)
         prepared_data = self.prepare_input_data(data)
 
-        return self.process(prepared_data)
+        result = self.process(prepared_data)
+
+        return self.prepare_output_data(result)

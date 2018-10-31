@@ -110,7 +110,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
     def random_uuid(self):
         return random_uuid4()
 
-    def put_create(self, data, user=None, action='create', viewset=None):
+    def put_create(self, data, user=None, action='create', viewset=None, _format='json'):
         if viewset is None:
             viewset = self.viewset
 
@@ -121,7 +121,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             }
         )
 
-        request = factory.put("", data=data, format='json')
+        request = factory.put("", data=data, format=_format)
         response = created(request)
         response.render()
 
@@ -132,7 +132,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             pass
         return response, as_dict
 
-    def put_update(self, pk: str, data, action='update', user=None, viewset=None):
+    def put_update(self, pk: str, data, action='update', user=None, viewset=None, _format='json'):
         if viewset is None:
             viewset = self.viewset
 
@@ -143,7 +143,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             }
         )
 
-        request = factory.put("", data=data, format='json')
+        request = factory.put("", data=data, format=_format)
         response = updated(request, pk=pk)
         response.render()
 
@@ -154,7 +154,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             pass
         return response, as_dict
 
-    def post_create(self, data, user=None, action='create', viewset=None):
+    def post_create(self, data, user=None, action='create', viewset=None, _format='json'):
         if viewset is None:
             viewset = self.viewset
 
@@ -165,7 +165,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             }
         )
 
-        request = factory.post("", data=data, format='json')
+        request = factory.post("", data=data, format=_format)
         response = created(request)
         response.render()
 
@@ -235,7 +235,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             viewset=ProjectsViewSet
         )
 
-    def patch_update(self, pk: str, data: dict, user=None, viewset=None):
+    def patch_update(self, pk: str, data: dict, user=None, viewset=None, _format='json'):
         if viewset is None:
             viewset = self.viewset
 
@@ -246,7 +246,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             }
         )
 
-        request = factory.patch("", data=data, format='json')
+        request = factory.patch("", data=data, format=_format)
 
         response = patched(request, pk=pk)
         response.render()

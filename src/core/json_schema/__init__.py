@@ -1,7 +1,14 @@
-import jsonschema
+from jsonschema.validators import (
+    Draft4Validator,
+    extend,
+)
 
 from core.json_schema.file import *
 
-PJSONSchema = extend_with_file(
-    jsonschema.Draft4Validator
+
+PJSONSchema = extend(
+    Draft4Validator,
+    type_checker=Draft4Validator.TYPE_CHECKER.redefine(
+        "file", file_checker,
+    ),
 )

@@ -37,6 +37,7 @@ def process_pipeline(
 
             error = None
             result = data
+
             try:
                 result = worker_instance.execute(
                     data

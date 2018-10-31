@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 from drf_queryfields import QueryFieldsMixin
 from rest_framework import serializers
@@ -13,6 +15,7 @@ from projects.models import (
 
 class PipelineResultFileSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     id = serializers.UUIDField()
+    pipeline_result = serializers.UUIDField()
 
     class Meta:
         model = PipelineResultFile

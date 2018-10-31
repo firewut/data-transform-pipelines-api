@@ -18,11 +18,25 @@ class Readability(Worker):
                 "description": "html to make readable"
             },
             "out": {
-                "type": "string",
-                "description": "output data"
+                "type": "object",
+                "description": "output data",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "cleaned title"
+                    },
+                    "content": {
+                        "type": "string",
+                        "description": "cleaned content"
+                    }
+                }
             }
         }
     }
 
     def process(self, data):
-        return Document(data).summary()
+        doc = Document(data)
+        return {
+            'title': doc.short_title(),
+            'content': doc.summary()
+        }

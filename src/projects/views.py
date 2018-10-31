@@ -42,19 +42,28 @@ class PipelineViewSet(viewsets.ModelViewSet):
 
         return queryset.order_by('-ctime')
 
-    @action(methods=['POST'], detail=True)
+    @action(methods=['POST', 'PUT'], detail=True)
     def process(self, request, pk=None, **kwargs):
         """
             Queues a Pipeline Processing. 
             In case of Success you'll get HTTP 202 Status Code.
             Check *Location* Response Header to retrieve Pipeline Result.
+
+            Accepts `application/json` or `multipart/form-data` Content-Types
+
+            If `multipart/form-data` passed the field should be named `file`
         """
         instance = self.get_object()
-        instance.check_input_data(request.data)
+
+        input_data = request.FILES.get(
+            'file',
+            request.data
+        )
+        instance.check_input_data(input_data)
 
         serializer_class = PipelineResultSerializer
         pipeline_result = instance.create_result(
-            request.data
+            input_data
         )
 
         response_data = serializer_class(

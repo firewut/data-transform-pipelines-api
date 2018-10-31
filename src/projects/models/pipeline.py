@@ -1,12 +1,20 @@
+import base64
 import hashlib
+import io
 import os
 import uuid
 
 from django.conf import settings
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import (
+    InMemoryUploadedFile
+)
 from django.contrib.postgres.fields import (
     JSONField
 )
 from django.db import models
+
 import celery
 
 from core.models import WithDate
@@ -28,6 +36,12 @@ class Pipeline(WithDate, models.Model):
             pipeline=self
         )
 
+        if self.accepts_file():
+            input_file = result_object.save_file(data)
+            data = {
+                'id': input_file.pk
+            }
+
         # Generate a task to queue processing
         celery.current_app.send_task(
             'projects.tasks.process_pipeline',
@@ -41,12 +55,54 @@ class Pipeline(WithDate, models.Model):
 
         return result_object
 
-    def check_input_data(self, data):
+    def get_first_processor(self):
+        first_processor = None
         if self.processors and len(self.processors) > 0:
             first_processor = Processor.objects.get(pk=self.processors[0]['id'])
+
+        return first_processor
+
+    def check_input_data(self, data):
+        first_processor = self.get_first_processor()
+        if first_processor:
             first_processor.check_input_data(data)
 
         return
+
+    def accepts_file(self):
+        """
+            Helper for first processor input data type
+        """
+        first_processor = self.get_first_processor()
+        if first_processor:
+            return first_processor.accepts_file()
+
+        return False
+
+    def remove_results(self, date_start=None, date_end=None):
+        """
+            Remove all Results and Associated Files
+                older than some moment
+        """
+        conditions = models.Q(pipeline=self)
+        if date_start:
+            conditions &= models.Q(ctime__gte=date_start)
+
+        if date_end:
+            conditions &= models.Q(ctime__lte=date_end)
+
+        results = PipelineResult.objects.filter(conditions)
+
+        for result in results:
+            result.delete()
+
+    def delete(self):
+        """
+            Remove all Results and Associated Files
+        """
+        self.remove_results()
+
+        super().delete()
 
 
 class PipelineResult(models.Model):
@@ -57,24 +113,89 @@ class PipelineResult(models.Model):
     result = JSONField(null=True, blank=True)
     is_finished = models.BooleanField(blank=True, default=False)
 
+    def delete(self):
+        for _file in PipelineResultFile.objects.filter(
+            pipeline_result=self
+        ):
+            _file.delete()
+
+        super().delete()
+
+    def open_file(self, data):
+        input_file = None
+
+        if isinstance(data, (
+                io.BufferedReader,
+                InMemoryUploadedFile,
+        )):
+            input_file = data
+        elif isinstance(data, str):
+            input_file = io.BytesIO(
+                base64.b64decode(data)
+            )
+        elif isinstance(data, dict):
+            if 'id' in data:
+                _file = PipelineResultFile.objects.get(
+                    pk=data['id']
+                )
+                input_file = _file.open()
+
+        return input_file
+
+    def save_file(self, data):
+        input_file = PipelineResultFile()
+        input_file.prepare()
+
+        if isinstance(data, (
+            io.BufferedReader,
+            InMemoryUploadedFile,
+        )):
+            default_storage.save(
+                input_file.path,
+                ContentFile(data.read())
+            )
+            input_file.post_process(self)
+
+        return input_file
+
 
 class PipelineResultFile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     path = models.CharField(max_length=666, null=False, blank=False)
     pipeline_result = models.ForeignKey(PipelineResult, on_delete=models.CASCADE, editable=False)
-    md5_hash = models.CharField(max_length=16, editable=False)
+    md5_hash = models.CharField(max_length=32, editable=False)
     ctime = models.DateTimeField(null=True, blank=True, auto_now_add=True)
 
-    def __init__(self, *args, **kwargs):
+    _saved = False
+
+    def delete(self):
+        if os.path.exists(self.path):
+            os.remove(self.path)
+
+        super().delete()
+
+    def prepare(self, *args, **kwargs):
         self.id = random_uuid4()
         self.path = os.path.join(
             settings.MEDIA_ROOT,
             self.id
         )
 
+        if os.path.isfile(self.path):
+            self._saved = True
+
     def post_process(self, pipeline_result):
-        self.md5_hash = hashlib.md5(
-            self.path
-        ).digest()
-        self.pipeline_result = pipeline_result
-        self.save()
+        hash_md5 = hashlib.md5()
+
+        if not self._saved:
+            with open(self.path, "rb") as f:
+                for chunk in iter(lambda: f.read(4096), b""):
+                    hash_md5.update(chunk)
+
+            self.md5_hash = hash_md5.hexdigest()
+            self.pipeline_result = pipeline_result
+            self.save()
+            self._saved = True
+
+    def open(self):
+        return open(self.path, 'rb')
