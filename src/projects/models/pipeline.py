@@ -169,7 +169,7 @@ class PipelineResultFile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     path = models.CharField(max_length=666, null=False, blank=False)
     pipeline_result = models.ForeignKey(PipelineResult, on_delete=models.CASCADE, editable=False)
-    md5_hash = models.CharField(max_length=32, editable=False)
+    md5_hash = models.CharField(max_length=64, editable=False)
     ctime = models.DateTimeField(null=True, blank=True, auto_now_add=True)
 
     _saved = False

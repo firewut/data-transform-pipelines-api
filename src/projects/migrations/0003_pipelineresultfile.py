@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('path', models.CharField(max_length=666)),
-                ('md5_hash', models.CharField(editable=False, max_length=32)),
+                ('md5_hash', models.CharField(editable=False, max_length=64)),
                 ('ctime', models.DateTimeField(auto_now_add=True, null=True)),
                 ('pipeline_result', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.CASCADE, to='projects.PipelineResult')),
             ],

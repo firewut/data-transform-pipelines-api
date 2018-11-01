@@ -64,6 +64,4 @@ class Watermark(Worker):
     }
 
     def process(self, data):
-        result = ""
-
-        return result
+        return data
