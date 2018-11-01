@@ -1,8 +1,9 @@
 from projects.workers.sentiment import Sentiment
 from tests.base import BaseTestCase
+from tests.workers.base import WorkerBaseTestCase
 
 
-class SentimentTestCase(BaseTestCase):
+class SentimentTestCase(WorkerBaseTestCase):
     worker_class = Sentiment
 
     @BaseTestCase.cases(

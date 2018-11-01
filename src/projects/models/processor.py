@@ -30,6 +30,9 @@ class Processor(models.Model):
 
     objects = ProcessorManager()
 
+    def __str__(self):
+        return self.id
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

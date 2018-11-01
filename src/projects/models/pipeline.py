@@ -31,6 +31,9 @@ class Pipeline(WithDate, models.Model):
     is_active = models.BooleanField(blank=True, default=True)
     processors = JSONField(null=True, blank=True)
 
+    def __str__(self):
+        return str(self.id)
+
     def create_result(self, data):
         result_object = PipelineResult.objects.create(
             pipeline=self
@@ -113,6 +116,9 @@ class PipelineResult(models.Model):
     result = JSONField(null=True, blank=True)
     is_finished = models.BooleanField(blank=True, default=False)
 
+    def __str__(self):
+        return str(self.id)
+
     def delete(self):
         for _file in PipelineResultFile.objects.filter(
             pipeline_result=self
@@ -167,6 +173,9 @@ class PipelineResultFile(models.Model):
     ctime = models.DateTimeField(null=True, blank=True, auto_now_add=True)
 
     _saved = False
+
+    def __str__(self):
+        return str(self.id)
 
     def delete(self):
         if os.path.exists(self.path):

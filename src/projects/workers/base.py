@@ -62,7 +62,10 @@ class Worker(metaclass=abc.ABCMeta):
             If Processor Input is a File this should convert
                 Input Data into a `file descriptor` object
         """
-        converted_data = copy.deepcopy(data)
+        try:
+            converted_data = copy.deepcopy(data)
+        except TypeError:
+            converted_data = data
 
         if self.processor.accepts_file():
             converted_data = self.pipeline_result.open_file(

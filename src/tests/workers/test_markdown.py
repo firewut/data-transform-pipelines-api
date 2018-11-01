@@ -1,8 +1,9 @@
 from projects.workers.markdown import Markdown
 from tests.base import BaseTestCase
+from tests.workers.base import WorkerBaseTestCase
 
 
-class MarkdownTestCase(BaseTestCase):
+class MarkdownTestCase(WorkerBaseTestCase):
     worker_class = Markdown
 
     @BaseTestCase.cases(

@@ -13,28 +13,6 @@ from projects.models import (
 )
 
 
-class PipelineResultFileSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    id = serializers.UUIDField()
-    pipeline_result = serializers.UUIDField()
-
-    class Meta:
-        model = PipelineResultFile
-        fields = (
-            'id',
-            'pipeline_result',
-            'md5_hash',
-            'ctime',
-        )
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['url'] = os.path.join(
-            settings.MEDIA_URL,
-            instance.id
-        )
-        return representation
-
-
 class PipelineResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     id = serializers.UUIDField()
 
@@ -56,6 +34,29 @@ class PipelineResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
             'result',
             'is_finished',
         )
+
+
+class PipelineResultFileSerializer(QueryFieldsMixin, serializers.ModelSerializer):
+    id = serializers.UUIDField()
+    pipeline_result = serializers.UUIDField()
+
+    class Meta:
+        model = PipelineResultFile
+        fields = (
+            'id',
+            'pipeline_result',
+            'md5_hash',
+            'ctime',
+        )
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['url'] = os.path.join(
+            settings.MEDIA_URL,
+            instance.id
+        )
+
+        return representation
 
 
 class PipelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):

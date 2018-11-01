@@ -1,8 +1,9 @@
 from projects.workers.get_object_property import GetObjectProperty
 from tests.base import BaseTestCase
+from tests.workers.base import WorkerBaseTestCase
 
 
-class GetObjectPropertyTestCase(BaseTestCase):
+class GetObjectPropertyTestCase(WorkerBaseTestCase):
     worker_class = GetObjectProperty
 
     @BaseTestCase.cases(

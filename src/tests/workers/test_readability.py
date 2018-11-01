@@ -1,8 +1,9 @@
 from projects.workers.readability import Readability
 from tests.base import BaseTestCase
+from tests.workers.base import WorkerBaseTestCase
 
 
-class ReadabilityTestCase(BaseTestCase):
+class ReadabilityTestCase(WorkerBaseTestCase):
     worker_class = Readability
 
     def test_worker(self):

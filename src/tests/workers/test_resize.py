@@ -7,9 +7,10 @@ from django.conf import settings
 from projects.models.pipeline import *
 from projects.workers.resize import Resize
 from tests.base import BaseTestCase
+from tests.workers.base import WorkerBaseTestCase
 
 
-class ResizeTestCase(BaseTestCase):
+class ResizeTestCase(WorkerBaseTestCase):
     worker_class = Resize
 
     image_as_file = open(
@@ -55,6 +56,7 @@ class ResizeTestCase(BaseTestCase):
     )
     def test_worker(self, in_config, value):
         result = self.worker_class(
+            pipeline_result=self.pipeline_result,
             pipeline_processor={
                 'id': 'resize',
                 'in_config': in_config
@@ -62,9 +64,9 @@ class ResizeTestCase(BaseTestCase):
         ).execute(
             value
         )
-        file_id = result.id
+        file_id = result['id']
         self.assertTrue(
-            isinstance(result, PipelineResultFile)
+            isinstance(result, dict)
         )
 
         self.assertTrue(

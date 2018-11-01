@@ -341,6 +341,7 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
         )
         self.assertEqual(response.status_code, 200, response_json)
         self.assertIsNone(response_json['error'])
+        self.assertEqual(response_json['pipeline'], self.pipeline_id)
         self.assertTrue(response_json['is_finished'], response_json)
         self.assertEqual(response_json['result'], 123, response_json)
 

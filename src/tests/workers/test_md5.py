@@ -2,9 +2,10 @@ import jsonschema
 
 from projects.workers.md5 import Md5
 from tests.base import BaseTestCase
+from tests.workers.base import WorkerBaseTestCase
 
 
-class Md5TestCase(BaseTestCase):
+class Md5TestCase(WorkerBaseTestCase):
     worker_class = Md5
 
     @BaseTestCase.cases(

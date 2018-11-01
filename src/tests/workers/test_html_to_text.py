@@ -1,8 +1,9 @@
 from projects.workers.html_to_text import HTMLToText
 from tests.base import BaseTestCase
+from tests.workers.base import WorkerBaseTestCase
 
 
-class HTMLToTextTestCase(BaseTestCase):
+class HTMLToTextTestCase(WorkerBaseTestCase):
     worker_class = HTMLToText
 
     @BaseTestCase.cases(

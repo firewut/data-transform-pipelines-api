@@ -1,8 +1,9 @@
 from projects.workers.random import Random
 from tests.base import BaseTestCase
+from tests.workers.base import WorkerBaseTestCase
 
 
-class RandomTestCase(BaseTestCase):
+class RandomTestCase(WorkerBaseTestCase):
     worker_class = Random
 
     @BaseTestCase.cases(

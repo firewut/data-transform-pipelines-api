@@ -7,9 +7,10 @@ from django.conf import settings
 from projects.models.pipeline import *
 from projects.workers.grayscale import Grayscale
 from tests.base import BaseTestCase
+from tests.workers.base import WorkerBaseTestCase
 
 
-class GrayscaleTestCase(BaseTestCase):
+class GrayscaleTestCase(WorkerBaseTestCase):
     worker_class = Grayscale
 
     image_as_file = open(
@@ -51,12 +52,15 @@ class GrayscaleTestCase(BaseTestCase):
         ),
     )
     def test_worker(self, value):
-        result = self.worker_class().execute(
+        result = self.worker_class(
+            pipeline_result=self.pipeline_result
+        ).execute(
             value
         )
-        file_id = result.id
+
+        file_id = result['id']
         self.assertTrue(
-            isinstance(result, PipelineResultFile)
+            isinstance(result, dict)
         )
 
         self.assertTrue(
