@@ -39,7 +39,14 @@ class Processor(models.Model):
         # Beware - Extended JSONSchema used here
         self.jsonschema = json_schema.PJSONSchema
 
-    def accepts_file(self):
+    def output_is_file(self):
+        out_type = self.schema['properties']['out']['type']
+        if not isinstance(out_type, list):
+            out_type = [out_type, ]
+
+        return 'file' in out_type
+
+    def input_is_file(self):
         in_type = self.schema['properties']['in']['type']
         if not isinstance(in_type, list):
             in_type = [in_type, ]

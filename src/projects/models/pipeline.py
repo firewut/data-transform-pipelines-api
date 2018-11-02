@@ -42,7 +42,7 @@ class Pipeline(WithDate, models.Model):
             pipeline=self
         )
 
-        if self.accepts_file():
+        if self.input_is_file():
             input_file = result_object.save_file(data)
             data = {
                 'id': input_file.pk
@@ -75,13 +75,13 @@ class Pipeline(WithDate, models.Model):
 
         return
 
-    def accepts_file(self):
+    def input_is_file(self):
         """
             Helper for first processor input data type
         """
         first_processor = self.get_first_processor()
         if first_processor:
-            return first_processor.accepts_file()
+            return first_processor.input_is_file()
 
         return False
 
@@ -133,11 +133,14 @@ class PipelineResult(models.Model):
     def open_file(self, data):
         input_file = None
 
-        if isinstance(data, (
+        if isinstance(
+            data,
+            (
                 io.BytesIO,
                 io.BufferedReader,
                 InMemoryUploadedFile,
-        )):
+            )
+        ):
             input_file = data
         elif isinstance(data, str):
             url_validator = URLValidator()

@@ -53,7 +53,7 @@ class Worker(metaclass=abc.ABCMeta):
         return _file
 
     def prepare_output_data(self, data):
-        if isinstance(data, PipelineResultFile):
+        if self.processor.output_is_file() and isinstance(data, PipelineResultFile):
             _file = copy.deepcopy(data)
             _file.post_process(self.pipeline_result)
             serializer = PipelineResultFileSerializer(
@@ -73,7 +73,7 @@ class Worker(metaclass=abc.ABCMeta):
         except TypeError:
             converted_data = data
 
-        if self.processor.accepts_file():
+        if self.processor.input_is_file():
             converted_data = self.pipeline_result.open_file(
                 data
             )
@@ -89,5 +89,4 @@ class Worker(metaclass=abc.ABCMeta):
         prepared_data = self.prepare_input_data(data)
 
         result = self.process(prepared_data)
-
         return self.prepare_output_data(result)

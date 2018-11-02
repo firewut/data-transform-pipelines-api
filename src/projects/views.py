@@ -55,10 +55,12 @@ class PipelineViewSet(viewsets.ModelViewSet):
         """
         instance = self.get_object()
 
-        input_data = request.FILES.get(
-            'file',
-            request.data
-        )
+        input_data = request.data
+        for k, v in request.FILES.items():
+            if k.lower() == 'file':
+                input_data = v
+                break
+
         instance.check_input_data(input_data)
 
         serializer_class = PipelineResultSerializer
