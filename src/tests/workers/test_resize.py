@@ -53,6 +53,16 @@ class ResizeTestCase(WorkerBaseTestCase):
             {'size': [100, 100]},
             image_as_data,
         ),
+        (
+            'file_with_percentage',
+            {'percentage': 20},
+            image_as_file,
+        ),
+        (
+            'base64_with_percentage',
+            {'percentage': 20},
+            image_as_data,
+        ),
     )
     def test_worker(self, in_config, value):
         result = self.worker_class(
@@ -65,6 +75,7 @@ class ResizeTestCase(WorkerBaseTestCase):
             value
         )
         file_id = result['id']
+
         self.assertTrue(
             isinstance(result, dict)
         )

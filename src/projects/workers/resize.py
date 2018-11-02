@@ -33,13 +33,13 @@ class Resize(Worker):
             "in_config": {
                 "type": "object",
                 "properties": {
-                    # "percentage": {
-                    #     "type": "number",
-                    #     "title": "size",
-                    #     "description": "size in percents",
-                    #     "minimum": 0.01,
-                    #     "maximum": 100
-                    # },
+                    "percentage": {
+                        "type": "integer",
+                        "title": "size",
+                        "description": "size in percents",
+                        "minimum": 0.01,
+                        "maximum": 100
+                    },
                     "size": {
                         "type": "array",
                         "title": "size",
@@ -47,16 +47,24 @@ class Resize(Worker):
                         "items": {
                             "title": "pixels",
                             "type": "integer",
-                            "minimum": -1,
+                            "minimum": 1,
                             "maximum": 10000
                         },
                         "minItems": 2,
                         "maxItems": 2
                     }
-                }
+                },
+                "oneOf": [
+                    {
+                        "required": ["percentage"]
+                    },
+                    {
+                        "required": ["size"]
+                    }
+                ]
             },
             "in_config_example": {
-                "percentage": 75
+                "size": [100, 100]
             },
             "out": {
                 "type": "file",
@@ -67,16 +75,33 @@ class Resize(Worker):
 
     def process(self, data):
         image = Image.open(data)
+        img = None
+
         if image is None:
             raise WorkerNoInputException(
                 'File Object or Base64 String Input required'
             )
 
         in_config = self.pipeline_processor.in_config
-        img = resizeimage.resize_thumbnail(
-            image,
-            in_config.get('size')
-        )
+
+        percentage = None
+        size = in_config.get('size')
+        if size:
+            img = resizeimage.resize_thumbnail(
+                image,
+                in_config.get('size')
+            )
+        else:
+            percentage = int(in_config.get('percentage'))
+            new_size = [
+                (image.width * percentage) // 100,
+                (image.width * percentage) // 100
+            ]
+
+            img = resizeimage.resize_thumbnail(
+                image,
+                new_size
+            )
 
         _file = self.request_file()
         img.save(_file.path, img.format)

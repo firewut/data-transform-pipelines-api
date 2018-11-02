@@ -32,10 +32,9 @@ class Watermark(Worker):
                             "file",
                             "string"
                         ],
-                        "description": "Watermark to apply as file"
+                        "description": "Watermark file to apply"
                     },
                     "gravity": {
-                        "title": "position of a watermark image",
                         "type": "string",
                         "enum": [
                                 "NorthWest",
