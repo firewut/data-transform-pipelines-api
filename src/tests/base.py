@@ -104,6 +104,9 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             return_value=True,
         ).start()
 
+    def random_image(self, width=500, height=500):
+        return random_image(width, height)
+
     def random_string(self, N=10):
         return random_string(N)
 

@@ -25,17 +25,17 @@ class Random(Worker):
             "in_config": {
                 "type": "object",
                 "required": [
-                        "random_type"
+                    "random_type"
                 ],
                 "properties": {
                     "random_type": {
                         "type": "string",
                         "description": "what random type to generate",
                         "enum": [
-                                "string",
-                                "number",
-                                "boolean",
-                                "integer"
+                            "string",
+                            "number",
+                            "boolean",
+                            "integer"
                         ]
                     },
                     "length": {

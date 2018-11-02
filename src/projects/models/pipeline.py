@@ -5,17 +5,20 @@ import os
 import uuid
 
 from django.conf import settings
-from django.core.files.storage import default_storage
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import (
     InMemoryUploadedFile
 )
+from django.core.validators import URLValidator
 from django.contrib.postgres.fields import (
     JSONField
 )
 from django.db import models
-
+from requests.exceptions import HTTPError
 import celery
+import requests
 
 from core.models import WithDate
 from core.utils import random_uuid4
@@ -131,14 +134,24 @@ class PipelineResult(models.Model):
         input_file = None
 
         if isinstance(data, (
+                io.BytesIO,
                 io.BufferedReader,
                 InMemoryUploadedFile,
         )):
             input_file = data
         elif isinstance(data, str):
-            input_file = io.BytesIO(
-                base64.b64decode(data)
-            )
+            url_validator = URLValidator()
+            # It may be a valid URL or base64 encoded string
+            try:
+                url_validator(data)
+                response = requests.get(data)
+                response.raise_for_status()
+                input_file = response.content
+            # except HTTPError:
+            except ValidationError:
+                input_file = io.BytesIO(
+                    base64.b64decode(data)
+                )
         elif isinstance(data, dict):
             if 'id' in data:
                 _file = PipelineResultFile.objects.get(

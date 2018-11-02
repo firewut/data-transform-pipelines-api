@@ -41,9 +41,15 @@ class Worker(metaclass=abc.ABCMeta):
     def check_input_data(self, data):
         return self.processor.check_input_data(data)
 
+    def open_file(self, value):
+        return self.pipeline_result.open_file(
+            value
+        )
+
     def request_file(self):
         _file = PipelineResultFile()
         _file.prepare()
+
         return _file
 
     def prepare_output_data(self, data):

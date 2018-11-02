@@ -1,4 +1,8 @@
+from PIL import Image
+from resizeimage import resizeimage
+
 from projects.workers.base import Worker
+from projects.workers.exceptions import *
 
 
 class Watermark(Worker):
@@ -23,8 +27,8 @@ class Watermark(Worker):
             "in_config": {
                 "type": "object",
                 "required": [
-                        "watermark_image",
-                        "gravity"
+                    "watermark_image",
+                    "gravity"
                 ],
                 "properties": {
                     "watermark_image": {
@@ -32,22 +36,23 @@ class Watermark(Worker):
                             "file",
                             "string"
                         ],
-                        "description": "Watermark file to apply"
+                        "description": "Base64, URL or ID of a file uploaded recently"
                     },
                     "gravity": {
                         "type": "string",
                         "enum": [
-                                "NorthWest",
-                                "North",
-                                "NorthEast",
-                                "West",
-                                "Center",
-                                "East",
-                                "SouthWest",
-                                "South",
-                                "SouthEast"
+                            "NorthWest",
+                            "North",
+                            "NorthEast",
+                            "West",
+                            "Center",
+                            "East",
+                            "SouthWest",
+                            "South",
+                            "SouthEast"
                         ],
-                        "description": "watermark position"
+                        "description": "watermark position",
+                        "default": "NorthWest"
                     }
                 }
             },
@@ -63,4 +68,88 @@ class Watermark(Worker):
     }
 
     def process(self, data):
-        return data
+        image = Image.open(data).convert("RGBA")
+
+        if image is None:
+            raise WorkerNoInputException(
+                'File Object or Base64 String Input required'
+            )
+
+        in_config = self.pipeline_processor.in_config
+        gravity = in_config['gravity']
+
+        watermark_file = self.open_file(
+            in_config['watermark_image']
+        )
+
+        if not watermark_file:
+            raise WorkerInvalidInConfigException(
+                'watermark is not an Image'
+            )
+
+        watermark = Image.open(
+            watermark_file
+        ).convert("RGBA")
+
+        img = Image.new(
+            'RGBA',
+            (image.width, image.height),
+            (0, 0, 0, 0)
+        )
+        img.paste(image, (0, 0))
+        position = (0, 0)
+
+        if gravity == "NorthWest":
+            position = (0, 0)
+        if gravity == "North":
+            position = (
+                image.width // 2 - watermark.width // 2,
+                0,
+            )
+        if gravity == "NorthEast":
+            position = (
+                image.width - watermark.width,
+                0,
+            )
+        if gravity == "West":
+            position = (
+                0,
+                image.height // 2 - watermark.height // 2,
+            )
+        if gravity == "Center":
+            position = (
+                image.width // 2 - watermark.width // 2,
+                image.height // 2 - watermark.height // 2,
+            )
+        if gravity == "East":
+            position = (
+                image.width - watermark.width,
+                image.height // 2 - watermark.height // 2,
+            )
+        if gravity == "SouthWest":
+            position = (
+                0,
+                image.height - watermark.height,
+            )
+        if gravity == "South":
+            position = (
+                image.width // 2 - watermark.width // 2,
+                image.height - watermark.height,
+            )
+        if gravity == "SouthEast":
+            position = (
+                image.width - watermark.width,
+                image.height - watermark.height,
+            )
+
+        img.paste(
+            watermark,
+            position,
+            mask=watermark
+        )
+
+        _file = self.request_file()
+        img.save(_file.path, 'PNG')
+        image.close()
+
+        return _file

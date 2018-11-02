@@ -3,6 +3,7 @@ import filecmp
 import os
 
 from django.conf import settings
+import rest_framework
 
 from projects.models.pipeline import *
 from projects.workers.grayscale import Grayscale
@@ -58,10 +59,14 @@ class GrayscaleTestCase(WorkerBaseTestCase):
             value
         )
 
-        file_id = result['id']
         self.assertTrue(
-            isinstance(result, dict)
+            isinstance(
+                result,
+                rest_framework.utils.serializer_helpers.ReturnDict
+            )
         )
+
+        file_id = result['id']
 
         self.assertTrue(
             filecmp.cmp(

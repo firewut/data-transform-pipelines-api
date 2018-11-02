@@ -1,6 +1,10 @@
 import random
 import string
 import uuid
+import os
+import io
+
+from PIL import Image
 
 
 def random_bool():
@@ -25,3 +29,17 @@ def random_string(N: int = 10):
 
 def random_uuid4():
     return str(uuid.uuid4())
+
+
+def random_image(width=500, height=500):
+    def ran():
+        return os.urandom(width * height)
+
+    image = Image.new('RGB', [width, height])
+    pixels = zip(ran(), ran(), ran())
+    image.putdata(list(pixels))
+
+    image_byte_array = io.BytesIO()
+    image.save(image_byte_array, format='PNG')
+
+    return image_byte_array

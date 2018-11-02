@@ -1,12 +1,6 @@
-import base64
-import io
-import os
-
-from django.conf import settings
 from PIL import Image
 from resizeimage import resizeimage
 
-from core.utils import random_uuid4
 from projects.workers.base import Worker
 from projects.workers.exceptions import WorkerNoInputException
 
@@ -95,7 +89,7 @@ class Resize(Worker):
             percentage = int(in_config.get('percentage'))
             new_size = [
                 (image.width * percentage) // 100,
-                (image.width * percentage) // 100
+                (image.height * percentage) // 100
             ]
 
             img = resizeimage.resize_thumbnail(
