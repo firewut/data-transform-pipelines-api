@@ -157,7 +157,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             pass
         return response, as_dict
 
-    def post_create(self, data, user=None, action='create', viewset=None, _format='json'):
+    def post_create(self, data, pk=None, user=None, action='create', viewset=None, _format='json'):
         if viewset is None:
             viewset = self.viewset
 
@@ -169,7 +169,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
         )
 
         request = factory.post("", data=data, format=_format)
-        response = created(request)
+        response = created(request, pk=pk)
         response.render()
 
         as_dict = None

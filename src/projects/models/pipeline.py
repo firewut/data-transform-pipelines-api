@@ -146,7 +146,7 @@ class PipelineResult(models.Model):
                 url_validator(data)
                 response = requests.get(data)
                 response.raise_for_status()
-                input_file = response.content
+                input_file = io.BytesIO(response.content)
             # except HTTPError:
             except ValidationError:
                 input_file = io.BytesIO(

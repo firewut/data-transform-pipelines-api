@@ -345,7 +345,7 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
         self.assertTrue(response_json['is_finished'], response_json)
         self.assertEqual(response_json['result'], 123, response_json)
 
-    def test_pipeline_process_valid_data_multiple_processors(self):
+    def test_pipeline_process_valid_data_multiple_processors_json(self):
         pipeline_data = {
             "id": self.random_uuid(),
             "title": self.random_string(),
@@ -388,3 +388,70 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
         self.assertIsNone(response_json['error'])
         self.assertTrue(response_json['is_finished'], response_json)
         self.assertEqual(response_json['result'], "<p><strong>Hello World</strong></p>\n", response_json)
+
+    def test_pipeline_process_valid_data_multiple_processors_multipart(self):
+        pipeline_data = {
+            "id": self.random_uuid(),
+            "title": self.random_string(),
+            "project": self.project_id,
+            "processors": [
+                {
+                    "id": "resize",
+                    "in_config": {
+                        "size": [
+                            200,
+                            200
+                        ]
+                    },
+                },
+                {
+                    "id": "watermark",
+                    "in_config": {
+                        "gravity": "SouthEast",
+                        "watermark_image": "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/google/146/thinking-face_1f914.png"
+                    }
+                }
+            ]
+        }
+        response, response_json = self.put_create(
+            pipeline_data,
+            viewset=PipelineViewSet
+        )
+        self.assertEqual(response.status_code, 201, response_json)
+
+        pipeline_id = response_json['id']
+
+        response, response_json = self.post_create(
+            pk=pipeline_id,
+            data={
+                'file': open(
+                    os.path.join(
+                        os.path.dirname(__file__),
+                        "../",
+                        "data",
+                        "image.png"
+                    ),
+                    'rb'
+                )
+            },
+            action='process',
+            viewset=PipelineViewSet,
+            _format='multipart',
+        )
+        self.assertEqual(response.status_code, 202, response_json)
+        self.assertEqual(response_json['pipeline'], pipeline_id)
+
+        response, response_json = self.get_item(
+            pk=response_json.get('id')
+        )
+        self.assertEqual(response.status_code, 200, response_json)
+        self.assertIsNone(response_json['error'])
+        self.assertTrue(response_json['is_finished'], response_json)
+        self.assertEqual(
+            response_json['result']['url'],
+            os.path.join(
+                settings.MEDIA_URL,
+                response_json['result']['id'],
+            ),
+            response_json
+        )
