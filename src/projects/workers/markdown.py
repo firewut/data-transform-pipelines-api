@@ -12,9 +12,7 @@ class Markdown(Worker):
         "type": "object",
         "properties": {
             "in": {
-                "type": [
-                    "string"
-                ],
+                "type": "string",
                 "description": "raw markdown"
             },
             "out": {

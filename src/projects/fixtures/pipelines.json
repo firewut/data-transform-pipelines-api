@@ -74,6 +74,9 @@
             "description": "Extracts focus Content from an HTML and Makes Markdown",
             "processors": [
                 {
+                    "id": "fetch_url"
+                },
+                {
                     "id": "readability"
                 },
                 {

@@ -12,9 +12,7 @@ class Readability(Worker):
         "type": "object",
         "properties": {
             "in": {
-                "type": [
-                    "string"
-                ],
+                "type": "string",
                 "description": "html to make readable"
             },
             "out": {

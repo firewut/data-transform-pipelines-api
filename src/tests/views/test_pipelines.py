@@ -185,14 +185,43 @@ class PipelinesTestCase(PipelinesBaseTestCase):
         )
 
     @BaseTestCase.cases(
-        ('random_none', 'random', {"length": 10, "random_type": "string"}, None),
-        ('random_empty', 'random', {"length": 10, "random_type": "string"}, {}),
-        ('get_object_property_empty', 'get_object_property', {"property": "lala"}, {}),
-        ('get_object_property_none', 'get_object_property', {"property": "lala"}, None),
-        ('get_object_property', 'get_object_property', {"property": "lala"}, {"lala": "123"}),
-        ('html_to_text_empty', 'html_to_text', {}, ""),
+        (
+            'random_none',
+            'random',
+            {"length": 10, "random_type": "string"},
+            {'data': None},
+        ),
+        (
+            'random_empty',
+            'random',
+            {"length": 10, "random_type": "string"},
+            {'data': {}},
+        ),
+        (
+            'get_object_property_empty',
+            'get_object_property',
+            {"property": "lala"},
+            {'data': {}},
+        ),
+        (
+            'get_object_property',
+            'get_object_property',
+            {"property": "lala"},
+            {'data': {"lala": "123"}},
+        ),
+        (
+            'html_to_text_empty',
+            'html_to_text',
+            {},
+            {'data': ""},
+        ),
     )
-    def test_processors_valid_input_data(self, processor_id, in_config, in_data):
+    def test_processors_valid_input_data(
+        self,
+        processor_id,
+        in_config,
+        in_data
+    ):
         pipeline_data = {
             "id": self.random_uuid(),
             "title": self.random_string(),
@@ -317,7 +346,11 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
     def test_pipeline_process_invalid_data(self, value):
         response, response_json = self.put_update(
             self.pipeline_id,
-            data=value,
+            {
+                "data": {
+                    value
+                }
+            },
             action='process',
             viewset=PipelineViewSet
         )
@@ -328,7 +361,9 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
         response, response_json = self.put_update(
             self.pipeline_id,
             {
-                "save_me": 123
+                "data": {
+                    "save_me": 123
+                }
             },
             action='process',
             viewset=PipelineViewSet
@@ -373,7 +408,9 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
         response, response_json = self.put_update(
             pipeline_id,
             {
-                "markdown_here": "**Hello World**"
+                "data": {
+                    "markdown_here": "**Hello World**"
+                }
             },
             action='process',
             viewset=PipelineViewSet

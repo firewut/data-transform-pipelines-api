@@ -1,3 +1,4 @@
+from urllib import request
 import base64
 import hashlib
 import io
@@ -60,6 +61,13 @@ class Pipeline(WithDate, models.Model):
         )
 
         return result_object
+
+    def requires_input_data(self):
+        first_processor = self.get_first_processor()
+        if first_processor:
+            return first_processor.requires_input()
+
+        return False
 
     def get_first_processor(self):
         first_processor = None
@@ -186,6 +194,7 @@ class PipelineResultFile(models.Model):
     path = models.CharField(max_length=666, null=False, blank=False)
     pipeline_result = models.ForeignKey(PipelineResult, on_delete=models.CASCADE, editable=False)
     md5_hash = models.CharField(max_length=64, editable=False)
+    mimetype = models.CharField(max_length=666, null=True, blank=True)
     ctime = models.DateTimeField(null=True, blank=True, auto_now_add=True)
 
     _saved = False

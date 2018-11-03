@@ -15,10 +15,7 @@ class Random(Worker):
         ],
         "properties": {
             "in": {
-                "type": [
-                    "null",
-                    "object"
-                ],
+                "type": "null",
                 "description": "takes no input data"
             },
             "in_config": {

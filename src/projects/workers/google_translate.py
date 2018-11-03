@@ -13,9 +13,7 @@ class GoogleTranslate(Worker):
         ],
         "properties": {
             "in": {
-                "type": [
-                    "string"
-                ],
+                "type": "string",
                 "description": "Text to translate",
                 "maxLength": 5000
             },

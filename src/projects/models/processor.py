@@ -39,29 +39,37 @@ class Processor(models.Model):
         # Beware - Extended JSONSchema used here
         self.jsonschema = json_schema.PJSONSchema
 
-    def output_is_file(self):
-        out_type = self.schema['properties']['out']['type']
-        if not isinstance(out_type, list):
-            out_type = [out_type, ]
+    def _get_type(self, direction: str = 'in'):
+        _type = self.schema['properties'][direction]['type']
+        if not isinstance(_type, list):
+            _type = [_type, ]
 
-        return 'file' in out_type
+        return _type
+
+    def _get_out_type(self):
+        return self._get_type('out')
+
+    def _get_in_type(self):
+        return self._get_type('in')
+
+    def requires_input(self):
+        in_type = self._get_in_type()
+        if not in_type or \
+                len(in_type) == 0 or \
+                in_type == ['null']:
+            return False
+
+        return True
+
+    def output_is_file(self):
+        return 'file' in self._get_out_type()
 
     def input_is_file(self):
-        in_type = self.schema['properties']['in']['type']
-        if not isinstance(in_type, list):
-            in_type = [in_type, ]
-
-        return 'file' in in_type
+        return 'file' in self._get_in_type()
 
     def can_send_result(self, processor):
-        out_type = self.schema['properties']['out']['type']
-        in_type = processor.schema['properties']['in']['type']
-
-        if not isinstance(out_type, list):
-            out_type = [out_type, ]
-
-        if not isinstance(in_type, list):
-            in_type = [in_type, ]
+        out_type = self._get_out_type()
+        in_type = processor._get_in_type()
 
         out_types = set(out_type)
         in_types = set(in_type)

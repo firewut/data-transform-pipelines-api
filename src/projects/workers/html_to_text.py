@@ -12,9 +12,7 @@ class HTMLToText(Worker):
         "type": "object",
         "properties": {
             "in": {
-                "type": [
-                    "string"
-                ],
+                "type": "string",
                 "description": "html to make a text from"
             },
             "out": {

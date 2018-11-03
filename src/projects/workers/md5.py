@@ -12,9 +12,7 @@ class Md5(Worker):
         "type": "object",
         "properties": {
             "in": {
-                "type": [
-                    "string"
-                ],
+                "type": "string",
                 "description": "string to hash"
             },
             "out": {

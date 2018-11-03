@@ -46,6 +46,7 @@ class PipelineResultFileSerializer(QueryFieldsMixin, serializers.ModelSerializer
             'id',
             'pipeline_result',
             'md5_hash',
+            'mimetype',
             'ctime',
         )
 

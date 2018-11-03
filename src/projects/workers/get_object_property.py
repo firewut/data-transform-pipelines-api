@@ -14,9 +14,7 @@ class GetObjectProperty(Worker):
         ],
         "properties": {
             "in": {
-                "type": [
-                    "object"
-                ]
+                "type": "object"
             },
             "out": {
                 "type": [

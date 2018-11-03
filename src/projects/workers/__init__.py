@@ -1,3 +1,4 @@
+from projects.workers.fetch_url import *
 from projects.workers.get_object_property import *
 from projects.workers.google_translate import *
 from projects.workers.grayscale import *
@@ -11,6 +12,7 @@ from projects.workers.sentiment import *
 from projects.workers.watermark import *
 
 REGISTERED_WORKER_CLASSES = (
+    FetchURL,
     GetObjectProperty,
     GoogleTranslate,
     Grayscale,

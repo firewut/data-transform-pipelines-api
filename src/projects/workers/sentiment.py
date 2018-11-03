@@ -12,9 +12,7 @@ class Sentiment(Worker):
         "type": "object",
         "properties": {
             "in": {
-                "type": [
-                    "string"
-                ],
+                "type": "string",
                 "description": "text to analyze"
             },
             "out": {
