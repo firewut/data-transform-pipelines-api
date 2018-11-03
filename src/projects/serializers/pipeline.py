@@ -107,8 +107,8 @@ class PipelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
                 _processor.check_in_config(processor)
             except Exception as e:
                 raise serializers.ValidationError(
-                    "{}[{}] has invalid in_config".format(
-                        _processor.id, i
+                    "{}[{}] has invalid in_config: {}".format(
+                        _processor.id, i, str(e)
                     )
                 )
 

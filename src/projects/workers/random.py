@@ -19,43 +19,58 @@ class Random(Worker):
                     "null",
                     "object"
                 ],
-                "additionalProperties": False,
                 "description": "takes no input data"
             },
             "in_config": {
                 "type": "object",
-                "required": [
-                    "random_type"
-                ],
-                "properties": {
-                    "random_type": {
-                        "type": "string",
-                        "description": "what random type to generate",
-                        "enum": [
-                            "string",
-                            "number",
-                            "boolean",
-                            "integer"
-                        ]
+                "oneOf": [
+                    {
+                        "properties": {
+                            "random_type": {
+                                "type": "string",
+                                "enum": ["boolean"]
+                            },
+                        },
+                        "additionalProperties": False,
+                        "required": ["random_type"]
                     },
-                    "length": {
-                        "description": "valid for string",
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 100
+                    {
+                        "properties": {
+                            "random_type": {
+                                "type": "string",
+                                "enum": ["string"]
+                            },
+                            "length": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 100
+                            }
+                        },
+                        "additionalProperties": False,
+                        "required": ["random_type", "length"]
                     },
-                    "min": {
-                        "description": "valid for string, number, integer",
-                        "type": "integer",
-                        "minimum": 0
+                    {
+                        "properties": {
+                            "random_type": {
+                                "type": "string",
+                                "enum": ["number", "integer"]
+                            },
+                            "min": {
+                                "description": "valid for string, number, integer",
+                                "type": "integer",
+                                "minimum": 0
+                            },
+                            "max": {
+                                "description": "valid for string, number, integer",
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 1000000
+                            }
+                        },
+                        "additionalProperties": False,
+                        "required": ["random_type"]
                     },
-                    "max": {
-                        "description": "valid for string, number, integer",
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 1000000
-                    }
-                }
+                ]
             },
             "in_config_example": {
                 "random_type": "number",

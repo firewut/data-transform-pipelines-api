@@ -18,6 +18,7 @@ class RandomTestCase(WorkerBaseTestCase):
                 'in_config': in_config
             }
         ).execute()
+
         self.assertTrue(
             isinstance(result, expectation_class)
         )
