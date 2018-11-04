@@ -1,3 +1,5 @@
+import json
+
 from rest_framework import (
     viewsets,
     status,
@@ -51,12 +53,39 @@ class PipelineViewSet(viewsets.ModelViewSet):
 
             Accepts `application/json` or `multipart/form-data` Content-Types
 
+            `processors` are Optional for preview:
+                application/json - JSON Object
+                multipart/form-data - JSON Object as a String
+
             If `application/json` - root property should be named `data`
             If `multipart/form-data` - the field should be named `file`
         """
         instance = self.get_object()
 
+        pipeline_processors = instance.processors
+
+        if isinstance(request.data, type({})):
+            if 'application/json' in request.content_type:
+                pipeline_processors = request.data.get(
+                    'processors',
+                    pipeline_processors
+                )
+            elif 'multipart/form-data' in request.content_type:
+                pipeline_processors = json.loads(
+                    request.data.get('processors', '{}')
+                ) or pipeline_processors
+
+        #   TODO: Think about replacing this    #
+        instance.processors = pipeline_processors
+        #########################################
+
+        pipeline_serializer = PipelineSerializer
+        pipeline_serializer().check_processors(
+            instance.processors
+        )
+
         input_data = None
+
         if instance.requires_input_data():
             input_data = request.data
             if 'application/json' in request.content_type:
@@ -71,11 +100,11 @@ class PipelineViewSet(viewsets.ModelViewSet):
 
             instance.check_input_data(input_data)
 
-        serializer_class = PipelineResultSerializer
         pipeline_result = instance.create_result(
             input_data
         )
 
+        serializer_class = PipelineResultSerializer
         response_data = serializer_class(
             pipeline_result
         ).data

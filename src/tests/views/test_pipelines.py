@@ -1,4 +1,5 @@
 import copy
+import json
 import os
 
 from django.conf import settings
@@ -363,7 +364,7 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
             {
                 "data": {
                     "save_me": 123
-                }
+                },
             },
             action='process',
             viewset=PipelineViewSet
@@ -470,6 +471,130 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
                     ),
                     'rb'
                 )
+            },
+            action='process',
+            viewset=PipelineViewSet,
+            _format='multipart',
+        )
+        self.assertEqual(response.status_code, 202, response_json)
+        self.assertEqual(response_json['pipeline'], pipeline_id)
+
+        response, response_json = self.get_item(
+            pk=response_json.get('id')
+        )
+        self.assertEqual(response.status_code, 200, response_json)
+        self.assertIsNone(response_json['error'])
+        self.assertTrue(response_json['is_finished'], response_json)
+        self.assertEqual(
+            response_json['result']['url'],
+            os.path.join(
+                settings.MEDIA_URL,
+                response_json['result']['id'],
+            ),
+            response_json
+        )
+
+    def test_pipeline_preview_json(self):
+        """
+            Sometimes it's necessary to "Preview" processors
+                and data/file without saving the Pipeline
+        """
+        response, response_json = self.put_update(
+            self.pipeline_id,
+            {
+                "data": {
+                    "save_me": "123"
+                },
+                "processors": [
+                    {
+                        "id": "get_object_property",
+                        "in_config": {
+                            "property": "save_me"
+                        }
+                    },
+                    {
+                        "id": "md5"
+                    }
+                ]
+            },
+            action='process',
+            viewset=PipelineViewSet
+        )
+        self.assertEqual(response.status_code, 202, response_json)
+        self.assertEqual(response_json['pipeline'], self.pipeline_id)
+
+        response, response_json = self.get_item(
+            pk=response_json.get('id')
+        )
+        self.assertEqual(response.status_code, 200, response_json)
+        self.assertIsNone(response_json['error'])
+        self.assertEqual(response_json['pipeline'], self.pipeline_id)
+        self.assertTrue(response_json['is_finished'], response_json)
+        self.assertEqual(
+            response_json['result'],
+            '202cb962ac59075b964b07152d234b70',
+            response_json
+        )
+
+    def test_pipeline_preview_multipart(self):
+        """
+            Sometimes it's necessary to "Preview" processors
+                and data/file without saving the Pipeline
+        """
+        pipeline_data = {
+            "id": self.random_uuid(),
+            "title": self.random_string(),
+            "project": self.project_id,
+            "processors": [
+                {
+                    "id": "resize",
+                    "in_config": {
+                        "size": [
+                            200,
+                            200
+                        ]
+                    },
+                }
+            ]
+        }
+        response, response_json = self.put_create(
+            pipeline_data,
+            viewset=PipelineViewSet
+        )
+        self.assertEqual(response.status_code, 201, response_json)
+
+        pipeline_id = response_json['id']
+
+        response, response_json = self.post_create(
+            pk=pipeline_id,
+            data={
+                'file': open(
+                    os.path.join(
+                        os.path.dirname(__file__),
+                        "../",
+                        "data",
+                        "image.png"
+                    ),
+                    'rb'
+                ),
+                'processors': json.dumps([
+                    {
+                        "id": "resize",
+                        "in_config": {
+                            "size": [
+                                200,
+                                200
+                            ]
+                        },
+                    },
+                    {
+                        "id": "watermark",
+                        "in_config": {
+                            "gravity": "SouthEast",
+                            "watermark_image": "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/google/146/thinking-face_1f914.png"
+                        }
+                    }
+                ])
             },
             action='process',
             viewset=PipelineViewSet,
