@@ -1,0 +1,16 @@
+language: python
+python:
+  - "3.6"
+install:
+  - pip install -r requirements.txt
+beforescript:
+  - psql -c 'create database data_transform;' -U postgres
+env:
+  - DB_NAME=data_transform
+  - DB_USER=postgres
+  - DB_PASSWORD=
+  - DB_HOST=localhost
+  - DB_PORT=5432
+  - CELERY_BROKER_URL=
+script:
+  - src/manage.py test
