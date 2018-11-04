@@ -14,7 +14,7 @@ class FetchURL(Worker):
             "in": {
                 "type": "string",
                 "format": "url",
-                "description": "URL to fetch content from"
+                "description": "URL to fetch content from. GET Method used"
             },
             "out": {
                 "type": [

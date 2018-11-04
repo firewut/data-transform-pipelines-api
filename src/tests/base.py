@@ -7,6 +7,7 @@ from django.test import TestCase
 from rest_framework.test import APIRequestFactory
 import celery
 import mock
+import requests
 
 from core.utils import *
 from projects.views import (
@@ -260,3 +261,22 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
         except Exception as e:
             pass
         return response, as_dict
+
+    def _fake_http_response(
+        self,
+        status=200,
+        content=None,
+        json_data=None,
+        cookies=None,
+    ):
+        response = requests.Response()
+        response.code = 'Ok'
+        response.status_code = status
+        response._content = str.encode(
+            json.dumps(json_data)
+        )
+        response.cookies = cookies or {
+            'CookieKey': 'CookieValue'
+        }
+
+        return response
