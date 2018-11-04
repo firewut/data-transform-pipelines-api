@@ -1,16 +1,25 @@
 language: python
 python:
   - "3.6"
+services:
+  - docker
+env:
+  global:
+    - DB_NAME=transform
+    - DB_USER=transform
+    - DB_PASSWORD=bZVWia5P4fMwACDjUHDI
+    - DB_HOST=localhost
+    - DB_PORT=5433
+    - CELERY_BROKER_URL=
+before_install:
+  - docker pull postgres:10
+  - docker run -d -p 127.0.0.1:5433:5432 \
+    -e POSTGRES_DB=$DB_NAME \
+    -e POSTGRES_USER=$DB_USER \
+    -e POSTGRES_PASSWORD=$DB_PASSWORD \
+    postgres:10 
 install:
   - pip install -r requirements.txt
-beforescript:
-  - psql -c 'create database data_transform;' -U postgres
-env:
-  - DB_NAME=data_transform
-  - DB_USER=postgres
-  - DB_PASSWORD=
-  - DB_HOST=localhost
-  - DB_PORT=5432
-  - CELERY_BROKER_URL=
 script:
-  - src/manage.py test
+  - mkdir media
+  - cd src && ./manage.py test

@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.com/firewut/data-transform-pipelines-api.svg)](https://travis-ci.com/firewut/data-transform-pipelines-api)
+[![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/firewut/data-transform-pipelines-api/master/LICENSE)
+
+
 # About
 
 Data Transformation Pipelines API.
@@ -13,6 +17,7 @@ Documentation available after a startup under [http://127.0.0.1:8000/api/v1/free
 ```bash
 pip install -r requirements.txt
 
+mkdir ./media
 cd src 
 ./manage.py migrate
 ./manage.py runserver 8000
