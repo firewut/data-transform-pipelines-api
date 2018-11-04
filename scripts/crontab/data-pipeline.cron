@@ -1,0 +1,7 @@
+PYTHONIOENCODING=utf-8
+PYTHON=/home/andrew/project/backend/env/bin/python
+
+SCRIPT_PATH=/home/andrew/project/backend/
+
+*/30    *    *    *    *     ./manage.py pipeline_housekeeping
+*       *    *    *    *     cd src && flock -n $SCRIPT_PATH/cron.celery.lock $SCRIPT_PATH/env/bin/celery -A src.core worker -l info --concurrency 8 --max-tasks-per-child 2
