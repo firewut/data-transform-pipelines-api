@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -27,6 +26,13 @@ DEBUG = bool(os.environ.get('DEBUG', True))
 
 ALLOWED_HOSTS = ['*']
 
+LOGS_DIR = os.environ.get(
+    'DJANGO_LOGS_DIR',
+    os.path.join(
+        BASE_DIR,
+        'logs'
+    )
+)
 
 # Application definition
 
@@ -161,3 +167,79 @@ CELERY_BROKER_URL = os.environ.get(
     'CELERY_BROKER_URL',
     'redis://127.0.0.1:6379/0'
 )
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'exceptions-log': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': LOGS_DIR + '/exceptions.log',
+            'formatter': 'verbose',
+        },
+        'common-log': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': LOGS_DIR + '/common.log',
+            'formatter': 'verbose',
+        },
+        'django.db.backends-log': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': LOGS_DIR + '/django.db.backends.log',
+            'formatter': 'verbose',
+        },
+        # 'sentry': {
+        #     'level': 'ERROR',
+        #     'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        #     'formatter': 'verbose',
+        # },
+        'celery-log': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': LOGS_DIR + '/celery.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'exceptions': {
+            'handlers': ['exceptions-log'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'common': {
+            'handlers': ['common-log'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'celery.tasks': {
+            'handlers': ['celery-log'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['django.db.backends-log'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['exceptions-log'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
