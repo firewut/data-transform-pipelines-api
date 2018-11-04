@@ -1,0 +1,6 @@
+PYTHONIOENCODING=utf-8
+PYTHON=/var/project/env/bin/python
+
+SCRIPT_PATH=/var/project/src/
+
+*/30    *    *    *    *     ./manage.py pipeline_housekeeping

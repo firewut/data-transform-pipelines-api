@@ -46,7 +46,7 @@ class Pipeline(WithDate, models.Model):
         if self.input_is_file():
             input_file = result_object.save_file(data)
             data = {
-                'id': input_file.pk
+                'id': input_file.pk,
             }
 
         # Generate a task to queue processing
@@ -93,12 +93,14 @@ class Pipeline(WithDate, models.Model):
 
         return False
 
-    def remove_results(self, date_start=None, date_end=None):
+    @classmethod
+    def housekeeping(cls, conditions: models.Q = None, date_start=None, date_end=None):
         """
-            Remove all Results and Associated Files
-                older than some moment
+            Mass Results cleanup
         """
-        conditions = models.Q(pipeline=self)
+        if not conditions:
+            conditions = models.Q()
+
         if date_start:
             conditions &= models.Q(ctime__gte=date_start)
 
@@ -106,9 +108,20 @@ class Pipeline(WithDate, models.Model):
             conditions &= models.Q(ctime__lte=date_end)
 
         results = PipelineResult.objects.filter(conditions)
-
         for result in results:
             result.delete()
+
+    def remove_results(self, date_start=None, date_end=None):
+        """
+            Remove all Results and Associated Files
+                older than some moment
+        """
+        conditions = models.Q(pipeline=self)
+        Pipeline.housekeeping(
+            conditions=models.Q(pipeline=self),
+            date_start=date_start,
+            date_end=date_end
+        )
 
     def delete(self):
         """
@@ -129,6 +142,13 @@ class PipelineResult(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    def delete_unused_files(self):
+        for _file in PipelineResultFile.objects.filter(
+            pipeline_result=self
+        ):
+            if self.result.get('id') != str(_file.id):
+                _file.delete()
 
     def delete(self):
         for _file in PipelineResultFile.objects.filter(

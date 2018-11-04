@@ -43,7 +43,7 @@
         "model": "projects.Pipeline",
         "fields": {
             "project": "541e7ada-987d-4826-a183-358e55d836fa",
-            "title": "Translate an HTML Page",
+            "title": "WIP: Translate an HTML Page",
             "description": "Extracts focus Content from an HTML and translates it to Specified Language",
             "processors": [
                 {
@@ -70,8 +70,8 @@
         "model": "projects.Pipeline",
         "fields": {
             "project": "541e7ada-987d-4826-a183-358e55d836fa",
-            "title": "Make Markdown",
-            "description": "Extracts focus Content from an HTML and Makes Markdown",
+            "title": "Extract HTML Content",
+            "description": "Extracts focus Content from an HTML",
             "processors": [
                 {
                     "id": "fetch_url"
@@ -87,9 +87,6 @@
                 },
                 {
                     "id": "html_to_text"
-                },
-                {
-                    "id": "markdown"
                 }
             ]
         }

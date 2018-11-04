@@ -13,25 +13,26 @@ def process_pipeline(
     data=None,
     error=None,
 ):
-
-    result = PipelineResult.objects.get(
+    pipeline_result = PipelineResult.objects.get(
         pk=result_id,
     )
 
     if not processors or \
             len(processors) == 0 \
             or error:
-        result.result = data
-        result.error = error
-        result.is_finished = True
-        result.save()
+        pipeline_result.result = data
+        pipeline_result.error = error
+        pipeline_result.is_finished = True
+        pipeline_result.save()
+
+        pipeline_result.delete_unused_files()
         return
 
     pipeline_processor = processors.pop(0)
     for REGISTERED_WORKER_CLASS in REGISTERED_WORKER_CLASSES:
         if pipeline_processor.get('id') == REGISTERED_WORKER_CLASS.id:
             worker_instance = REGISTERED_WORKER_CLASS(
-                pipeline_result=result,
+                pipeline_result=pipeline_result,
                 pipeline_processor=pipeline_processor
             )
 
