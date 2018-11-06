@@ -114,6 +114,13 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
     def random_uuid(self):
         return random_uuid4()
 
+    def random_url(self):
+        return "http://{}.{}/{}".format(
+            self.random_string(7),
+            self.random_string(3),
+            self.random_string(5)
+        )
+
     def put_create(self, data, user=None, action='create', viewset=None, _format='json'):
         if viewset is None:
             viewset = self.viewset

@@ -5,6 +5,7 @@ django-rest-framework==0.1.0
 Django==2.1.2
 djangorestframework-queryfields==1.0.0
 djangorestframework==3.8.2
+flock==0.1
 jsonschema==3.0.0.a2
 markdown2==2.3.6
 mock==2.0.0
@@ -13,4 +14,3 @@ python-resize-image==1.1.18
 readability-lxml==0.7
 requests==2.20.0
 textblob==0.15.1
-flock==0.1
