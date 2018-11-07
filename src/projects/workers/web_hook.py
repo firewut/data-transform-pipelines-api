@@ -36,8 +36,7 @@ class WebHook(Worker):
                     },
                     "payload_wrapper": {
                         "type": [
-                            "string",
-                            "null",
+                            "string", "null",
                         ],
                         "description": "If you need to move a payload into Root"
                     },
@@ -65,14 +64,12 @@ class WebHook(Worker):
                     },
                     "headers": {
                         "type": [
-                            "null",
-                            "object",
+                            "null", "object",
                         ]
                     },
                     "timeout": {
                         "type": [
-                            "object",
-                            "null",
+                            "object", "null",
                         ],
                         "properties": {
                             "read": {
@@ -90,6 +87,9 @@ class WebHook(Worker):
                                 "default": 5,
                             }
                         },
+                        "required": [
+                            "read", "connect"
+                        ],
                         "description": "timeout settings"
                     },
                     # "retry": {
@@ -105,8 +105,7 @@ class WebHook(Worker):
                     # }
                 },
                 "required": [
-                    "method",
-                    "url",
+                    "method", "url",
                 ]
             },
             "out": {
@@ -132,9 +131,11 @@ class WebHook(Worker):
             pass
 
         in_config = self.pipeline_processor.in_config
-        if 'payload_wrapper' in in_config:
+
+        payload_wrapper = in_config.get('payload_wrapper')
+        if payload_wrapper and isinstance(payload_wrapper, str):
             _data = {
-                in_config['payload_wrapper']: data
+                payload_wrapper: data
             }
 
         method = in_config.get('method', 'GET').upper()
@@ -146,13 +147,9 @@ class WebHook(Worker):
                 'X-Hook-ID': in_config.get['id']
             })
 
-        timeout = in_config.get(
-            'timeout',
-            {
-                'connect': 5,
-                'read': 5
-            }
-        )
+        timeout = in_config.get('timeout', {})
+        timeout_read = timeout.get('read', 5)
+        timeout_connect = timeout.get('connect', 5)
 
         request = requests.request(
             method,
@@ -160,8 +157,8 @@ class WebHook(Worker):
             data=_data,
             headers=headers,
             timeout=(
-                timeout['connect'],
-                timeout['read']
+                timeout_connect,
+                timeout_read,
             ),
         )
 
