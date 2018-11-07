@@ -10,6 +10,7 @@ from projects.workers.readability import *
 from projects.workers.resize import *
 from projects.workers.sentiment import *
 from projects.workers.watermark import *
+from projects.workers.web_hook import *
 
 REGISTERED_WORKER_CLASSES = (
     FetchURL,
@@ -24,6 +25,7 @@ REGISTERED_WORKER_CLASSES = (
     Resize,
     Sentiment,
     Watermark,
+    WebHook,
 )
 
 
