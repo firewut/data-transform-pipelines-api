@@ -5,7 +5,7 @@ import requests
 from projects.workers.base import Worker
 
 
-class WebHook(Worker):
+class Webhook(Worker):
     id = 'web_hook'
     name = 'web_hook'
     image = ''

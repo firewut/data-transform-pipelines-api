@@ -1,13 +1,13 @@
 import copy
 import mock
 
-from projects.workers.web_hook import WebHook
+from projects.workers.web_hook import Webhook
 from tests.base import BaseTestCase
 from tests.workers.base import WorkerBaseTestCase
 
 
-class WebHookTestCase(WorkerBaseTestCase):
-    worker_class = WebHook
+class WebhookTestCase(WorkerBaseTestCase):
+    worker_class = Webhook
 
     @BaseTestCase.cases(
         (
