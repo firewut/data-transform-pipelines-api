@@ -61,7 +61,7 @@ class PipelineResultFileSerializer(QueryFieldsMixin, serializers.ModelSerializer
 
 
 class PipelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    id = serializers.UUIDField()
+    id = serializers.UUIDField(required=False)
 
     class Meta:
         model = Pipeline

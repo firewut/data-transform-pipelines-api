@@ -77,6 +77,13 @@ class PipelineViewSet(viewsets.ModelViewSet):
 
         #   TODO: Think about replacing this    #
         instance.processors = pipeline_processors
+        if not instance.processors:
+            return Response(
+                {
+                    "error": "No processors passed"
+                },
+                status=422,
+            )
         #########################################
 
         pipeline_serializer = PipelineSerializer
