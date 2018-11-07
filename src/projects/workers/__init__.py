@@ -25,7 +25,7 @@ REGISTERED_WORKER_CLASSES = (
     Resize,
     Sentiment,
     Watermark,
-    WebHook,
+    Webhook,
 )
 
 
