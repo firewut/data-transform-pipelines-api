@@ -25,7 +25,8 @@ class Random(Worker):
                         "properties": {
                             "random_type": {
                                 "type": "string",
-                                "enum": ["boolean"]
+                                "enum": ["boolean"],
+                                "description": "Value Type",
                             },
                         },
                         "additionalProperties": False,
@@ -35,12 +36,14 @@ class Random(Worker):
                         "properties": {
                             "random_type": {
                                 "type": "string",
-                                "enum": ["string"]
+                                "enum": ["string"],
+                                "description": "Value Type",
                             },
                             "length": {
                                 "type": "integer",
                                 "minimum": 1,
-                                "maximum": 100
+                                "maximum": 100,
+                                "description": "Value Length",
                             }
                         },
                         "additionalProperties": False,
@@ -50,29 +53,45 @@ class Random(Worker):
                         "properties": {
                             "random_type": {
                                 "type": "string",
-                                "enum": ["number", "integer"]
+                                "enum": ["number", "integer"],
+                                "description": "Value Type",
                             },
                             "min": {
                                 "description": "valid for string, number, integer",
                                 "type": "integer",
-                                "minimum": 0
+                                "minimum": 0,
+                                "description": "Min",
                             },
                             "max": {
                                 "description": "valid for string, number, integer",
                                 "type": "integer",
                                 "minimum": 1,
-                                "maximum": 1000000
+                                "description": "Max",
                             }
                         },
                         "additionalProperties": False,
                         "required": ["random_type"]
                     },
-                ]
-            },
-            "in_config_example": {
-                "random_type": "number",
-                "min": 1,
-                "max": 10
+                ],
+                "properties": {
+                    "random_type": {
+                        "type": "string",
+                    },
+                    "min": {
+                        "description": "valid for string, number, integer",
+                        "type": "integer",
+                    },
+                    "max": {
+                        "description": "valid for string, number, integer",
+                        "type": "integer",
+                    },
+                    "length": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "description": "Value Length",
+                    }
+                },
             },
             "out": {
                 "description": "randomized result",

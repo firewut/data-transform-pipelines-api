@@ -27,15 +27,15 @@ class GoogleTranslate(Worker):
                 "properties": {
                     "from": {
                         "type": "string",
-                        "description": "Language translate from"
+                        "description": "From Language"
                     },
                     "to": {
                         "type": "string",
-                        "description": "Language translate to"
+                        "description": "To Language"
                     },
                     "api_key": {
                         "type": "string",
-                        "description": "Your developer API Key"
+                        "description": "Your Developer API Key"
                     }
                 }
             },

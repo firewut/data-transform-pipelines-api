@@ -21,7 +21,6 @@ class Resize(Worker):
                     "file",
                     "string"
                 ],
-                "title": "input data",
                 "description": "object to make a template from"
             },
             "in_config": {
@@ -29,20 +28,17 @@ class Resize(Worker):
                 "properties": {
                     "percentage": {
                         "type": "integer",
-                        "title": "size",
                         "description": "size in percents",
-                        "minimum": 0.01,
+                        "minimum": 0,
                         "maximum": 100
                     },
                     "size": {
                         "type": "array",
-                        "title": "size",
                         "description": "size in pixels",
                         "items": {
-                            "title": "pixels",
                             "type": "integer",
-                            "minimum": 1,
-                            "maximum": 10000
+                            "minimum": 0,
+                            "maximum": 4000
                         },
                         "minItems": 2,
                         "maxItems": 2
@@ -50,11 +46,11 @@ class Resize(Worker):
                 },
                 "oneOf": [
                     {
-                        "required": ["percentage"]
+                        "required": ["size"]
                     },
                     {
-                        "required": ["size"]
-                    }
+                        "required": ["percentage"]
+                    },
                 ]
             },
             "in_config_example": {
