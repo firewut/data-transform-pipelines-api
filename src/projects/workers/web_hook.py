@@ -73,15 +73,13 @@ class Webhook(Worker):
                         ],
                         "properties": {
                             "read": {
-                                "type": "number",
-                                "format": "integer",
+                                "type": "integer",
                                 "min": 1,
                                 "max": 60,
                                 "default": 5,
                             },
                             "connect": {
-                                "type": "number",
-                                "format": "integer",
+                                "type": "integer",
                                 "min": 1,
                                 "max": 60,
                                 "default": 5,

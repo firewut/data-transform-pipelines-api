@@ -40,6 +40,7 @@ def import_registered_workers(apps, schema_editor):
                 'image': registered_worker.image,
                 'description': registered_worker.description,
                 'schema': registered_worker.schema,
+                'ui_schema': registered_worker.ui_schema,
             })
         else:
             Processor.objects.create(**{
@@ -48,4 +49,5 @@ def import_registered_workers(apps, schema_editor):
                 'image': registered_worker.image,
                 'description': registered_worker.description,
                 'schema': registered_worker.schema,
+                'ui_schema': registered_worker.ui_schema,
             })

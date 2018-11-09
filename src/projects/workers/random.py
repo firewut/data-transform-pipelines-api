@@ -8,6 +8,11 @@ class Random(Worker):
     name = 'random'
     image = 'https://upload.wikimedia.org/wikipedia/commons/e/e1/Ideal_chain_random_walk.png'
     description = 'Make a random value'
+    ui_schema = {
+        "ui:order": [
+            "random_type", "*",
+        ],
+    }
     schema = {
         "type": "object",
         "required": [
@@ -20,12 +25,37 @@ class Random(Worker):
             },
             "in_config": {
                 "type": "object",
+                "properties": {
+                    "random_type": {
+                        "type": "string",
+                        "description": "Value Type",
+                        "oneOf": [
+                            {"title": "string", "enum": ["string"]},
+                            {"title": "boolean", "enum": ["boolean"]},
+                            {"title": "integer", "enum": ["integer"]},
+                            {"title": "number", "enum": ["number"]},
+                        ]
+                    },
+                    "length": {
+                        "type": "integer",
+                        "description": "for string"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "description": "for number, integer",
+                    },
+                    "max": {
+                        "type": "integer",
+                        "description": "for number, integer",
+                    }
+                },
                 "oneOf": [
                     {
                         "properties": {
                             "random_type": {
                                 "type": "string",
-                                "enum": ["boolean"]
+                                "title": "boolean",
+                                "enum": ["boolean"],
                             },
                         },
                         "additionalProperties": False,
@@ -35,12 +65,12 @@ class Random(Worker):
                         "properties": {
                             "random_type": {
                                 "type": "string",
-                                "enum": ["string"]
+                                "enum": ["string"],
                             },
                             "length": {
                                 "type": "integer",
                                 "minimum": 1,
-                                "maximum": 100
+                                "maximum": 100,
                             }
                         },
                         "additionalProperties": False,
@@ -50,29 +80,23 @@ class Random(Worker):
                         "properties": {
                             "random_type": {
                                 "type": "string",
-                                "enum": ["number", "integer"]
+                                "enum": ["number", "integer"],
                             },
                             "min": {
-                                "description": "valid for string, number, integer",
                                 "type": "integer",
-                                "minimum": 0
+                                "minimum": 0,
+                                "description": "Min",
                             },
                             "max": {
-                                "description": "valid for string, number, integer",
                                 "type": "integer",
                                 "minimum": 1,
-                                "maximum": 1000000
+                                "description": "Max",
                             }
                         },
                         "additionalProperties": False,
                         "required": ["random_type"]
                     },
-                ]
-            },
-            "in_config_example": {
-                "random_type": "number",
-                "min": 1,
-                "max": 10
+                ],
             },
             "out": {
                 "description": "randomized result",

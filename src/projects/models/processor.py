@@ -27,6 +27,7 @@ class Processor(models.Model):
     )
     description = models.TextField(blank=True, null=True)
     schema = JSONField()
+    ui_schema = JSONField(default=None, blank=True, null=True)
 
     objects = ProcessorManager()
 

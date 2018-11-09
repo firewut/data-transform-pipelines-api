@@ -21,7 +21,6 @@ class Watermark(Worker):
                     "file",
                     "string"
                 ],
-                "title": "input data",
                 "description": "object to make a template from"
             },
             "in_config": {

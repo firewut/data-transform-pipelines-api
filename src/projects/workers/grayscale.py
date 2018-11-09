@@ -23,7 +23,6 @@ class Grayscale(Worker):
                     "file",
                     "string"
                 ],
-                "title": "input data",
                 "description": "object to make a template from"
             },
             "out": {

@@ -10,7 +10,7 @@ class GetObjectProperty(Worker):
     schema = {
         "type": "object",
         "required": [
-                "in_config"
+            "in_config"
         ],
         "properties": {
             "in": {
@@ -30,11 +30,12 @@ class GetObjectProperty(Worker):
             "in_config": {
                 "type": "object",
                 "required": [
-                        "property"
+                    "property"
                 ],
                 "properties": {
                     "property": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Object Property Name"
                     }
                 }
             },

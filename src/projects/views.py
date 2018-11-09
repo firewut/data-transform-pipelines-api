@@ -131,7 +131,7 @@ class PipelineViewSet(viewsets.ModelViewSet):
         )
 
 
-class ProcessorsViewSet(viewsets.ModelViewSet):
+class ProcessorsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Processor.objects.all()
     serializer_class = ProcessorSerializer
     filter_fields = ('id', 'name', 'description')

@@ -14,6 +14,13 @@ from projects.serializers.pipeline import (
 
 
 class Worker(metaclass=abc.ABCMeta):
+    id = None
+    name = ""
+    description = ""
+    image = ""
+    schema = {}
+    ui_schema = None
+
     def __init__(self, *args, **kwargs):
         processor = Processor()
         processor.id = self.id
@@ -21,6 +28,7 @@ class Worker(metaclass=abc.ABCMeta):
         processor.image = self.image
         processor.description = self.description
         processor.schema = self.schema
+        processor.ui_schema = self.ui_schema
 
         self.processor = processor
         if 'pipeline_result' in kwargs:

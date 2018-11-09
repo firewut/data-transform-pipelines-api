@@ -80,6 +80,7 @@ class Migration(migrations.Migration):
                 ('image', models.TextField(blank=True, default=None, null=True)),
                 ('description', models.TextField(blank=True, null=True)),
                 ('schema', django.contrib.postgres.fields.jsonb.JSONField()),
+                ('ui_schema', django.contrib.postgres.fields.jsonb.JSONField(blank=True, default=None, null=True)),
             ],
         ),
         migrations.CreateModel(
