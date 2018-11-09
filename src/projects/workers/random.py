@@ -8,6 +8,11 @@ class Random(Worker):
     name = 'random'
     image = 'https://upload.wikimedia.org/wikipedia/commons/e/e1/Ideal_chain_random_walk.png'
     description = 'Make a random value'
+    ui_schema = {
+        "ui:order": [
+            "random_type", "*",
+        ],
+    }
     schema = {
         "type": "object",
         "required": [
@@ -20,13 +25,37 @@ class Random(Worker):
             },
             "in_config": {
                 "type": "object",
+                "properties": {
+                    "random_type": {
+                        "type": "string",
+                        "description": "Value Type",
+                        "oneOf": [
+                            {"title": "string", "enum": ["string"]},
+                            {"title": "boolean", "enum": ["boolean"]},
+                            {"title": "integer", "enum": ["integer"]},
+                            {"title": "number", "enum": ["number"]},
+                        ]
+                    },
+                    "length": {
+                        "type": "integer",
+                        "description": "for string"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "description": "for number, integer",
+                    },
+                    "max": {
+                        "type": "integer",
+                        "description": "for number, integer",
+                    }
+                },
                 "oneOf": [
                     {
                         "properties": {
                             "random_type": {
                                 "type": "string",
+                                "title": "boolean",
                                 "enum": ["boolean"],
-                                "description": "Value Type",
                             },
                         },
                         "additionalProperties": False,
@@ -37,13 +66,11 @@ class Random(Worker):
                             "random_type": {
                                 "type": "string",
                                 "enum": ["string"],
-                                "description": "Value Type",
                             },
                             "length": {
                                 "type": "integer",
                                 "minimum": 1,
                                 "maximum": 100,
-                                "description": "Value Length",
                             }
                         },
                         "additionalProperties": False,
@@ -54,16 +81,13 @@ class Random(Worker):
                             "random_type": {
                                 "type": "string",
                                 "enum": ["number", "integer"],
-                                "description": "Value Type",
                             },
                             "min": {
-                                "description": "valid for string, number, integer",
                                 "type": "integer",
                                 "minimum": 0,
                                 "description": "Min",
                             },
                             "max": {
-                                "description": "valid for string, number, integer",
                                 "type": "integer",
                                 "minimum": 1,
                                 "description": "Max",
@@ -73,25 +97,6 @@ class Random(Worker):
                         "required": ["random_type"]
                     },
                 ],
-                "properties": {
-                    "random_type": {
-                        "type": "string",
-                    },
-                    "min": {
-                        "description": "valid for string, number, integer",
-                        "type": "integer",
-                    },
-                    "max": {
-                        "description": "valid for string, number, integer",
-                        "type": "integer",
-                    },
-                    "length": {
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 100,
-                        "description": "Value Length",
-                    }
-                },
             },
             "out": {
                 "description": "randomized result",

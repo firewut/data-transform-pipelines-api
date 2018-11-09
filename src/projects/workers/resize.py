@@ -26,23 +26,22 @@ class Resize(Worker):
             "in_config": {
                 "type": "object",
                 "properties": {
+                    "size": {
+                        "type": "array",
+                        "description": "size in pixels",
+                        "orderable": False,
+                        "items": {
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
+                    },
                     "percentage": {
                         "type": "integer",
                         "description": "size in percents",
                         "minimum": 0,
-                        "maximum": 100
                     },
-                    "size": {
-                        "type": "array",
-                        "description": "size in pixels",
-                        "items": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 4000
-                        },
-                        "minItems": 2,
-                        "maxItems": 2
-                    }
                 },
                 "oneOf": [
                     {
@@ -54,7 +53,7 @@ class Resize(Worker):
                 ]
             },
             "in_config_example": {
-                "size": [100, 100]
+                "size": [500, 500]
             },
             "out": {
                 "type": "file",

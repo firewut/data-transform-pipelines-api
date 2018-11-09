@@ -2,6 +2,7 @@
     {
         "model": "projects.Pipeline",
         "fields": {
+            "id": "2e7f2e3b-a5c5-4c6c-b57c-9439318b72fd",
             "project": "2e7f2e3b-a5c5-4c6c-b57c-9439318b72fc",
             "title": "MD5 of Random",
             "description": "Generates a Random value and makes and MD5 of it",
@@ -22,6 +23,7 @@
     {
         "model": "projects.Pipeline",
         "fields": {
+            "id": "2e7f2e3b-a5c5-4c6c-b57c-9439318b72fb",
             "project": "2e7f2e3b-a5c5-4c6c-b57c-9439318b72fc",
             "title": "Can machine be Sentimental ?",
             "description": "Sentiment analysis from a Random String",
@@ -42,6 +44,7 @@
     {
         "model": "projects.Pipeline",
         "fields": {
+            "id": "541e7ada-987d-4826-a183-358e55d835fa",
             "project": "541e7ada-987d-4826-a183-358e55d836fa",
             "title": "WIP: Translate an HTML Page",
             "description": "Extracts focus Content from an HTML and translates it to Specified Language",
@@ -69,6 +72,7 @@
     {
         "model": "projects.Pipeline",
         "fields": {
+            "id": "541e7ada-987d-4826-a183-358e54d836fa",
             "project": "541e7ada-987d-4826-a183-358e55d836fa",
             "title": "Extract HTML Content",
             "description": "Extracts focus Content from an HTML",
@@ -94,6 +98,7 @@
     {
         "model": "projects.Pipeline",
         "fields": {
+            "id": "f043fc5c-7e89-4028-b530-2dc2a8ef4ec0",
             "project": "f043fc5c-7e89-4028-b530-2dc6a8ef4ec0",
             "title": "Resize an Image",
             "description": "Resize ANY Image",
@@ -113,6 +118,7 @@
     {
         "model": "projects.Pipeline",
         "fields": {
+            "id": "f043fc5c-7e89-4028-b530-1dc6a8ef4ec0",
             "project": "f043fc5c-7e89-4028-b530-2dc6a8ef4ec0",
             "title": "Resize and Watermark Image",
             "description": "Resize ANY Image",
@@ -139,6 +145,7 @@
     {
         "model": "projects.Pipeline",
         "fields": {
+            "id": "f043fc5c-7e89-3028-b530-2dc6a8ef4ec0",
             "project": "f043fc5c-7e89-4028-b530-2dc6a8ef4ec0",
             "title": "Filters for Image",
             "description": "Resize and apply A Few Filters",
