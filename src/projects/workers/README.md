@@ -1,5 +1,7 @@
 # Worker Development Guide
 
+It you are not familiar to JSON Schema yet - please [check it's guide](https://json-schema.org/understanding-json-schema/)
+
 This guide may help to create your own **Processor**. 
 
 Let's start with basics.
@@ -72,3 +74,99 @@ This is how it works:
   * Task Consumer fetches a task **without worker which should receive it** - this is a **Result** of a Pipe
 
 That's all :)
+
+
+# Worker Development Steps
+
+We'll create new **Worker** named `fetch_url`
+
+## New File
+
+Create new file under `src/projects/workers` with name `fetch_url` and content
+
+```python
+import requests
+
+from projects.workers.base import Worker
+
+
+class FetchURL(Worker):
+    id = 'fetch_url'
+    name = 'fetch_url'
+    image = ''
+    description = ''
+    schema = {
+        "type": "object",
+        "properties": {
+            "in": {
+                "type": "string",
+                "format": "url",
+                "description": "URL to fetch content from. GET Method used"
+            },
+            "out": {
+                "type": [
+                    "string", "null"
+                ],
+                "description": "URL Content"
+            }
+        }
+    }
+
+    def process(self, data):
+        response = requests.get(data)
+        response.raise_for_status()
+
+        return response.text
+
+```
+
+Import it to `src/projects/workers/__init__.py`:
+
+```python
+...
+from projects.workers.fetch_url import *
+...
+
+REGISTERED_WORKER_CLASSES = (
+    ...
+    FetchURL
+    ...
+)
+```
+
+## Schema
+
+Every Worker should know what's input and output data is. It's controlled by `schema` property of a worker.
+
+```json
+{
+    "type": "object",
+    "properties": {
+        "in": {
+            "type": "string",
+            "format": "url",
+            "description": "URL to fetch content from. GET Method used"
+        },
+        "out": {
+            "type": [
+                "string", "null"
+            ],
+            "description": "URL Content"
+        }
+    }
+}
+```
+
+### Migration
+
+Now you need to migrate database
+
+```bash
+./manage.py migrate
+```
+
+### Checking 
+
+Your worker should appear under `/api/v1/free/processors/` Location of an API
+
+**Restart your Celery Queue** and Your Worker is Ready.
