@@ -4,15 +4,22 @@
 
 # About
 
-Data Transformation Pipelines API.
+Data Transformation API.
+
+Basic Pipeline of Transformation may look like:
+
+  * Receive an Image
+    * Resize Image to 500x500
+    * Add Watermark to Image using URL or Base64 Image as a **watermark**
+    * Grayscale Image
+    * Notify any HTTP Service about result completion
+
+## API Documentation
+
+API Documentation available after a startup under [http://127.0.0.1:8000/api/v1/free/docs/](http://127.0.0.1:8000/api/v1/free/docs/)
 
 
-# Documentation
-
-Documentation available after a startup under [http://127.0.0.1:8000/api/v1/free/docs/](http://127.0.0.1:8000/api/v1/free/docs/)
-
-
-# Startup
+## Execution
 
 ```bash
 pip install -r requirements.txt

@@ -18,7 +18,7 @@ class ProcessorManager(models.Manager):
 
 
 class Processor(models.Model):
-    id = models.CharField(max_length=666, primary_key=True, editable=False)
+    id = models.SlugField(max_length=666, primary_key=True, editable=False)
     name = models.CharField(max_length=666, null=False, blank=False)
     image = models.TextField(
         null=True,
