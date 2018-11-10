@@ -27,6 +27,7 @@ pip install -r requirements.txt
 mkdir ./media
 cd src 
 ./manage.py migrate
+./manage.py sync_processors
 ./manage.py runserver 8000
 ```
 

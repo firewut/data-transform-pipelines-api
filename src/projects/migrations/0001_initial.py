@@ -109,8 +109,4 @@ class Migration(migrations.Migration):
             load_processors_fixture,
             lambda apps, schema_editor: None
         ),
-        migrations.RunPython(
-            workers.import_registered_workers,
-            lambda apps, schema_editor: None
-        )
     ]

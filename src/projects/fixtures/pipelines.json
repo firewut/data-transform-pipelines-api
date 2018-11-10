@@ -32,7 +32,7 @@
                     "id": "random",
                     "in_config": {
                         "random_type": "string",
-                        "length": 2000
+                        "length": 50
                     }
                 },
                 {
@@ -104,7 +104,7 @@
             "description": "Resize ANY Image",
             "processors": [
                 {
-                    "id": "resize",
+                    "id": "resize_image",
                     "in_config": {
                         "size": [
                             200,
@@ -124,7 +124,7 @@
             "description": "Resize ANY Image",
             "processors": [
                 {
-                    "id": "resize",
+                    "id": "resize_image",
                     "in_config": {
                         "size": [
                             200,
@@ -133,7 +133,7 @@
                     }
                 },
                 {
-                    "id": "watermark",
+                    "id": "watermark_image",
                     "in_config": {
                         "watermark_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ambox_important.svg/60px-Ambox_important.svg.png",
                         "gravity": "SouthEast"
@@ -151,7 +151,7 @@
             "description": "Resize and apply A Few Filters",
             "processors": [
                 {
-                    "id": "resize",
+                    "id": "resize_image",
                     "in_config": {
                         "size": [
                             200,
@@ -160,14 +160,14 @@
                     }
                 },
                 {
-                    "id": "watermark",
+                    "id": "watermark_image",
                     "in_config": {
                         "watermark_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ambox_important.svg/60px-Ambox_important.svg.png",
                         "gravity": "SouthEast"
                     }
                 },
                 {
-                    "id": "grayscale"
+                    "id": "grayscale_image"
                 }
             ]
         }

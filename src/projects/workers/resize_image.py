@@ -5,9 +5,9 @@ from projects.workers.base import Worker
 from projects.workers.exceptions import WorkerNoInputException
 
 
-class Resize(Worker):
-    id = 'resize'
-    name = 'resize'
+class ResizeImage(Worker):
+    id = 'resize_image'
+    name = 'resize_image'
     image = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Resize_small_font_awesome.svg/512px-Resize_small_font_awesome.svg.png'
     description = 'Resize an image'
     schema = {

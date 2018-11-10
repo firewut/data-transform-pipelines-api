@@ -157,12 +157,12 @@ Every Worker should know what's input and output data is. It's controlled by `sc
 }
 ```
 
-### Migration
+### Synchronization
 
-Now you need to migrate database
+Now you need to Synchronize Processors
 
 ```bash
-./manage.py migrate
+./manage.py sync_processors
 ```
 
 ### Checking 
