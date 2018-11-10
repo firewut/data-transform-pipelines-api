@@ -6,13 +6,13 @@ from django.conf import settings
 import rest_framework
 
 from projects.models.pipeline import *
-from projects.workers.watermark import Watermark
+from projects.workers.watermark_image import WatermarkImage
 from tests.base import BaseTestCase
 from tests.workers.base import WorkerBaseTestCase
 
 
-class WatermarkTestCase(WorkerBaseTestCase):
-    worker_class = Watermark
+class WatermarkImageTestCase(WorkerBaseTestCase):
+    worker_class = WatermarkImage
 
     data_location = os.path.join(
         os.path.dirname(__file__),
@@ -46,7 +46,7 @@ class WatermarkTestCase(WorkerBaseTestCase):
     ).decode()
 
     @BaseTestCase.cases(
-        # Image File / Watermark Base64
+        # Image File / WatermarkImage Base64
         (
             'file_image_with_base64_watermark_northwest',
             {
@@ -129,7 +129,7 @@ class WatermarkTestCase(WorkerBaseTestCase):
             'watermarked_southeast.png',
         ),
 
-        # Image Base64 / Watermark Base64
+        # Image Base64 / WatermarkImage Base64
         (
             'base64_image_with_base64_watermark_northwest',
             {
@@ -212,7 +212,7 @@ class WatermarkTestCase(WorkerBaseTestCase):
             'watermarked_southeast.png',
         ),
 
-        # Image File / Watermark File
+        # Image File / WatermarkImage File
         (
             'file_image_with_file_watermark_northwest',
             {
@@ -295,7 +295,7 @@ class WatermarkTestCase(WorkerBaseTestCase):
             'watermarked_southeast.png',
         ),
 
-        # Image Base64 / Watermark File
+        # Image Base64 / WatermarkImage File
         (
             'base64_image_with_file_watermark_northwest',
             {
@@ -382,7 +382,7 @@ class WatermarkTestCase(WorkerBaseTestCase):
         result = self.worker_class(
             pipeline_result=self.pipeline_result,
             pipeline_processor={
-                'id': 'watermark',
+                'id': 'watermark_image',
                 'in_config': in_config
             }
         ).execute(

@@ -261,13 +261,13 @@ class PipelinesTestCase(PipelinesBaseTestCase):
             "project": self.project_id,
             "processors": [
                 {
-                    "id": "resize",
+                    "id": "resize_image",
                     "in_config": {
                         "size": [100, 100]
                     }
                 },
                 {
-                    "id": "grayscale"
+                    "id": "grayscale_image"
                 }
             ]
         }
@@ -434,7 +434,7 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
             "project": self.project_id,
             "processors": [
                 {
-                    "id": "resize",
+                    "id": "resize_image",
                     "in_config": {
                         "size": [
                             200,
@@ -443,7 +443,7 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
                     },
                 },
                 {
-                    "id": "watermark",
+                    "id": "watermark_image",
                     "in_config": {
                         "gravity": "SouthEast",
                         "watermark_image": "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/google/146/thinking-face_1f914.png"
@@ -547,7 +547,7 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
             "project": self.project_id,
             "processors": [
                 {
-                    "id": "resize",
+                    "id": "resize_image",
                     "in_config": {
                         "size": [
                             200,
@@ -579,7 +579,7 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
                 ),
                 'processors': json.dumps([
                     {
-                        "id": "resize",
+                        "id": "resize_image",
                         "in_config": {
                             "size": [
                                 200,
@@ -588,7 +588,7 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
                         },
                     },
                     {
-                        "id": "watermark",
+                        "id": "watermark_image",
                         "in_config": {
                             "gravity": "SouthEast",
                             "watermark_image": "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/google/146/thinking-face_1f914.png"

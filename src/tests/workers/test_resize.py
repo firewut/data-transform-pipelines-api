@@ -7,13 +7,13 @@ import rest_framework
 
 
 from projects.models.pipeline import *
-from projects.workers.resize import Resize
+from projects.workers.resize_image import ResizeImage
 from tests.base import BaseTestCase
 from tests.workers.base import WorkerBaseTestCase
 
 
-class ResizeTestCase(WorkerBaseTestCase):
-    worker_class = Resize
+class ResizeImageTestCase(WorkerBaseTestCase):
+    worker_class = ResizeImage
 
     image_as_file = open(
         os.path.join(
@@ -70,7 +70,7 @@ class ResizeTestCase(WorkerBaseTestCase):
         result = self.worker_class(
             pipeline_result=self.pipeline_result,
             pipeline_processor={
-                'id': 'resize',
+                'id': 'resize_image',
                 'in_config': in_config
             }
         ).execute(

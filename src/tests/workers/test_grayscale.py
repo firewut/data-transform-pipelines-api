@@ -6,13 +6,13 @@ from django.conf import settings
 import rest_framework
 
 from projects.models.pipeline import *
-from projects.workers.grayscale import Grayscale
+from projects.workers.grayscale_image import GrayscaleImage
 from tests.base import BaseTestCase
 from tests.workers.base import WorkerBaseTestCase
 
 
-class GrayscaleTestCase(WorkerBaseTestCase):
-    worker_class = Grayscale
+class GrayscaleImageTestCase(WorkerBaseTestCase):
+    worker_class = GrayscaleImage
 
     image_as_file = open(
         os.path.join(
