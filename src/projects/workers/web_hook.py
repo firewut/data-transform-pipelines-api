@@ -17,6 +17,7 @@ class Webhook(Worker):
                 "type": [
                     "array",
                     "boolean",
+                    "file",
                     "integer",
                     "null",
                     "number",
@@ -112,6 +113,7 @@ class Webhook(Worker):
                 "type": [
                     "array",
                     "boolean",
+                    "file",
                     "integer",
                     "null",
                     "number",

@@ -68,6 +68,9 @@ class Processor(models.Model):
     def input_is_file(self):
         return 'file' in self._get_in_type()
 
+    def input_is_file_only(self):
+        return ['file', ] == self._get_in_type()
+
     def can_send_result(self, processor):
         out_type = self._get_out_type()
         in_type = processor._get_in_type()

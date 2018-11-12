@@ -3,6 +3,7 @@ import json
 import os
 
 from django.conf import settings
+import mock
 
 from projects.views import *
 from tests.base import BaseTestCase
@@ -617,3 +618,60 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
             ),
             response_json
         )
+
+    @mock.patch('requests.request')
+    def test_pipeline_web_hook_json(self, mocked_request):
+        response = ""
+        mocked_request.return_value = self._fake_http_response(
+            status=200,
+            json_data=response,
+        )
+
+        method = 'PUT'
+        url = 'http://127.0.0.1'
+        _data = {
+            'save_me': '123'
+        }
+
+        response, response_json = self.put_update(
+            self.pipeline_id,
+            {
+                "data": _data,
+                "processors": [
+                    {
+                        "id": "get_object_property",
+                        "in_config": {
+                            "property": "save_me",
+                        }
+                    },
+                    {
+                        "id": "web_hook",
+                        "in_config": {
+                            "method": method,
+                            "url": url,
+                        }
+                    }
+                ]
+            },
+            action='process',
+            viewset=PipelineViewSet
+        )
+        self.assertEqual(response.status_code, 202, response_json)
+        self.assertEqual(response_json['pipeline'], self.pipeline_id)
+
+        mocked_request.assert_called()
+        mocked_request.assert_called_with(
+            method,
+            url,
+            data='123',
+            headers={},
+            timeout=(5, 5),
+        )
+
+        response, response_json = self.get_item(
+            pk=response_json.get('id')
+        )
+        self.assertEqual(response.status_code, 200, response_json)
+        self.assertIsNone(response_json['error'])
+        self.assertTrue(response_json['is_finished'], response_json)
+        self.assertEqual(response_json['result'], '123')

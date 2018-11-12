@@ -83,7 +83,8 @@ class Worker(metaclass=abc.ABCMeta):
 
         if self.processor.input_is_file():
             converted_data = self.pipeline_result.open_file(
-                data
+                data,
+                self.processor.input_is_file_only()
             )
 
         return converted_data

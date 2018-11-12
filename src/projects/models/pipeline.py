@@ -158,7 +158,7 @@ class PipelineResult(models.Model):
 
         super().delete()
 
-    def open_file(self, data):
+    def open_file(self, data, raise_exception=False):
         input_file = None
 
         if isinstance(
@@ -174,21 +174,31 @@ class PipelineResult(models.Model):
             url_validator = URLValidator()
             # It may be a valid URL or base64 encoded string
             try:
-                url_validator(data)
-                response = requests.get(data)
-                response.raise_for_status()
-                input_file = io.BytesIO(response.content)
-            # except HTTPError:
-            except ValidationError:
-                input_file = io.BytesIO(
-                    base64.b64decode(data)
-                )
+                try:
+                    url_validator(data)
+                    response = requests.get(data)
+                    response.raise_for_status()
+                    input_file = io.BytesIO(response.content)
+                except ValidationError:
+                    input_file = io.BytesIO(
+                        base64.b64decode(data)
+                    )
+            except Exception as e:
+                if raise_exception:
+                    raise e
+                input_file = data
+
         elif isinstance(data, dict):
             if 'id' in data:
-                _file = PipelineResultFile.objects.get(
-                    pk=data['id']
-                )
-                input_file = _file.open()
+                try:
+                    _file = PipelineResultFile.objects.get(
+                        pk=data['id']
+                    )
+                    input_file = _file.open()
+                except Exception as e:
+                    if raise_exception:
+                        raise e
+                    input_file = data
 
         return input_file
 

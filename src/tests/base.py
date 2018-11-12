@@ -3,6 +3,7 @@ import importlib
 import random
 
 from django.conf import settings
+from django.core.management import call_command
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory
 import celery
@@ -78,6 +79,9 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
 
     def setUp(self):
         super().setUp()
+
+        # Sync processors
+        call_command('sync_processors')
 
         def send_task_apply(*args, **kwargs):
             task_name = args[0].split('.')[-1]
