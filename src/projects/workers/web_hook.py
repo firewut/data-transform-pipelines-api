@@ -30,13 +30,15 @@ class Webhook(Worker):
                 "properties": {
                     "id": {
                         "type": [
-                            "null", "string"
+                            "null",
+                            "string"
                         ],
                         "description": "ID of a Hook. Included to X-Hook-ID header of a Request"
                     },
                     "payload_wrapper": {
                         "type": [
-                            "string", "null",
+                            "null",
+                            "string",
                         ],
                         "description": "If you need to move a payload into Root"
                     },
@@ -54,22 +56,21 @@ class Webhook(Worker):
                             "PATCH",
                             "POST",
                             "PUT",
-                            "get",
-                            "head",
-                            "options",
-                            "patch",
-                            "post",
-                            "put",
                         ]
                     },
                     "headers": {
                         "type": [
-                            "null", "object",
-                        ]
+                            "null",
+                            "object",
+                        ],
+                        "properties": {
+                        },
+                        "additionalProperties": True
                     },
                     "timeout": {
                         "type": [
-                            "object", "null",
+                            "null",
+                            "object",
                         ],
                         "properties": {
                             "read": {
@@ -83,8 +84,9 @@ class Webhook(Worker):
                                 "min": 1,
                                 "max": 60,
                                 "default": 5,
-                            }
+                            },
                         },
+                        "additionalProperties": False,
                         "required": [
                             "read", "connect"
                         ],

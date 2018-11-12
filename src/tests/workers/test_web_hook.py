@@ -202,7 +202,7 @@ class WebhookTestCase(WorkerBaseTestCase):
         )
 
         url = self.random_url()
-        method = 'POST'
+        method = 'GET'
 
         data = self.random_string(30)
         result = self.worker_class(
