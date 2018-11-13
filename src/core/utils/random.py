@@ -22,7 +22,9 @@ def random_float(_min: int, _max: int):
 def random_string(N: int = 10):
     return ''.join(
         random.SystemRandom().choice(
-            string.ascii_uppercase
+            string.ascii_uppercase +
+            string.ascii_lowercase +
+            string.digits
         ) for _ in range(N)
     )
 
