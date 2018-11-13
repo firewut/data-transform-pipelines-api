@@ -21,6 +21,7 @@ from requests.exceptions import HTTPError
 import celery
 import requests
 
+from core.json_schema.file import check_is_internal_file
 from core.models import WithDate
 from core.utils import random_uuid4
 from projects.models.project import Project
@@ -38,12 +39,21 @@ class Pipeline(WithDate, models.Model):
     def __str__(self):
         return str(self.id)
 
+    def check_is_internal_file(self, data):
+        if not check_is_internal_file(data):
+            _, is_opened = PipelineResult.open_file(data)
+            if is_opened:
+                return True
+        else:
+            return True
+        return False
+
     def create_result(self, data):
         result_object = PipelineResult.objects.create(
             pipeline=self
         )
 
-        if self.input_is_file():
+        if self.accepts_file() and self.check_is_internal_file(data):
             input_file = result_object.save_file(data)
             data = {
                 'id': input_file.pk,
@@ -83,7 +93,7 @@ class Pipeline(WithDate, models.Model):
 
         return
 
-    def input_is_file(self):
+    def accepts_file(self):
         """
             Helper for first processor input data type
         """
@@ -158,18 +168,14 @@ class PipelineResult(models.Model):
 
         super().delete()
 
-    def open_file(self, data, raise_exception=False):
+    @classmethod
+    def open_file(cls, data, raise_exception=False):
         input_file = None
+        is_opened = False
 
-        if isinstance(
-            data,
-            (
-                io.BytesIO,
-                io.BufferedReader,
-                InMemoryUploadedFile,
-            )
-        ):
+        if check_is_internal_file(data):
             input_file = data
+            is_opened = True
         elif isinstance(data, str):
             url_validator = URLValidator()
             # It may be a valid URL or base64 encoded string
@@ -179,10 +185,12 @@ class PipelineResult(models.Model):
                     response = requests.get(data)
                     response.raise_for_status()
                     input_file = io.BytesIO(response.content)
+                    is_opened = True
                 except ValidationError:
                     input_file = io.BytesIO(
                         base64.b64decode(data)
                     )
+                    is_opened = True
             except Exception as e:
                 if raise_exception:
                     raise e
@@ -195,21 +203,19 @@ class PipelineResult(models.Model):
                         pk=data['id']
                     )
                     input_file = _file.open()
+                    is_opened = True
                 except Exception as e:
                     if raise_exception:
                         raise e
                     input_file = data
 
-        return input_file
+        return input_file, is_opened
 
     def save_file(self, data):
         input_file = PipelineResultFile()
         input_file.prepare()
 
-        if isinstance(data, (
-            io.BufferedReader,
-            InMemoryUploadedFile,
-        )):
+        if self.pipeline.check_is_internal_file(data):
             default_storage.save(
                 input_file.path,
                 ContentFile(data.read())

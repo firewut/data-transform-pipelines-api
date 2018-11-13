@@ -61,7 +61,6 @@ class PipelineViewSet(viewsets.ModelViewSet):
             If `multipart/form-data` - the field should be named `file`
         """
         instance = self.get_object()
-
         pipeline_processors = instance.processors
 
         if isinstance(request.data, type({})):

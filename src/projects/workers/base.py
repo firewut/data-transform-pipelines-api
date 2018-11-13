@@ -20,6 +20,10 @@ class Worker(metaclass=abc.ABCMeta):
     image = ""
     schema = {}
     ui_schema = None
+    input_is_file = False
+
+    # helpers
+    raw_input_data = None
 
     def __init__(self, *args, **kwargs):
         processor = Processor()
@@ -50,9 +54,10 @@ class Worker(metaclass=abc.ABCMeta):
         return self.processor.check_input_data(data)
 
     def open_file(self, value):
-        return self.pipeline_result.open_file(
+        _file, _ = self.pipeline_result.open_file(
             value
         )
+        return _file
 
     def request_file(self):
         _file = PipelineResultFile()
@@ -61,13 +66,18 @@ class Worker(metaclass=abc.ABCMeta):
         return _file
 
     def prepare_output_data(self, data):
-        if self.processor.output_is_file() and isinstance(data, PipelineResultFile):
-            _file = copy.deepcopy(data)
-            _file.post_process(self.pipeline_result)
-            serializer = PipelineResultFileSerializer(
-                instance=_file
-            )
-            data = serializer.data
+        if self.processor.output_is_file():
+            if isinstance(data, PipelineResultFile):
+                _file = copy.deepcopy(data)
+                _file.post_process(self.pipeline_result)
+                serializer = PipelineResultFileSerializer(
+                    instance=_file
+                )
+                data = serializer.data
+            else:
+                if isinstance(data, io.BufferedReader):
+                    # Reuse previous step file
+                    data = self.raw_input_data
 
         return data
 
@@ -77,15 +87,18 @@ class Worker(metaclass=abc.ABCMeta):
                 Input Data into a `file descriptor` object
         """
         try:
+            self.raw_input_data = copy.deepcopy(data)
             converted_data = copy.deepcopy(data)
         except TypeError:
+            self.raw_input_data = data
             converted_data = data
 
-        if self.processor.input_is_file():
-            converted_data = self.pipeline_result.open_file(
+        if self.processor.input_is_file() and self.pipeline.check_is_internal_file(data):
+            converted_data, is_opened = self.pipeline_result.open_file(
                 data,
                 self.processor.input_is_file_only()
             )
+            self.input_is_file = is_opened
 
         return converted_data
 

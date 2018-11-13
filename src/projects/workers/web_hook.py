@@ -29,7 +29,7 @@ class Webhook(Worker):
             "in_config": {
                 "type": "object",
                 "properties": {
-                    "id": {
+                    "x-hook-id": {
                         "type": [
                             "null",
                             "string"
@@ -41,7 +41,7 @@ class Webhook(Worker):
                             "null",
                             "string",
                         ],
-                        "description": "If you need to move a payload into Root"
+                        "description": "If you need to move a payload into Root. Does not Work with `file`"
                     },
                     "url": {
                         "type": "string",
@@ -126,27 +126,36 @@ class Webhook(Worker):
     }
 
     def process(self, data):
-        _data = data
+        _files = None
         try:
             _data = copy.deepcopy(data)
         except Exception as e:
-            pass
+            _data = data
 
         in_config = self.pipeline_processor.in_config
-
-        payload_wrapper = in_config.get('payload_wrapper')
-        if payload_wrapper and isinstance(payload_wrapper, str):
-            _data = {
-                payload_wrapper: data
-            }
 
         method = in_config.get('method', 'GET').upper()
         url = in_config.get('url')
         headers = in_config.get('headers', {})
 
-        if 'id' in in_config:
+        if self.input_is_file:
+            _files = {
+                'file': _data
+            }
+            _data = None
             headers.update({
-                'X-Hook-ID': in_config.get['id']
+                'Content-type': 'multipart/form-data'
+            })
+        else:
+            payload_wrapper = in_config.get('payload_wrapper')
+            if payload_wrapper and isinstance(payload_wrapper, str):
+                _data = {
+                    payload_wrapper: data
+                }
+
+        if 'x-hook-id' in in_config:
+            headers.update({
+                'X-Hook-ID': in_config.get['x-hook-id']
             })
 
         timeout = in_config.get('timeout', {})
@@ -157,6 +166,7 @@ class Webhook(Worker):
             method,
             url,
             data=_data,
+            files=_files,
             headers=headers,
             timeout=(
                 timeout_connect,

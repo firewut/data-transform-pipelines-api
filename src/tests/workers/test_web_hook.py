@@ -139,6 +139,7 @@ class WebhookTestCase(WorkerBaseTestCase):
         timeout,
         mocked_request
     ):
+        files = None
         response = ""
         mocked_request.return_value = self._fake_http_response(
             status=200,
@@ -146,8 +147,8 @@ class WebhookTestCase(WorkerBaseTestCase):
         )
 
         url = self.random_url()
-
         data = self.random_string(30)
+
         result = self.worker_class(
             pipeline_result=self.pipeline_result,
             pipeline_processor={
@@ -181,6 +182,7 @@ class WebhookTestCase(WorkerBaseTestCase):
             method,
             url,
             data=data,
+            files=files,
             headers=headers,
             timeout=_timeout,
         )
@@ -222,6 +224,7 @@ class WebhookTestCase(WorkerBaseTestCase):
         self.assertEqual(result, data)
 
         _data = copy.deepcopy(data)
+        _files = None
         if payload_wrapper:
             _data = {
                 payload_wrapper: _data
@@ -232,6 +235,7 @@ class WebhookTestCase(WorkerBaseTestCase):
             method,
             url,
             data=_data,
+            files=_files,
             headers={},
             timeout=(5, 5),
         )

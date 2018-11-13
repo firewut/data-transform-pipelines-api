@@ -16,12 +16,28 @@ FILE_TYPE_SCHEMA = {
 }
 
 
+def check_is_internal_file(data):
+    """
+        Use this only if you know why. 
+        Check Pipeline method with same name
+    """
+    return isinstance(
+        data,
+        (
+            io.BytesIO,
+            io.BufferedReader,
+            InMemoryUploadedFile,
+        )
+    )
+
+
 def file_checker(checker, instance):
     if not isinstance(
         instance, (
             # Base64
             str,
             # internally provided
+            io.BytesIO,
             io.BufferedReader,
             # file upload
             InMemoryUploadedFile,

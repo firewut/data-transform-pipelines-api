@@ -1,11 +1,14 @@
 import copy
+import io
 import json
 import os
 
+from django.db.transaction import TransactionManagementError
 from django.conf import settings
 import mock
 
 from projects.views import *
+from projects.models import *
 from tests.base import BaseTestCase
 
 
@@ -19,6 +22,25 @@ class PipelinesBaseTestCase(BaseTestCase):
         })
         self.assertEqual(project_response.status_code, 201)
         self.project_id = response_json['id']
+
+        self.project = Project.objects.get(pk=self.project_id)
+
+    def tearDown(self):
+        try:
+            self.project.delete()
+            self.assertIsNone(self.project.pk)
+
+            if hasattr(self, 'pipeline'):
+                self.pipeline.delete()
+                self.assertIsNone(self.pipeline.pk)
+
+                if hasattr(self, 'pipeline_result'):
+                    self.pipeline_result.delete()
+                    self.assertIsNone(self.pipeline_result.pk)
+        except TransactionManagementError as e:
+            pass
+
+        super().tearDown()
 
 
 class PipelinesTestCase(PipelinesBaseTestCase):
@@ -282,7 +304,7 @@ class PipelinesTestCase(PipelinesBaseTestCase):
                 'data',
                 'image.png'
             ),
-            'rb'
+            "rb"
         )
 
         response, response_json = self.put_update(
@@ -470,7 +492,7 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
                         "data",
                         "image.png"
                     ),
-                    'rb'
+                    "rb"
                 )
             },
             action='process',
@@ -576,7 +598,7 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
                         "data",
                         "image.png"
                     ),
-                    'rb'
+                    "rb"
                 ),
                 'processors': json.dumps([
                     {
@@ -664,6 +686,7 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
             method,
             url,
             data='123',
+            files=None,
             headers={},
             timeout=(5, 5),
         )
@@ -675,3 +698,193 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
         self.assertIsNone(response_json['error'])
         self.assertTrue(response_json['is_finished'], response_json)
         self.assertEqual(response_json['result'], '123')
+
+    @mock.patch('requests.request')
+    def test_pipeline_web_hook_multipart(self, mocked_request):
+        response = ""
+        mocked_request.return_value = self._fake_http_response(
+            status=200,
+            json_data=response,
+        )
+
+        method = 'PUT'
+        url = 'http://127.0.0.1'
+
+        response, response_json = self.put_update(
+            self.pipeline_id,
+            {
+                "file": open(
+                    os.path.join(
+                        os.path.dirname(__file__),
+                        "../",
+                        "data",
+                        "image.png"
+                    ),
+                    "rb"
+                ),
+                "processors": json.dumps([
+                    {
+                        "id": "resize_image",
+                        "in_config": {
+                            "percentage": 15
+                        }
+                    },
+                    {
+                        "id": "web_hook",
+                        "in_config": {
+                            "method": method,
+                            "url": url,
+                        }
+                    }
+                ])
+            },
+            action='process',
+            viewset=PipelineViewSet,
+            _format='multipart',
+        )
+        self.assertEqual(response.status_code, 202, response_json)
+        self.assertEqual(response_json['pipeline'], self.pipeline_id)
+
+        response, response_json = self.get_item(
+            pk=response_json.get('id')
+        )
+        self.assertEqual(response.status_code, 200, response_json)
+        self.assertIsNone(response_json['error'])
+        self.assertTrue(response_json['is_finished'], response_json)
+
+        mocked_request.assert_called_once()
+        call_args = mocked_request.call_args
+        self.assertEqual(
+            call_args[0], (method, url)
+        )
+
+        payload = call_args[1]
+        self.assertIsNone(payload['data'])
+        self.assertIn('files', payload)
+        self.assertEqual(
+            payload['headers'], {'Content-type': 'multipart/form-data'}
+        )
+        self.assertEqual(payload['timeout'], (5, 5))
+        self.assertIn(
+            response_json['result']['id'],
+            payload['files']['file'].name,
+        )
+
+    @mock.patch('requests.request')
+    def test_pipeline_web_hook_multipart_consumed_by_file_processor(self, mocked_request):
+        response = ""
+        mocked_request.return_value = self._fake_http_response(
+            status=200,
+            json_data=response,
+        )
+
+        method = 'PUT'
+        url = 'http://127.0.0.1'
+
+        response, response_json = self.put_update(
+            self.pipeline_id,
+            {
+                "file": open(
+                    os.path.join(
+                        os.path.dirname(__file__),
+                        "../",
+                        "data",
+                        "image.png"
+                    ),
+                    "rb"
+                ),
+                "processors": json.dumps([
+                    {
+                        "id": "resize_image",
+                        "in_config": {
+                            "percentage": 15
+                        }
+                    },
+                    {
+                        "id": "web_hook",
+                        "in_config": {
+                            "method": method,
+                            "url": url,
+                        }
+                    },
+                    {
+                        "id": "resize_image",
+                        "in_config": {
+                            "percentage": 15
+                        }
+                    },
+                ])
+            },
+            action='process',
+            viewset=PipelineViewSet,
+            _format='multipart',
+        )
+        self.assertEqual(response.status_code, 202, response_json)
+        self.assertEqual(response_json['pipeline'], self.pipeline_id)
+
+        response, response_json = self.get_item(
+            pk=response_json.get('id')
+        )
+        self.assertEqual(response.status_code, 200, response_json)
+        self.assertIsNone(response_json['error'])
+        self.assertTrue(response_json['is_finished'], response_json)
+
+        mocked_request.assert_called_once()
+
+        self.assertEqual(
+            response_json['result']['url'],
+            os.path.join(
+                settings.MEDIA_URL,
+                response_json['result']['id'],
+            ),
+            response_json
+        )
+
+    @mock.patch('requests.request')
+    def test_pipeline_web_hook_json_consumed_by_object_processor(self, mocked_request):
+        response = ""
+        mocked_request.return_value = self._fake_http_response(
+            status=200,
+            json_data=response,
+        )
+
+        method = 'PUT'
+        url = 'http://127.0.0.1'
+
+        response, response_json = self.put_update(
+            self.pipeline_id,
+            {
+                "data": {
+                    "save_me": 123
+                },
+                "processors": [
+                    {
+                        "id": "web_hook",
+                        "in_config": {
+                            "method": method,
+                            "url": url,
+                        }
+                    },
+                    {
+                        "id": "get_object_property",
+                        "in_config": {
+                            "property": "save_me",
+                        }
+                    },
+                ]
+            },
+            action='process',
+            viewset=PipelineViewSet,
+        )
+        self.assertEqual(response.status_code, 202, response_json)
+        self.assertEqual(response_json['pipeline'], self.pipeline_id)
+
+        mocked_request.assert_called_once()
+
+        response, response_json = self.get_item(
+            pk=response_json.get('id')
+        )
+        self.assertEqual(response.status_code, 200, response_json)
+        self.assertIsNone(response_json['error'])
+        self.assertTrue(response_json['is_finished'], response_json)
+        self.assertEqual(response_json['result'], 123, response_json)
