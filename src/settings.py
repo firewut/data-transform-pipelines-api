@@ -23,6 +23,7 @@ SECRET_KEY = ')$&j_jd!vnscd87t_%a9766399cfkf9x1@+dvz4g2=%1bf0q&k'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get('DEBUG', True))
+DEMO_MODE = bool(os.environ.get('DEMO_MODE', False))
 
 ALLOWED_HOSTS = ['*']
 
