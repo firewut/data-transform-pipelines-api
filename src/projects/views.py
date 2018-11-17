@@ -11,11 +11,12 @@ from rest_framework.reverse import reverse
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
+from core.views import BaseViewSet
 from projects.models import *
 from projects.serializers import *
 
 
-class ProjectsViewSet(viewsets.ModelViewSet):
+class ProjectsViewSet(BaseViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     filter_fields = ('id', 'title', 'description')
@@ -34,7 +35,7 @@ class PipelineResultViewSet(
     serializer_class = PipelineResultSerializer
 
 
-class PipelineViewSet(viewsets.ModelViewSet):
+class PipelineViewSet(BaseViewSet):
     queryset = Pipeline.objects.all()
     serializer_class = PipelineSerializer
     filter_fields = ('id', 'project', 'title', 'description')
