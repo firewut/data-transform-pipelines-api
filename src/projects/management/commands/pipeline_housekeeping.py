@@ -17,16 +17,9 @@ class Command(BaseCommand):
         now = datetime.datetime.utcnow().replace(
             tzinfo=pytz.utc
         )
-        today_midnight = datetime.datetime.combine(
-            now,
-            datetime.time.min
-        ).replace(
-            tzinfo=pytz.utc
-        )
 
-        yesterday_midnight = today_midnight - datetime.timedelta(days=1)
+        ten_hours_ago = now - datetime.timedelta(hours=10)
 
         Pipeline.housekeeping(
-            date_start=yesterday_midnight,
-            date_end=today_midnight
+            date_end=ten_hours_ago
         )
