@@ -14,3 +14,4 @@ python-resize-image==1.1.18
 readability-lxml==0.7
 requests==2.20.0
 textblob==0.15.1
+python-magic==0.4.15

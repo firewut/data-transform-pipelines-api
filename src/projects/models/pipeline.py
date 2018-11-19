@@ -19,6 +19,7 @@ from django.contrib.postgres.fields import (
 from django.db import models
 from requests.exceptions import HTTPError
 import celery
+import magic
 import requests
 
 from core.json_schema.file import check_is_internal_file
@@ -230,6 +231,7 @@ class PipelineResultFile(models.Model):
     path = models.CharField(max_length=666, null=False, blank=False)
     pipeline_result = models.ForeignKey(PipelineResult, on_delete=models.CASCADE, editable=False)
     md5_hash = models.CharField(max_length=64, editable=False)
+    size = models.BigIntegerField(default=0)
     mimetype = models.CharField(max_length=666, null=True, blank=True)
     ctime = models.DateTimeField(null=True, blank=True, auto_now_add=True)
 
@@ -261,6 +263,15 @@ class PipelineResultFile(models.Model):
             with open(self.path, "rb") as f:
                 for chunk in iter(lambda: f.read(4096), b""):
                     hash_md5.update(chunk)
+
+                f.seek(0, os.SEEK_END)
+                self.size = f.tell()
+
+            try:
+                mime = magic.Magic(mime=True)
+                self.mimetype = mime.from_file(self.path)
+            except Exception as e:
+                pass
 
             self.md5_hash = hash_md5.hexdigest()
             self.pipeline_result = pipeline_result
