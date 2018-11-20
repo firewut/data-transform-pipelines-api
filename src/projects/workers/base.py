@@ -81,6 +81,11 @@ class Worker(metaclass=abc.ABCMeta):
 
         return data
 
+    def discard_files(self, data):
+        if self.input_is_file:
+            if isinstance(data, dict):
+                PipelineResultFile.remove_by_id(data.get('id'))
+
     def prepare_input_data(self, data):
         """
             If Processor Input is a File this should convert

@@ -45,10 +45,12 @@ def process_pipeline(
                 )
             except jsonschema.exceptions.ValidationError as e:
                 error = str(e)
+                worker_instance.discard_files(data)
             except Exception as e:
                 error = "{}: Internal Processing Error".format(
                     worker_instance.id,
                 )
+                worker_instance.discard_files(data)
 
             celery.current_app.send_task(
                 'projects.tasks.process_pipeline',

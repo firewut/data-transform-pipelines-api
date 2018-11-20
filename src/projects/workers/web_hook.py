@@ -109,6 +109,10 @@ class Webhook(Worker):
                     "method", "url",
                 ]
             },
+            "in_config_example": {
+                "method": "GET",
+                "url": "http://example.com"
+            },
             "out": {
                 "type": [
                     "array",

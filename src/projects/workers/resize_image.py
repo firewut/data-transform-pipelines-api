@@ -27,15 +27,22 @@ class ResizeImage(Worker):
                 "type": "object",
                 "properties": {
                     "size": {
-                        "type": "array",
+                        "type": "object",
                         "description": "size in pixels",
                         "orderable": False,
-                        "items": {
-                            "type": "integer",
-                            "minimum": 0
+                        "properties": {
+                            "width": {
+                                "type": "integer"
+                            },
+                            "height": {
+                                "type": "integer"
+                            },
+                            "additionalProperties": False
                         },
-                        "minItems": 2,
-                        "maxItems": 2
+                        "required": [
+                            "width",
+                            "height"
+                        ]
                     },
                     "percentage": {
                         "type": "integer",
@@ -53,7 +60,10 @@ class ResizeImage(Worker):
                 ]
             },
             "in_config_example": {
-                "size": [500, 500]
+                "size": {
+                    "width": 400,
+                    "height": 400
+                }
             },
             "out": {
                 "type": "file",
@@ -78,7 +88,10 @@ class ResizeImage(Worker):
         if size:
             img = resizeimage.resize_thumbnail(
                 image,
-                in_config.get('size')
+                [
+                    size.get('width'),
+                    size.get('height')
+                ]
             )
         else:
             percentage = int(in_config.get('percentage'))

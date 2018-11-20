@@ -98,6 +98,11 @@ class Random(Worker):
                     },
                 ],
             },
+            "in_config_example": {
+                "random_type": "integer",
+                "min": 10,
+                "max": 20
+            },
             "out": {
                 "description": "randomized result",
                 "type": [

@@ -78,10 +78,10 @@
                 {
                     "id": "resize_image",
                     "in_config": {
-                        "size": [
-                            200,
-                            200
-                        ]
+                        "size": {
+                            "width": 200,
+                            "height": 200
+                        }
                     }
                 }
             ]
@@ -98,10 +98,10 @@
                 {
                     "id": "resize_image",
                     "in_config": {
-                        "size": [
-                            200,
-                            200
-                        ]
+                        "size": {
+                            "width": 200,
+                            "height": 200
+                        }
                     }
                 },
                 {
@@ -125,10 +125,10 @@
                 {
                     "id": "resize_image",
                     "in_config": {
-                        "size": [
-                            200,
-                            200
-                        ]
+                        "size": {
+                            "width": 200,
+                            "height": 200
+                        }
                     }
                 },
                 {

@@ -276,7 +276,10 @@ class PipelinesTestCase(PipelinesBaseTestCase):
                 {
                     "id": "resize_image",
                     "in_config": {
-                        "size": [100, 100]
+                        "size": {
+                            "width": 100,
+                            "height": 100
+                        }
                     }
                 },
             ]
@@ -333,7 +336,10 @@ class PipelinesTestCase(PipelinesBaseTestCase):
                 {
                     "id": "resize_image",
                     "in_config": {
-                        "size": [100, 100]
+                        "size": {
+                            "width": 100,
+                            "height": 100
+                        }
                     }
                 },
                 {
@@ -506,10 +512,10 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
                 {
                     "id": "resize_image",
                     "in_config": {
-                        "size": [
-                            200,
-                            200
-                        ]
+                        "size": {
+                            "width": 200,
+                            "height": 200
+                        }
                     },
                 },
                 {
@@ -619,10 +625,10 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
                 {
                     "id": "resize_image",
                     "in_config": {
-                        "size": [
-                            200,
-                            200
-                        ]
+                        "size": {
+                            "width": 200,
+                            "height": 200
+                        }
                     },
                 }
             ]
@@ -651,10 +657,10 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
                     {
                         "id": "resize_image",
                         "in_config": {
-                            "size": [
-                                200,
-                                200
-                            ]
+                            "size": {
+                                "width": 200,
+                                "height": 200
+                            }
                         },
                     },
                     {
@@ -935,3 +941,48 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
         self.assertIsNone(response_json['error'])
         self.assertTrue(response_json['is_finished'], response_json)
         self.assertEqual(response_json['result'], 123, response_json)
+
+    def test_pipeline_discards_invalid_file_types(self):
+        text_as_data = 'TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1dCBieSB0aGlzIHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlciBhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2YgdGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFuY2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGludWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRoZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4='
+        pipeline_data = {
+            "id": self.random_uuid(),
+            "title": self.random_string(),
+            "project": self.project_id,
+            "processors": [
+                {
+                    "id": "resize_image",
+                    "in_config": {
+                        "size": {
+                            "width": 200,
+                            "height": 200
+                        }
+                    },
+                }
+            ]
+        }
+        response, response_json = self.put_create(
+            pipeline_data,
+            viewset=PipelineViewSet
+        )
+        self.assertEqual(response.status_code, 201, response_json)
+
+        pipeline_id = response_json['id']
+
+        response, response_json = self.post_create(
+            pk=pipeline_id,
+            data={
+                "data": text_as_data,
+            },
+            action='process',
+            viewset=PipelineViewSet,
+            _format='json',
+        )
+        self.assertEqual(response.status_code, 202, response_json)
+        self.assertEqual(response_json['pipeline'], pipeline_id)
+
+        response, response_json = self.get_item(
+            pk=response_json.get('id')
+        )
+        self.assertEqual(response.status_code, 200, response_json)
+        self.assertIsNotNone(response_json['error'])
+        self.assertTrue(response_json['is_finished'], response_json)

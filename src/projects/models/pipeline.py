@@ -155,6 +155,9 @@ class PipelineResult(models.Model):
         return str(self.id)
 
     def delete_unused_files(self):
+        if not self.result:
+            return
+
         for _file in PipelineResultFile.objects.filter(
             pipeline_result=self
         ):
@@ -216,10 +219,12 @@ class PipelineResult(models.Model):
         input_file = PipelineResultFile()
         input_file.prepare()
 
-        if self.pipeline.check_is_internal_file(data):
+        converted_data, is_opened = PipelineResult.open_file(data)
+
+        if self.pipeline.check_is_internal_file(data) and is_opened:
             default_storage.save(
                 input_file.path,
-                ContentFile(data.read())
+                ContentFile(converted_data.read())
             )
             input_file.post_process(self)
 
@@ -239,6 +244,18 @@ class PipelineResultFile(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    @classmethod
+    def remove_by_id(cls, file_id: dict = None):
+        if not file_id:
+            return
+
+        file_path = os.path.join(
+            settings.MEDIA_ROOT,
+            file_id
+        )
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
     def delete(self):
         if os.path.exists(self.path):
