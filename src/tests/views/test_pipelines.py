@@ -144,12 +144,7 @@ class PipelinesTestCase(PipelinesBaseTestCase):
                     }
                 },
                 {
-                    "id": "google_translate",
-                    "in_config": {
-                        "from": "en",
-                        "to": "ru",
-                        "api_key": "<YOUR_API_KEY>"
-                    }
+                    "id": "md5"
                 }
             ]
         }
@@ -167,12 +162,7 @@ class PipelinesTestCase(PipelinesBaseTestCase):
                     "id": "readability"
                 },
                 {
-                    "id": "google_translate",
-                    "in_config": {
-                        "from": "en",
-                        "to": "ru",
-                        "api_key": "<YOUR_API_KEY>"
-                    }
+                    "id": "md5"
                 }
             ]
         }
@@ -180,7 +170,7 @@ class PipelinesTestCase(PipelinesBaseTestCase):
         response, response_json = self.put_create(pipeline_data)
         self.assertEqual(response.status_code, 400, response_json)
         self.assertIn(
-            "readability[0] is incompatible with next processor google_translate",
+            "readability[0] is incompatible with next processor md5",
             str(response_json),
         )
 

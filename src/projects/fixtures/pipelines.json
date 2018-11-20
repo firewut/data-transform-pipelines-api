@@ -44,34 +44,6 @@
     {
         "model": "projects.Pipeline",
         "fields": {
-            "id": "541e7ada-987d-4826-a183-358e55d835fa",
-            "project": "541e7ada-987d-4826-a183-358e55d836fa",
-            "title": "WIP: Translate an HTML Page",
-            "description": "Extracts focus Content from an HTML and translates it to Specified Language",
-            "processors": [
-                {
-                    "id": "readability"
-                },
-                {
-                    "id": "get_object_property",
-                    "in_config": {
-                        "property": "content"
-                    }
-                },
-                {
-                    "id": "google_translate",
-                    "in_config": {
-                        "from": "en",
-                        "to": "ru",
-                        "api_key": "<YOUR_API_KEY>"
-                    }
-                }
-            ]
-        }
-    },
-    {
-        "model": "projects.Pipeline",
-        "fields": {
             "id": "541e7ada-987d-4826-a183-358e54d836fa",
             "project": "541e7ada-987d-4826-a183-358e55d836fa",
             "title": "Extract HTML Content",
