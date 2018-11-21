@@ -59,10 +59,14 @@ class WatermarkImage(Worker):
                         "orderable": False,
                         "properties": {
                             "width": {
-                                "type": "integer"
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 5000,
                             },
                             "height": {
-                                "type": "integer"
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 5000,
                             },
                             "additionalProperties": False
                         },

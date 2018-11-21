@@ -2,6 +2,25 @@
     {
         "model": "projects.Pipeline",
         "fields": {
+            "id": "3e7f2e3b-a5c5-4c6c-b57c-9439318b72fd",
+            "project": "2e7f2e3b-a5c5-4c6c-b57c-9439318b72fc",
+            "title": "Random Image",
+            "description": "Generates Random Image",
+            "processors": [
+                {
+                    "id": "random",
+                    "in_config": {
+                        "random_type": "image",
+                        "width": 300,
+                        "height": 300
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "model": "projects.Pipeline",
+        "fields": {
             "id": "2e7f2e3b-a5c5-4c6c-b57c-9439318b72fd",
             "project": "2e7f2e3b-a5c5-4c6c-b57c-9439318b72fc",
             "title": "MD5 of Random",

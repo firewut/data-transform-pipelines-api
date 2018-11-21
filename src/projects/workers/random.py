@@ -1,3 +1,5 @@
+from PIL import Image
+import numpy
 
 from core.utils import *
 from projects.workers.base import Worker
@@ -34,6 +36,7 @@ class Random(Worker):
                             {"title": "boolean", "enum": ["boolean"]},
                             {"title": "integer", "enum": ["integer"]},
                             {"title": "number", "enum": ["number"]},
+                            {"title": "image", "enum": ["image"]},
                         ]
                     },
                     "length": {
@@ -47,9 +50,36 @@ class Random(Worker):
                     "max": {
                         "type": "integer",
                         "description": "for number, integer",
+                    },
+                    "width": {
+                        "type": "integer",
+                        "description": "for image",
+                    },
+                    "height": {
+                        "type": "integer",
+                        "description": "for image",
                     }
                 },
                 "oneOf": [
+                    {
+                        "properties": {
+                            "random_type": {
+                                "type": "string",
+                                "title": "image",
+                                "enum": ["image"]
+                            },
+                            "width": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 5000,
+                            },
+                            "height": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 5000,
+                            }
+                        }
+                    },
                     {
                         "properties": {
                             "random_type": {
@@ -109,7 +139,8 @@ class Random(Worker):
                     "string",
                     "boolean",
                     "number",
-                    "integer"
+                    "integer",
+                    "file",
                 ]
             }
         }
@@ -120,6 +151,24 @@ class Random(Worker):
         in_config = self.pipeline_processor.in_config
 
         random_type = in_config.get('random_type')
+        if random_type == 'image':
+            width = in_config.get('width')
+            height = in_config.get('height')
+
+            imarray = numpy.random.rand(
+                width,
+                height,
+                3
+            ) * 255
+            image = Image.fromarray(
+                imarray.astype('uint8')
+            ).convert('RGBA')
+
+            _file = self.request_file()
+            image.save(_file.path, 'png')
+            image.close()
+            result = _file
+
         if random_type == 'string':
             result = random_string(
                 in_config.get('length', 50),
