@@ -19,12 +19,15 @@ def random_float(_min: int, _max: int):
     return random.uniform(_min, _max)
 
 
-def random_string(N: int = 10):
+def random_string(N: int = 10, alphabet: str=None):
+    if not alphabet or not isinstance(alphabet, str):
+        alphabet = string.ascii_uppercase + \
+            string.ascii_lowercase + \
+            string.digits
+
     return ''.join(
         random.SystemRandom().choice(
-            string.ascii_uppercase +
-            string.ascii_lowercase +
-            string.digits
+            alphabet
         ) for _ in range(N)
     )
 

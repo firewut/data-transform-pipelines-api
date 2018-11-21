@@ -181,10 +181,9 @@ class PipelinesTestCase(PipelinesBaseTestCase):
             "project": self.project_id,
             "processors": [
                 {
-                    "id": "random",
+                    "id": "random_string",
                     "in_config": {
-                        "length": 101,
-                        "random_type": "string"
+                        "length": '100',
                     }
                 }
             ]
@@ -193,7 +192,7 @@ class PipelinesTestCase(PipelinesBaseTestCase):
         response, response_json = self.put_create(pipeline_data)
         self.assertEqual(response.status_code, 400, response_json)
         self.assertIn(
-            "random[0] has invalid in_config",
+            "random_string[0] has invalid in_config",
             str(response_json),
             response_json
         )
@@ -201,14 +200,14 @@ class PipelinesTestCase(PipelinesBaseTestCase):
     @BaseTestCase.cases(
         (
             'random_none',
-            'random',
-            {"length": 10, "random_type": "string"},
+            'random_string',
+            {"length": 10},
             {'data': None},
         ),
         (
             'random_empty',
-            'random',
-            {"length": 10, "random_type": "string"},
+            'random_string',
+            {"length": 10},
             {'data': {}},
         ),
         (

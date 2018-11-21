@@ -6,7 +6,9 @@ from projects.workers.grayscale_image import *
 from projects.workers.html_to_text import *
 from projects.workers.markdown import *
 from projects.workers.md5 import *
-from projects.workers.random import *
+from projects.workers.random_image import *
+from projects.workers.random_number import *
+from projects.workers.random_string import *
 from projects.workers.readability import *
 from projects.workers.resize_image import *
 from projects.workers.sentiment import *
@@ -20,7 +22,9 @@ REGISTERED_WORKER_CLASSES = (
     HTMLToText,
     Markdown,
     Md5,
-    Random,
+    RandomImage,
+    RandomNumber,
+    RandomString,
     Readability,
     ResizeImage,
     Sentiment,

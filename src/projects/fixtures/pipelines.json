@@ -8,9 +8,8 @@
             "description": "Generates Random Image",
             "processors": [
                 {
-                    "id": "random",
+                    "id": "random_image",
                     "in_config": {
-                        "random_type": "image",
                         "width": 300,
                         "height": 300
                     }
@@ -27,9 +26,8 @@
             "description": "Generates a Random value and makes and MD5 of it",
             "processors": [
                 {
-                    "id": "random",
+                    "id": "random_string",
                     "in_config": {
-                        "random_type": "string",
                         "length": 20
                     }
                 },
@@ -48,10 +46,10 @@
             "description": "Sentiment analysis from a Random String",
             "processors": [
                 {
-                    "id": "random",
+                    "id": "random_string",
                     "in_config": {
-                        "random_type": "string",
-                        "length": 50
+                        "length": 30,
+                        "alphabet": "hello great world"
                     }
                 },
                 {
@@ -95,6 +93,13 @@
             "description": "Resize ANY Image",
             "processors": [
                 {
+                    "id": "random_image",
+                    "in_config": {
+                        "width": 300,
+                        "height": 300
+                    }
+                },
+                {
                     "id": "resize_image",
                     "in_config": {
                         "size": {
@@ -112,8 +117,15 @@
             "id": "f043fc5c-7e89-4028-b530-1dc6a8ef4ec0",
             "project": "f043fc5c-7e89-4028-b530-2dc6a8ef4ec0",
             "title": "Resize and Watermark Image",
-            "description": "Resize ANY Image",
+            "description": "Resize and Watermark an Image",
             "processors": [
+                {
+                    "id": "random_image",
+                    "in_config": {
+                        "width": 300,
+                        "height": 300
+                    }
+                },
                 {
                     "id": "resize_image",
                     "in_config": {
@@ -127,7 +139,11 @@
                     "id": "watermark_image",
                     "in_config": {
                         "watermark_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ambox_important.svg/60px-Ambox_important.svg.png",
-                        "gravity": "SouthEast"
+                        "gravity": "NorthEast",
+                        "size": {
+                            "width": 50,
+                            "height": 50
+                        }
                     }
                 }
             ]
@@ -142,6 +158,16 @@
             "description": "Resize and apply A Few Filters",
             "processors": [
                 {
+                    "id": "random_image",
+                    "in_config": {
+                        "width": 400,
+                        "height": 400
+                    }
+                },
+                {
+                    "id": "grayscale_image"
+                },
+                {
                     "id": "resize_image",
                     "in_config": {
                         "size": {
@@ -154,11 +180,12 @@
                     "id": "watermark_image",
                     "in_config": {
                         "watermark_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ambox_important.svg/60px-Ambox_important.svg.png",
-                        "gravity": "SouthEast"
+                        "gravity": "NorthEast",
+                        "size": {
+                            "width": 50,
+                            "height": 50
+                        }
                     }
-                },
-                {
-                    "id": "grayscale_image"
                 }
             ]
         }

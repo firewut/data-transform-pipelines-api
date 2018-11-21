@@ -34,12 +34,10 @@ class ResizeImage(Worker):
                             "width": {
                                 "type": "integer",
                                 "minimum": 0,
-                                "maximum": 5000,
                             },
                             "height": {
                                 "type": "integer",
                                 "minimum": 0,
-                                "maximum": 5000,
                             },
                             "additionalProperties": False
                         },
