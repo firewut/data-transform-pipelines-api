@@ -377,6 +377,21 @@ class WatermarkImageTestCase(WorkerBaseTestCase):
             image_as_data,
             'watermarked_southeast.png',
         ),
+
+        # With size
+        (
+            'base64_image_with_file_watermark_southeast_and_size',
+            {
+                'watermark_image': watermark_as_file,
+                'gravity': 'SouthEast',
+                'size': {
+                    'width': 220,
+                    'height': 220,
+                }
+            },
+            image_as_data,
+            'watermarked_southeast.png',
+        )
     )
     def test_worker(self, in_config, value, expectation):
         result = self.worker_class(

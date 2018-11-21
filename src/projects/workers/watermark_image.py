@@ -52,12 +52,34 @@ class WatermarkImage(Worker):
                         ],
                         "description": "watermark position",
                         "default": "NorthWest"
+                    },
+                    "size": {
+                        "type": "object",
+                        "description": "size in pixels",
+                        "orderable": False,
+                        "properties": {
+                            "width": {
+                                "type": "integer"
+                            },
+                            "height": {
+                                "type": "integer"
+                            },
+                            "additionalProperties": False
+                        },
+                        "required": [
+                            "width",
+                            "height"
+                        ]
                     }
                 }
             },
             "in_config_example": {
                 "watermark_image": "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/google/146/thinking-face_1f914.png",
-                "gravity": "SouthEast"
+                "gravity": "SouthEast",
+                "size": {
+                    "width": 50,
+                    "height": 50,
+                }
             },
             "out": {
                 "type": "file",
@@ -83,12 +105,22 @@ class WatermarkImage(Worker):
 
         if not watermark_file:
             raise WorkerInvalidInConfigException(
-                'watermark is not an Image'
+                'watermark is not available'
             )
 
         watermark = Image.open(
             watermark_file
         ).convert("RGBA")
+
+        size = in_config.get('size')
+        if size:
+            watermark = resizeimage.resize_thumbnail(
+                watermark,
+                [
+                    size.get('width'),
+                    size.get('height')
+                ]
+            )
 
         img = Image.new(
             'RGBA',
