@@ -1,9 +1,13 @@
 from celery import shared_task
+from celery.utils.log import get_task_logger
 import celery
 import jsonschema
 
 from projects.models import *
 from projects.workers import *
+
+
+logger = get_task_logger('celery.tasks')
 
 
 @shared_task
@@ -26,6 +30,13 @@ def process_pipeline(
         pipeline_result.save()
 
         pipeline_result.delete_unused_files()
+
+        logger.info(
+            "[process_pipeline {}] Finished".format(
+                result_id,
+            )
+        )
+
         return
 
     pipeline_processor = processors.pop(0)
@@ -47,6 +58,12 @@ def process_pipeline(
                 error = str(e)
                 worker_instance.discard_files(data)
             except Exception as e:
+                logger.error(
+                    "[process_pipeline {}] Error: {}".format(
+                        result_id, e
+                    )
+                )
+
                 error = "{}: Internal Processing Error".format(
                     worker_instance.id,
                 )
