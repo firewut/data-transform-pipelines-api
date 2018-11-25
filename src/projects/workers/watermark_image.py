@@ -184,5 +184,6 @@ class WatermarkImage(Worker):
         _file = self.request_file()
         img.save(_file.path, 'PNG')
         image.close()
+        watermark.close()
 
         return _file

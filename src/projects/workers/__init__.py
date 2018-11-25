@@ -12,6 +12,7 @@ from projects.workers.random_string import *
 from projects.workers.readability import *
 from projects.workers.resize_image import *
 from projects.workers.sentiment import *
+from projects.workers.template_match_image import *
 from projects.workers.watermark_image import *
 from projects.workers.web_hook import *
 
@@ -28,6 +29,7 @@ REGISTERED_WORKER_CLASSES = (
     Readability,
     ResizeImage,
     Sentiment,
+    TemplateMatchImage,
     WatermarkImage,
     Webhook,
 )
