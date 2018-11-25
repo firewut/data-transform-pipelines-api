@@ -122,7 +122,7 @@
                 {
                     "id": "template_match_image",
                     "in_config": {
-                        "template_image": "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/google/146/thinking-face_1f914.png"
+                        "template_image": "http://pipeline.live/media/data/watermark.png"
                     }
                 }
             ]
