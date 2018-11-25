@@ -18,6 +18,12 @@ Basic Pipeline of Transformation may look like:
 
 API Documentation available after a startup under [http://127.0.0.1:8000/api/v1/free/docs/](http://127.0.0.1:8000/api/v1/free/docs/)
 
+## Requirements
+
+Every Worker may have it's own requirements. By default this package requires:
+
+* Libmagic = Required
+* OpenCV 3+ - Optional ( used by `template_match_image` processor )
 
 ## Execution
 

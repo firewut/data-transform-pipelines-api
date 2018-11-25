@@ -413,7 +413,6 @@ class WatermarkImageTestCase(WorkerBaseTestCase):
 
         file_id = result['id']
 
-        # TODO: Later make that expectation
         self.assertTrue(
             filecmp.cmp(
                 os.path.join(
