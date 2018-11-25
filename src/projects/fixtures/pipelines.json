@@ -122,7 +122,7 @@
                 {
                     "id": "template_match_image",
                     "in_config": {
-                        "template_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ambox_important.svg/60px-Ambox_important.svg.png"
+                        "template_image": "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/google/146/thinking-face_1f914.png"
                     }
                 }
             ]

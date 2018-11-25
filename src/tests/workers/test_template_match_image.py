@@ -7,7 +7,6 @@ import rest_framework
 
 from projects.models.pipeline import *
 from projects.workers.template_match_image import TemplateMatchImage
-from tests.base import BaseTestCase
 from tests.workers.base import WorkerBaseTestCase
 
 
@@ -67,3 +66,17 @@ class TemplateMatchImageTestCase(WorkerBaseTestCase):
         )
 
         file_id = result['id']
+
+        self.assertTrue(
+            filecmp.cmp(
+                os.path.join(
+                    settings.MEDIA_ROOT,
+                    file_id
+                ),
+                os.path.join(
+                    self.data_location,
+                    'template_matched_image.png'
+                )
+            ),
+            file_id
+        )

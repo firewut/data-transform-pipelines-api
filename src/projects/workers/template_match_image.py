@@ -52,7 +52,7 @@ class TemplateMatchImage(Worker):
     }
 
     def process(self, data):
-        image = Image.open(data).convert("RGBA")
+        image = Image.open(data).convert("RGB")
 
         if image is None:
             raise WorkerNoInputException(
@@ -72,20 +72,27 @@ class TemplateMatchImage(Worker):
 
         template = Image.open(
             template_file
-        ).convert("RGBA")
+        ).convert("RGB")
 
         cv_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
         cv_template = cv2.cvtColor(np.array(template), cv2.COLOR_RGB2BGR)
 
         imageGray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
         templateGray = cv2.cvtColor(cv_template, cv2.COLOR_BGR2GRAY)
+        w, h = templateGray.shape[::-1]
 
-        result = cv2.matchTemplate(imageGray, templateGray, cv2.TM_CCOEFF)
-        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
-        top_left = max_loc
-        h, w = templateGray.shape
-        bottom_right = (top_left[0] + w, top_left[1] + h)
-        cv2.rectangle(cv_image, top_left, bottom_right, (0, 0, 255), 4)
+        result = cv2.matchTemplate(imageGray, templateGray, cv2.TM_CCOEFF_NORMED)
+        threshold = 0.8
+
+        loc = np.where(result >= threshold)
+        for pt in zip(*loc[::-1]):
+            cv2.rectangle(
+                cv_image,
+                pt,
+                (pt[0] + w, pt[1] + h),
+                (0, 0, 255),
+                4
+            )
 
         _file = self.request_file()
         filename = _file.path + '.png'
