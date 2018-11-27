@@ -1,8 +1,7 @@
 import io
+import re
 
-from django.core.files.uploadedfile import (
-    InMemoryUploadedFile
-)
+from django.core.files.uploadedfile import InMemoryUploadedFile
 import jsonschema
 
 FILE_TYPE_SCHEMA = {
@@ -31,11 +30,19 @@ def check_is_internal_file(data):
     )
 
 
+def is_base64(value: str):
+    match = re.compile('^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$').match(value)
+    if match:
+        return match.pos == 0
+    return False
+
+
 def file_checker(checker, instance):
+    if isinstance(instance, str):
+        return is_base64(instance)
+
     if not isinstance(
         instance, (
-            # Base64
-            str,
             # internally provided
             io.BytesIO,
             io.BufferedReader,

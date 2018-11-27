@@ -2,6 +2,43 @@
     {
         "model": "projects.Pipeline",
         "fields": {
+            "id": "3e7f2e3b-a5c3-4c6c-b57c-9439318b72fd",
+            "project": "aecf9c49-ad03-44ab-bea2-6c1f996c1728",
+            "title": "CSV to XLS",
+            "description": "Converts uploaded CSV to XLS",
+            "processors": [
+                {
+                    "id": "convert_csv_to_xls",
+                    "in_config": {
+                        "delimiter": ";"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "model": "projects.Pipeline",
+        "fields": {
+            "id": "4a7f2e3b-a5c3-4c6c-b57c-9439318b72fd",
+            "project": "aecf9c49-ad03-44ab-bea2-6c1f996c1728",
+            "title": "HTTP requested CSV to XLS",
+            "description": "Converts uploaded CSV to XLS. Try http://winterolympicsmedals.com/medals.csv",
+            "processors": [
+                {
+                    "id": "fetch_url"
+                },
+                {
+                    "id": "convert_csv_to_xls",
+                    "in_config": {
+                        "delimiter": ","
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "model": "projects.Pipeline",
+        "fields": {
             "id": "3e7f2e3b-a5c5-4c6c-b57c-9439318b72fd",
             "project": "2e7f2e3b-a5c5-4c6c-b57c-9439318b72fc",
             "title": "Random Image",

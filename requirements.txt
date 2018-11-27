@@ -17,3 +17,5 @@ textblob==0.15.1
 python-magic==0.4.15
 numpy==1.15.4
 opencv-python==3.4.3.18
+xlsxwriter==1.1.2
+

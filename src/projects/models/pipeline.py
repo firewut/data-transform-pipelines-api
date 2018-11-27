@@ -22,7 +22,10 @@ import celery
 import magic
 import requests
 
-from core.json_schema.file import check_is_internal_file
+from core.json_schema.file import (
+    check_is_internal_file,
+    is_base64,
+)
 from core.models import WithDate
 from core.utils import random_uuid4
 from projects.models.project import Project
@@ -182,6 +185,7 @@ class PipelineResult(models.Model):
             is_opened = True
         elif isinstance(data, str):
             url_validator = URLValidator()
+
             # It may be a valid URL or base64 encoded string
             try:
                 try:
@@ -191,10 +195,11 @@ class PipelineResult(models.Model):
                     input_file = io.BytesIO(response.content)
                     is_opened = True
                 except ValidationError:
-                    input_file = io.BytesIO(
-                        base64.b64decode(data)
-                    )
-                    is_opened = True
+                    if is_base64(data):
+                        input_file = io.BytesIO(
+                            base64.b64decode(data)
+                        )
+                        is_opened = True
             except Exception as e:
                 if raise_exception:
                     raise e

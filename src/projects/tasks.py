@@ -63,7 +63,6 @@ def process_pipeline(
                         result_id, e
                     )
                 )
-
                 error = "{}: Internal Processing Error".format(
                     worker_instance.id,
                 )

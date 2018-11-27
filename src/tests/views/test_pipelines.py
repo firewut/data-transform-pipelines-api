@@ -892,6 +892,62 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
             response_json
         )
 
+    # @mock.patch('requests.get')
+    # def test_pipeline_fetch_url_and_convert_csv_to_xls(self, mocked_request):
+    #     response = open(
+    #         os.path.join(
+    #             os.path.dirname(__file__),
+    #             "../",
+    #             "data",
+    #             "example.csv"
+    #         ),
+    #         "r"
+    #     ).read()
+
+    #     mocked_request.return_value = self._fake_http_response(
+    #         status=200,
+    #         json_data=response,
+    #     )
+
+    #     response, response_json = self.put_update(
+    #         self.pipeline_id,
+    #         {
+    #             "data": "http://example.com/example.csv",
+    #             "processors": [
+    #                 {
+    #                     "id": "fetch_url"
+    #                 },
+    #                 {
+    #                     "id": "convert_csv_to_xls",
+    #                     "in_config": {
+    #                         "delimiter": ";"
+    #                     }
+    #                 },
+    #             ]
+    #         },
+    #         action='process',
+    #         viewset=PipelineViewSet,
+    #     )
+    #     self.assertEqual(response.status_code, 202, response_json)
+    #     self.assertEqual(response_json['pipeline'], self.pipeline_id)
+
+    #     mocked_request.assert_called_once()
+
+    #     response, response_json = self.get_item(
+    #         pk=response_json.get('id')
+    #     )
+    #     self.assertEqual(response.status_code, 200, response_json)
+    #     self.assertIsNone(response_json['error'])
+    #     self.assertTrue(response_json['is_finished'], response_json)
+    #     self.assertEqual(
+    #         response_json['result']['url'],
+    #         os.path.join(
+    #             settings.MEDIA_URL,
+    #             response_json['result']['id'],
+    #         ),
+    #         response_json
+    #     )
+
     @mock.patch('requests.request')
     def test_pipeline_web_hook_json_consumed_by_object_processor(self, mocked_request):
         response = ""
