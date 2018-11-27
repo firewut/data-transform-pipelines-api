@@ -4,3 +4,7 @@ class WorkerNoInputException(Exception):
 
 class WorkerInvalidInConfigException(Exception):
     pass
+
+
+class WorkerInvalidInputSizeException(Exception):
+    pass

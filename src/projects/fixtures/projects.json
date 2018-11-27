@@ -27,8 +27,8 @@
         "pk": "aecf9c49-ad03-44ab-bea2-6c1f996c1728",
         "model": "projects.Project",
         "fields": {
-            "title": "Empty Project",
-            "description": "Empty Project"
+            "title": "File Convertation",
+            "description": "Convert one file to another"
         }
     }
 ]

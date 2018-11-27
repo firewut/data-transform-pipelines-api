@@ -91,6 +91,7 @@ class Worker(metaclass=abc.ABCMeta):
             If Processor Input is a File this should convert
                 Input Data into a `file descriptor` object
         """
+
         try:
             self.raw_input_data = copy.deepcopy(data)
             converted_data = copy.deepcopy(data)
