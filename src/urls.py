@@ -23,17 +23,20 @@ router.register(r'pipeline_result', PipelineResultViewSet, base_name='pipeline_r
 router.register(r'files', PipelineResultFileViewSet, base_name='files_x_accel_redirect')
 
 urlpatterns = [
-    path('api/', include(router.urls)),
-    path('api/docs/', include_docs_urls(
-        title=API_TITLE,
-        description=API_DESCRIPTION,
-        public=True,
-        authentication_classes=[],
-        permission_classes=[],
-        renderer_classes=[
-            DocumentationRenderer
-        ],
-    )
+    path(settings.API_URL, include(router.urls)),
+    path(
+        '{}docs/'.format(
+            settings.API_URL
+        ), include_docs_urls(
+            title=API_TITLE,
+            description=API_DESCRIPTION,
+            public=True,
+            authentication_classes=[],
+            permission_classes=[],
+            renderer_classes=[
+                DocumentationRenderer
+            ],
+        )
     )
 ]
 

@@ -59,14 +59,17 @@ class PipelineResultFileViewSet(
                 )
             else:
                 """
-                    Production - there is an Nginx with 
+                    Production - there is an Nginx with
                     `internal` directive
                 """
                 response = Response(
                     None,
                     status=status.HTTP_200_OK,
                     headers={
-                        'X-Accel-Redirect': instance.path,
+                        'X-Accel-Redirect': urljoin(
+                            settings.MEDIA_URL,
+                            str(instance.pk)
+                        ),
                     },
                 )
 
