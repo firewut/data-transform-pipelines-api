@@ -11,6 +11,15 @@ env:
     - DB_HOST=localhost
     - DB_PORT=5433
     - CELERY_BROKER_URL=
+cache:
+  pip: true
+  directories:
+    - opencv/
+before_script:
+  - bash build_opencv.sh
+  - cd opencv/build/
+  - sudo make install
+  - cd ../../
 before_install:
   - docker pull postgres:10
   - docker run -d -p 127.0.0.1:5433:5432
