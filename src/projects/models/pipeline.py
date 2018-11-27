@@ -289,11 +289,17 @@ class PipelineResultFile(models.Model):
                 f.seek(0, os.SEEK_END)
                 self.size = f.tell()
 
-            try:
-                mime = magic.Magic(mime=True)
-                self.mimetype = mime.from_file(self.path)
-            except Exception as e:
-                pass
+            """
+                Possible Vulnerability:
+
+                  * Worker may set file's `mimetype`
+            """
+            if not self.mimetype:
+                try:
+                    mime = magic.Magic(mime=True)
+                    self.mimetype = mime.from_file(self.path)
+                except Exception as e:
+                    pass
 
             self.md5_hash = hash_md5.hexdigest()
             self.pipeline_result = pipeline_result

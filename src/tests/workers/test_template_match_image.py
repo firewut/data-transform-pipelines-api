@@ -78,5 +78,8 @@ class TemplateMatchImageTestCase(WorkerBaseTestCase):
                     'template_matched_image.png'
                 )
             ),
-            file_id
+            "{} - {}".format(
+                file_id,
+                result
+            )
         )

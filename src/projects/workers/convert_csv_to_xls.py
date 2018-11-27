@@ -69,6 +69,8 @@ class ConvertCSVtoXLS(Worker):
         )
 
         _file = self.request_file()
+        _file.mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
         workbook = xlsxwriter.Workbook(_file.path)
         self.active_sheet = workbook.add_worksheet()
         self.active_sheet.max_column_widths = {}

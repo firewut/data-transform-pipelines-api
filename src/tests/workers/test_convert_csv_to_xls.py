@@ -57,3 +57,8 @@ class ConvertCSVtoXLSTestCase(WorkerBaseTestCase):
                 rest_framework.utils.serializer_helpers.ReturnDict
             )
         )
+
+        self.assertEqual(
+            result['mimetype'],
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
