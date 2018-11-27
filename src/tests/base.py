@@ -11,6 +11,7 @@ import mock
 import requests
 
 from core.utils import *
+from core.utils.url import urljoin
 from projects.views import (
     ProjectsViewSet
 )
@@ -76,6 +77,9 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             return test_method
 
         return decorator
+
+    def urljoin(self, *args):
+        return urljoin(*args)
 
     def setUp(self):
         super().setUp()

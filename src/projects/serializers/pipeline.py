@@ -3,6 +3,7 @@ import os
 from django.conf import settings
 from drf_queryfields import QueryFieldsMixin
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 
 from projects.serializers.processor import *
 from projects.models import (
@@ -53,9 +54,12 @@ class PipelineResultFileSerializer(QueryFieldsMixin, serializers.ModelSerializer
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['url'] = os.path.join(
-            settings.MEDIA_URL,
-            instance.id
+
+        representation['url'] = reverse(
+            'files_x_accel_redirect-content',
+            args=(
+                instance.pk,
+            ),
         )
 
         return representation

@@ -157,6 +157,11 @@ class PipelineResult(models.Model):
     def __str__(self):
         return str(self.id)
 
+    def get_last_file(self):
+        return PipelineResultFile.objects.filter(
+            pipeline_result=self
+        ).last()
+
     def delete_unused_files(self):
         if not self.result:
             return

@@ -11,6 +11,7 @@ from rest_framework.reverse import reverse
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
+from core.utils.url import urljoin
 from core.views import BaseViewSet
 from projects.models import *
 from projects.serializers import *
@@ -25,6 +26,51 @@ class ProjectsViewSet(BaseViewSet):
         queryset = super().get_queryset()
 
         return queryset.order_by('-ctime')
+
+
+class PipelineResultFileViewSet(
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
+):
+    queryset = PipelineResultFile.objects.all()
+    serializer_class = PipelineResultFileSerializer
+
+    @action(methods=['GET'], detail=True)
+    def content(self, request, pk=None, **kwargs):
+        instance = self.get_object()
+
+        if not instance:
+            response = Response(
+                None,
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        else:
+            if settings.DEBUG:
+                # No Nginx Frontend
+                response = Response(
+                    None,
+                    status=status.HTTP_302_FOUND,
+                    headers={
+                        'Location': urljoin(
+                            settings.MEDIA_URL,
+                            str(instance.pk)
+                        )
+                    }
+                )
+            else:
+                """
+                    Production - there is an Nginx with 
+                    `internal` directive
+                """
+                response = Response(
+                    None,
+                    status=status.HTTP_200_OK,
+                    headers={
+                        'X-Accel-Redirect': instance.path,
+                    },
+                )
+
+        return response
 
 
 class PipelineResultViewSet(
