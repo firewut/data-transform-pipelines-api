@@ -20,12 +20,14 @@ router.register(r'processors', ProcessorsViewSet, base_name='processors')
 router.register(r'projects', ProjectsViewSet, base_name='projects')
 router.register(r'pipelines', PipelineViewSet, base_name='pipelines')
 router.register(r'pipeline_result', PipelineResultViewSet, base_name='pipeline_result')
+router.register(r'files', PipelineResultFileViewSet, base_name='files_x_accel_redirect')
 
 urlpatterns = [
-    path('api/v1/free/', include(router.urls)),
+    path(settings.API_URL, include(router.urls)),
     path(
-        'api/v1/free/docs/',
-        include_docs_urls(
+        '{}docs/'.format(
+            settings.API_URL
+        ), include_docs_urls(
             title=API_TITLE,
             description=API_DESCRIPTION,
             public=True,

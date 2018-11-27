@@ -1,4 +1,3 @@
-from urllib import request
 import base64
 import hashlib
 import io
@@ -9,15 +8,11 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.core.files.uploadedfile import (
-    InMemoryUploadedFile
-)
 from django.core.validators import URLValidator
 from django.contrib.postgres.fields import (
     JSONField
 )
 from django.db import models
-from requests.exceptions import HTTPError
 import celery
 import magic
 import requests
@@ -132,7 +127,7 @@ class Pipeline(WithDate, models.Model):
         """
         conditions = models.Q(pipeline=self)
         Pipeline.housekeeping(
-            conditions=models.Q(pipeline=self),
+            conditions=conditions,
             date_start=date_start,
             date_end=date_end
         )
@@ -156,6 +151,11 @@ class PipelineResult(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    def get_last_file(self):
+        return PipelineResultFile.objects.filter(
+            pipeline_result=self
+        ).last()
 
     def delete_unused_files(self):
         if not self.result:

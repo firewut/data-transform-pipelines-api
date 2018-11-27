@@ -5,6 +5,7 @@ import os
 
 from django.db.transaction import TransactionManagementError
 from django.conf import settings
+from rest_framework.reverse import reverse
 import mock
 
 from projects.views import *
@@ -314,12 +315,14 @@ class PipelinesTestCase(PipelinesBaseTestCase):
         self.assertEqual(response.status_code, 200, response_json)
         self.assertIsNone(response_json['error'])
         self.assertTrue(response_json['is_finished'], response_json)
-        self.assertEqual(
-            response_json['result']['url'],
-            os.path.join(
-                settings.MEDIA_URL,
-                response_json['result']['id'],
+        self.assertIn(
+            reverse(
+                'files_x_accel_redirect-content',
+                args=(
+                    response_json['result']['id'],
+                ),
             ),
+            response_json['result']['url'],
             response_json
         )
         self.assertEqual(response_json['result']['mimetype'], 'image/png')
@@ -377,12 +380,15 @@ class PipelinesTestCase(PipelinesBaseTestCase):
         self.assertEqual(response.status_code, 200, response_json)
         self.assertIsNone(response_json['error'])
         self.assertTrue(response_json['is_finished'], response_json)
-        self.assertEqual(
-            response_json['result']['url'],
-            os.path.join(
-                settings.MEDIA_URL,
-                response_json['result']['id'],
+
+        self.assertIn(
+            reverse(
+                'files_x_accel_redirect-content',
+                args=(
+                    response_json['result']['id'],
+                ),
             ),
+            response_json['result']['url'],
             response_json
         )
 
@@ -560,12 +566,14 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
         self.assertEqual(response.status_code, 200, response_json)
         self.assertIsNone(response_json['error'])
         self.assertTrue(response_json['is_finished'], response_json)
-        self.assertEqual(
-            response_json['result']['url'],
-            os.path.join(
-                settings.MEDIA_URL,
-                response_json['result']['id'],
+        self.assertIn(
+            reverse(
+                'files_x_accel_redirect-content',
+                args=(
+                    response_json['result']['id'],
+                ),
             ),
+            response_json['result']['url'],
             response_json
         )
 
@@ -684,12 +692,14 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
         self.assertEqual(response.status_code, 200, response_json)
         self.assertIsNone(response_json['error'])
         self.assertTrue(response_json['is_finished'], response_json)
-        self.assertEqual(
-            response_json['result']['url'],
-            os.path.join(
-                settings.MEDIA_URL,
-                response_json['result']['id'],
+        self.assertIn(
+            reverse(
+                'files_x_accel_redirect-content',
+                args=(
+                    response_json['result']['id'],
+                ),
             ),
+            response_json['result']['url'],
             response_json
         )
 
@@ -883,15 +893,16 @@ class PipelinesProcessTestCase(PipelinesBaseTestCase):
 
         mocked_request.assert_called_once()
 
-        self.assertEqual(
-            response_json['result']['url'],
-            os.path.join(
-                settings.MEDIA_URL,
-                response_json['result']['id'],
+        self.assertIn(
+            reverse(
+                'files_x_accel_redirect-content',
+                args=(
+                    response_json['result']['id'],
+                ),
             ),
+            response_json['result']['url'],
             response_json
         )
-
     # @mock.patch('requests.get')
     # def test_pipeline_fetch_url_and_convert_csv_to_xls(self, mocked_request):
     #     response = open(

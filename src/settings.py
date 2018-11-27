@@ -22,8 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = ')$&j_jd!vnscd87t_%a9766399cfkf9x1@+dvz4g2=%1bf0q&k'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.environ.get('DEBUG', True))
-DEMO_MODE = bool(os.environ.get('DEMO_MODE', False))
+DEBUG = os.environ.get('DEBUG') == 'True'
+DEMO_MODE = os.environ.get('DEMO_MODE') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
@@ -136,6 +136,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
+APPEND_SLASH = False
+
+API_URL = 'api/'
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
