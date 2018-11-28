@@ -1,6 +1,7 @@
 from django import apps
 
 from projects.workers.convert_csv_to_xls import *
+from projects.workers.convert_image import *
 from projects.workers.fetch_url import *
 from projects.workers.get_object_property import *
 from projects.workers.grayscale_image import *
@@ -19,6 +20,7 @@ from projects.workers.web_hook import *
 
 REGISTERED_WORKER_CLASSES = (
     ConvertCSVtoXLS,
+    ConvertImage,
     FetchURL,
     GetObjectProperty,
     GrayscaleImage,

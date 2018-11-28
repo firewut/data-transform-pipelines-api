@@ -72,7 +72,7 @@ class GrayscaleImageTestCase(WorkerBaseTestCase):
             filecmp.cmp(
                 os.path.join(
                     settings.MEDIA_ROOT,
-                    file_id
+                    file_id + '.png'
                 ),
                 self.grayscaled_image_path,
             ),

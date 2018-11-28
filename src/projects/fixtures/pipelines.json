@@ -168,6 +168,23 @@
     {
         "model": "projects.Pipeline",
         "fields": {
+            "id": "1c5f2d2b-a5c5-4c6c-b57c-6439318b72fd",
+            "project": "f043fc5c-7e89-4028-b530-2dc6a8ef4ec0",
+            "title": "Convert Image",
+            "description": "Convert Image from One Format to Another",
+            "processors": [
+                {
+                    "id": "convert_image",
+                    "in_config": {
+                        "to": "jpg"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "model": "projects.Pipeline",
+        "fields": {
             "id": "f043fc5c-7e89-4028-b530-1dc6a8ef4ec0",
             "project": "f043fc5c-7e89-4028-b530-2dc6a8ef4ec0",
             "title": "Resize and Watermark Image",

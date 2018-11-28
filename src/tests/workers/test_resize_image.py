@@ -90,7 +90,7 @@ class ResizeImageTestCase(WorkerBaseTestCase):
             filecmp.cmp(
                 os.path.join(
                     settings.MEDIA_ROOT,
-                    file_id
+                    file_id + '.png'
                 ),
                 self.resized_image_path,
             ),

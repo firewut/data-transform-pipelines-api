@@ -417,7 +417,7 @@ class WatermarkImageTestCase(WorkerBaseTestCase):
             filecmp.cmp(
                 os.path.join(
                     settings.MEDIA_ROOT,
-                    file_id
+                    file_id + '.png'
                 ),
                 os.path.join(
                     self.data_location,
