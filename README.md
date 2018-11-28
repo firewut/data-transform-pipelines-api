@@ -34,7 +34,7 @@ mkdir ./media
 cd src 
 ./manage.py migrate
 ./manage.py sync_processors
-./manage.py runserver 8000
+env DEBUG=True ./manage.py runserver 8000
 ```
 
 Then Execute Redis and Celery
