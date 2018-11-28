@@ -176,7 +176,7 @@
                 {
                     "id": "convert_image",
                     "in_config": {
-                        "to": "jpg"
+                        "to": "jpeg"
                     }
                 }
             ]

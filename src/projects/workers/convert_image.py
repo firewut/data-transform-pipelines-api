@@ -25,6 +25,9 @@ class ConvertImage(Worker):
             },
             "in_config": {
                 "type": "object",
+                "required": [
+                    "to"
+                ],
                 "properties": {
                     "to": {
                         "type": "string",
@@ -32,11 +35,13 @@ class ConvertImage(Worker):
                             "jpeg",
                             "png",
                         ],
+                        "description": "Result Image Format",
+                        "default": "jpeg"
                     }
                 }
             },
             "in_config_example": {
-                "to": "jpeg"
+                "to": "png"
             },
             "out": {
                 "type": "file",
