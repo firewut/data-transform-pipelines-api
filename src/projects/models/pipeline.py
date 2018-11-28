@@ -15,6 +15,7 @@ from django.contrib.postgres.fields import (
 from django.db import models
 import celery
 import magic
+import mimetypes
 import requests
 
 from core.json_schema.file import (
@@ -239,6 +240,7 @@ class PipelineResult(models.Model):
 class PipelineResultFile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     path = models.CharField(max_length=666, null=False, blank=False)
+    extension = models.CharField(max_length=10, null=True, blank=True)
     pipeline_result = models.ForeignKey(PipelineResult, on_delete=models.CASCADE, editable=False)
     md5_hash = models.CharField(max_length=64, editable=False)
     size = models.BigIntegerField(default=0)
@@ -300,6 +302,20 @@ class PipelineResultFile(models.Model):
                     self.mimetype = mime.from_file(self.path)
                 except Exception as e:
                     pass
+
+            if self.mimetype:
+                self.extension = mimetypes.guess_extension(
+                    self.mimetype
+                )
+
+            if self.extension:
+                if not self.path.endswith(self.extension):
+                    old_path = self.path
+                    self.path = self.path + self.extension
+
+                    os.rename(
+                        old_path, self.path
+                    )
 
             self.md5_hash = hash_md5.hexdigest()
             self.pipeline_result = pipeline_result

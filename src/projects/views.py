@@ -1,4 +1,5 @@
 import json
+import os
 
 from rest_framework import (
     viewsets,
@@ -53,7 +54,7 @@ class PipelineResultFileViewSet(
                     headers={
                         'Location': urljoin(
                             settings.MEDIA_URL,
-                            str(instance.pk)
+                            os.path.basename(instance.path),
                         )
                     }
                 )
@@ -68,7 +69,7 @@ class PipelineResultFileViewSet(
                     headers={
                         'X-Accel-Redirect': urljoin(
                             settings.MEDIA_URL,
-                            str(instance.pk)
+                            os.path.basename(instance.path),
                         ),
                     },
                 )
