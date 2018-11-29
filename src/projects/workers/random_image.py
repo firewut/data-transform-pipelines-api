@@ -58,8 +58,8 @@ class RandomImage(Worker):
         height = in_config.get('height')
 
         imarray = numpy.random.rand(
-            width,
             height,
+            width,
             3
         ) * 255
         image = Image.fromarray(
