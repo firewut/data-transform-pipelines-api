@@ -27,12 +27,23 @@ Every Worker may have it's own requirements. By default this package requires:
 
 ## Execution
 
+Using docker-compose: Starts Queue, Database, Workers and API Itself
+
+```
+docker-compose up
+
+# curl -X GET http://127.0.0.1:8000/api/
+```
+
+or 
+
 ```bash
 pip install -r requirements.txt
 
-mkdir ./media
+mkdir ./media ./logs
 cd src 
 ./manage.py migrate
+./manage.py collectstatic
 ./manage.py sync_processors
 env DEBUG=True ./manage.py runserver 8000
 ```
