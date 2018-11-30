@@ -3,18 +3,104 @@ services:
   postgres: 
     image: postgres:latest
     restart: always
-    ports:
-      - 5432:5432
+    networks:
+      - private
     volumes:
       - ./var/lib/postgresql:/var/lib/postgresql
     environment:
       POSTGRES_DB: data_transform
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Eir4Ooquae
-  
-  redis:
-    image: redis:latest
+
+  rabbit:
+    hostname: rabbit
+    image: rabbitmq:latest
     restart: always
+    networks:
+      - private
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=mypass
     ports:
-      - 6379:6379
+      - 5672:5672
+  
+  pipelines-base:
+    build: 
+      context: .
+      dockerfile: ./scripts/docker/Dockerfile
+    volumes:
+      - web-api-static:/project/static
+      - web-api-media:/project/media
+      - web-api-logs:/project/logs
+
+  api-workers:
+    image: backend_pipelines-base
+    restart: always
+    command: bash -c "
+      python3 manage.py migrate && 
+      python3 manage.py sync_processors &&
+      celery -A core worker -l info --concurrency 8 --max-tasks-per-child 2"
+    networks:
+      - private
+    volumes:
+      - web-api-media:/project/media
+      - web-api-logs:/project/logs
+    depends_on:
+      - postgres
+      - rabbit
+      - pipelines-base
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=data_transform
+      - DB_USER=postgres
+      - DB_PASSWORD=Eir4Ooquae
+      - CELERY_BROKER_URL=amqp://admin:mypass@rabbit:5672
+  
+  web-api:
+    image: backend_pipelines-base
+    restart: always
+    command: uwsgi --ini /project/scripts/uwsgi/data-pipeline.ini
+    networks:
+      - private
+    volumes:
+      - web-api-static:/project/static
+      - web-api-media:/project/media
+      - web-api-logs:/project/logs
+    depends_on:
+      - postgres
+      - rabbit
+      - api-workers
+      - pipelines-base
+    environment:
+      - DEBUG=False
+      - DEMO_MODE=True
+      - DB_HOST=postgres
+      - DB_NAME=data_transform
+      - DB_USER=postgres
+      - DB_PASSWORD=Eir4Ooquae
+      - CELERY_BROKER_URL=amqp://admin:mypass@rabbit:5672
     
+  nginx-proxy:
+    image: nginx:latest
+    restart: always
+    networks:
+      - private
+      - public
+    depends_on:
+      - web-api
+    ports:
+      - 8000:80
+    volumes:
+      - web-api-static:/project/static
+      - web-api-media:/project/media
+      - web-api-logs:/project/logs
+      - ./scripts/nginx/sites-enabled/data-pipeline.conf:/etc/nginx/conf.d/data-pipeline.conf
+
+networks:
+  private:
+  public:
+
+volumes:
+  web-api-static:
+  web-api-media:
+  web-api-logs:
