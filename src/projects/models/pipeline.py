@@ -324,3 +324,7 @@ class PipelineResultFile(models.Model):
 
     def open(self):
         return open(self.path, 'rb')
+
+    def write(self, data):
+        with open(self.path, 'wb') as e:
+            e.write(data)

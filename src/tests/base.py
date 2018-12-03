@@ -283,9 +283,12 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
         content=None,
         json_data=None,
         cookies=None,
+        headers=None,
     ):
         response = requests.Response()
         response.code = 'Ok'
+        if headers:
+            response.headers = headers
         response.status_code = status
         response._content = str.encode(
             json.dumps(json_data)
