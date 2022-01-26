@@ -20,7 +20,7 @@ cache:
 before_script:
   - sudo make install
   - cd ../../
-  - sudo apt-get install python-dev
+  - sudo apt-get install python-dev uwsgi-plugin-python3 python3-opencv -y
 before_install:
   - docker pull postgres:12
   - docker run -d -p 127.0.0.1:5433:5432 

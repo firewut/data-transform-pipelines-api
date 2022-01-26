@@ -36,7 +36,7 @@ setup(
         "jsonschema==4.4.0",
         "markdown2==2.4.2",
         "mock==4.0.3",
-        "numpy==1.22.1",
+        "numpy==1.21.5",
         "opencv-python==4.5.5.62",
         "psycopg2==2.9.3",
         "python-magic==0.4.24",
