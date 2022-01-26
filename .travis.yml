@@ -29,7 +29,7 @@ before_install:
     -e POSTGRES_PASSWORD=$DB_PASSWORD 
     postgres:12
 install:
-  - pip install -r requirements.txt
+  - pip install .
 script:
   - mkdir /tmp/media
   - mkdir /tmp/logs

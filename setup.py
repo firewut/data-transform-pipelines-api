@@ -1,12 +1,7 @@
 from setuptools import setup, find_packages
 
-from distutils.command.sdist import sdist as sdist_orig
-from distutils.errors import DistutilsExecError
-
-
-# Configuration is in setup.cfg
 setup(
-    name="data-transform-api",
+    name="data_transform_api",
     url="https://github.com/firewut/data-transform-pipelines-api",
     version=1.0,
     license="MIT",
