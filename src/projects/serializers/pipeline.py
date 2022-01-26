@@ -20,20 +20,20 @@ class PipelineResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = PipelineResult
         fields = (
-            'id',
-            'pipeline',
-            'ctime',
-            'error',
-            'result',
-            'is_finished',
+            "id",
+            "pipeline",
+            "ctime",
+            "error",
+            "result",
+            "is_finished",
         )
         read_only = (
-            'id',
-            'pipeline',
-            'ctime',
-            'error',
-            'result',
-            'is_finished',
+            "id",
+            "pipeline",
+            "ctime",
+            "error",
+            "result",
+            "is_finished",
         )
 
 
@@ -44,22 +44,20 @@ class PipelineResultFileSerializer(QueryFieldsMixin, serializers.ModelSerializer
     class Meta:
         model = PipelineResultFile
         fields = (
-            'id',
-            'pipeline_result',
-            'md5_hash',
-            'mimetype',
-            'size',
-            'ctime',
+            "id",
+            "pipeline_result",
+            "md5_hash",
+            "mimetype",
+            "size",
+            "ctime",
         )
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        representation['url'] = reverse(
-            'files_x_accel_redirect-content',
-            args=(
-                instance.pk,
-            ),
+        representation["url"] = reverse(
+            "files_x_accel_redirect-content",
+            args=(instance.pk,),
         )
 
         return representation
@@ -90,13 +88,13 @@ class PipelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         # Retrieve processors used in a Pipeline
         _processors = {}
         for processor in processors:
-            if processor['id'] not in _processors.keys():
-                _processors[processor['id']] = Processor.objects.get(pk=processor['id'])
+            if processor["id"] not in _processors.keys():
+                _processors[processor["id"]] = Processor.objects.get(pk=processor["id"])
 
         # Check Pipeline Data Flow
         for i in range(0, len(processors) - 1):
-            current_processor = _processors[processors[i]['id']]
-            next_processor = _processors[processors[i + 1]['id']]
+            current_processor = _processors[processors[i]["id"]]
+            next_processor = _processors[processors[i + 1]["id"]]
 
             if not current_processor.can_send_result(next_processor):
                 raise serializers.ValidationError(
@@ -107,15 +105,13 @@ class PipelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
         # Check Processor in_config and out_config
         for i, processor in enumerate(processors):
-            _processor = _processors[processor['id']]
+            _processor = _processors[processor["id"]]
 
             try:
                 _processor.check_in_config(processor)
             except Exception as e:
                 raise serializers.ValidationError(
-                    "{}[{}] has invalid in_config: {}".format(
-                        _processor.id, i, str(e)
-                    )
+                    "{}[{}] has invalid in_config: {}".format(_processor.id, i, str(e))
                 )
 
         return
@@ -123,11 +119,7 @@ class PipelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     def _cleanup_processors(self, processors: []):
         cleaned_processors = []
 
-        processor_allowed_properties = [
-            'id',
-            'in_config',
-            'out_config'
-        ]
+        processor_allowed_properties = ["id", "in_config", "out_config"]
         for processor in processors:
             cleaned_processor = {}
             for k, v in processor.items():
@@ -138,22 +130,18 @@ class PipelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         return cleaned_processors
 
     def create(self, validated_data):
-        processors = validated_data.pop('processors', None)
+        processors = validated_data.pop("processors", None)
         if processors:
-            validated_data['processors'] = self._cleanup_processors(
-                processors
-            )
-            self.check_processors(validated_data['processors'])
+            validated_data["processors"] = self._cleanup_processors(processors)
+            self.check_processors(validated_data["processors"])
 
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        processors = validated_data.pop('processors', None)
+        processors = validated_data.pop("processors", None)
         if processors:
-            validated_data['processors'] = self._cleanup_processors(
-                processors
-            )
-            self.check_processors(validated_data['processors'])
+            validated_data["processors"] = self._cleanup_processors(processors)
+            self.check_processors(validated_data["processors"])
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
@@ -164,38 +152,30 @@ class PipelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         instance_processors_ids = list()
 
         for _processor in instance.processors:
-            instance_processors_ids.append(
-                _processor.get('id')
-            )
+            instance_processors_ids.append(_processor.get("id"))
 
         template_processors = {}
         for processor in Processor.objects.filter_ids(instance_processors_ids):
-            template_processors[processor.pk] = ProcessorSerializer(
-                processor
-            ).data
+            template_processors[processor.pk] = ProcessorSerializer(processor).data
 
         for _processor in instance.processors:
-            _processor.update({
-                'template': template_processors.get(_processor.get('id'))
-            })
+            _processor.update(
+                {"template": template_processors.get(_processor.get("id"))}
+            )
         return representation
 
     def validate_processors(self, value):
         missing_processors = []
-        processors_ids = set(
-            Processor.objects.all().values_list('id', flat=True)
-        )
+        processors_ids = set(Processor.objects.all().values_list("id", flat=True))
 
         if isinstance(value, list):
             for _processor in value:
-                if _processor['id'] not in processors_ids:
-                    missing_processors.append(_processor['id'])
+                if _processor["id"] not in processors_ids:
+                    missing_processors.append(_processor["id"])
 
         if len(missing_processors) > 0:
             raise serializers.ValidationError(
-                "Processors does not exist: {}".format(
-                    missing_processors
-                )
+                "Processors does not exist: {}".format(missing_processors)
             )
 
         return value

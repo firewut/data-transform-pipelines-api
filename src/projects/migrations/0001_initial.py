@@ -19,26 +19,21 @@ def load_processors_fixture(apps, schema_editor):
             return apps.get_model(model_identifier)
         except (LookupError, TypeError):
             raise base.DeserializationError(
-                "Invalid model identifier: '%s'" % model_identifier)
+                "Invalid model identifier: '%s'" % model_identifier
+            )
 
     python._get_model = _get_model
 
     try:
         # Call loaddata command
         call_command(
-            'loaddata',
-            'projects/fixtures/processors.json',
-            app_label='projects'
+            "loaddata", "projects/fixtures/processors.json", app_label="projects"
         )
         call_command(
-            'loaddata',
-            'projects/fixtures/projects.json',
-            app_label='projects'
+            "loaddata", "projects/fixtures/projects.json", app_label="projects"
         )
         call_command(
-            'loaddata',
-            'projects/fixtures/pipelines.json',
-            app_label='projects'
+            "loaddata", "projects/fixtures/pipelines.json", app_label="projects"
         )
     finally:
         # Restore old _get_model() function
@@ -49,64 +44,95 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Pipeline',
+            name="Pipeline",
             fields=[
-                ('ctime', models.DateTimeField(
-                    null=True, blank=True, auto_now_add=True)),
-                ('mtime', models.DateTimeField(null=True, blank=True, auto_now=True)),
-                ('id', models.UUIDField(default=uuid.uuid4,
-                                        editable=False, primary_key=True, serialize=False)),
-                ('title', models.CharField(max_length=666)),
-                ('description', models.TextField(blank=True, null=True)),
-                ('is_active', models.BooleanField(blank=True, default=True)),
-                ('processors', django.contrib.postgres.fields.jsonb.JSONField(
-                    blank=True, null=True)),
+                (
+                    "ctime",
+                    models.DateTimeField(null=True, blank=True, auto_now_add=True),
+                ),
+                ("mtime", models.DateTimeField(null=True, blank=True, auto_now=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("title", models.CharField(max_length=666)),
+                ("description", models.TextField(blank=True, null=True)),
+                ("is_active", models.BooleanField(blank=True, default=True)),
+                (
+                    "processors",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        blank=True, null=True
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Processor',
+            name="Processor",
             fields=[
-                ('id', models.CharField(editable=False,
-                                        max_length=666, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=666)),
-                ('image', models.TextField(blank=True, default=None, null=True)),
-                ('description', models.TextField(blank=True, null=True)),
-                ('schema', django.contrib.postgres.fields.jsonb.JSONField()),
-                ('ui_schema', django.contrib.postgres.fields.jsonb.JSONField(blank=True, default=None, null=True)),
+                (
+                    "id",
+                    models.CharField(
+                        editable=False,
+                        max_length=666,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("name", models.CharField(max_length=666)),
+                ("image", models.TextField(blank=True, default=None, null=True)),
+                ("description", models.TextField(blank=True, null=True)),
+                ("schema", django.contrib.postgres.fields.jsonb.JSONField()),
+                (
+                    "ui_schema",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        blank=True, default=None, null=True
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Project',
+            name="Project",
             fields=[
-                ('ctime', models.DateTimeField(
-                    null=True, blank=True, auto_now_add=True)),
-                ('mtime', models.DateTimeField(null=True, blank=True, auto_now=True)),
-                ('id', models.UUIDField(default=uuid.uuid4,
-                                        editable=False, primary_key=True, serialize=False)),
-                ('title', models.CharField(max_length=666)),
-                ('description', models.TextField(blank=True, null=True)),
-                ('is_active', models.BooleanField(blank=True, default=True)),
+                (
+                    "ctime",
+                    models.DateTimeField(null=True, blank=True, auto_now_add=True),
+                ),
+                ("mtime", models.DateTimeField(null=True, blank=True, auto_now=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("title", models.CharField(max_length=666)),
+                ("description", models.TextField(blank=True, null=True)),
+                ("is_active", models.BooleanField(blank=True, default=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AddField(
-            model_name='pipeline',
-            name='project',
+            model_name="pipeline",
+            name="project",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to='projects.Project'),
+                on_delete=django.db.models.deletion.CASCADE, to="projects.Project"
+            ),
         ),
-        migrations.RunPython(
-            load_processors_fixture,
-            lambda apps, schema_editor: None
-        ),
+        migrations.RunPython(load_processors_fixture, lambda apps, schema_editor: None),
     ]

@@ -14,67 +14,42 @@ from tests.workers.base import WorkerBaseTestCase
 class GrayscaleImageTestCase(WorkerBaseTestCase):
     worker_class = GrayscaleImage
 
-    image_as_file = open(
-        os.path.join(
-            os.path.dirname(__file__),
-            '../',
-            'data',
-            'image.png'
-        ),
-        'rb'
-    )
-    image_as_data = base64.b64encode(
-        open(
-            os.path.join(
-                os.path.dirname(__file__),
-                '../',
-                'data',
-                'image.png'
-            ),
-            'rb'
-        ).read()
-    ).decode()
-
     grayscaled_image_path = os.path.join(
-        os.path.dirname(__file__),
-        '../',
-        'data',
-        'grayscaled.png'
+        WorkerBaseTestCase.images_dir, "grayscaled.png"
     )
 
-    @BaseTestCase.cases(
-        (
-            'file_with_size',
-            image_as_file,
-        ),
-        (
-            'base64_with_size',
-            image_as_data,
-        ),
-    )
-    def test_worker(self, value):
-        result = self.worker_class(
-            pipeline_result=self.pipeline_result
-        ).execute(
-            value
-        )
+    def test_worker__image_as_file(self):
+        value = open(self.image_path, "rb")
+        result = self.worker_class(pipeline_result=self.pipeline_result).execute(value)
 
         self.assertTrue(
-            isinstance(
-                result,
-                rest_framework.utils.serializer_helpers.ReturnDict
-            )
+            isinstance(result, rest_framework.utils.serializer_helpers.ReturnDict)
         )
 
-        file_id = result['id']
+        file_id = result["id"]
 
         self.assertTrue(
             filecmp.cmp(
-                os.path.join(
-                    settings.MEDIA_ROOT,
-                    file_id + '.png'
-                ),
+                os.path.join(settings.MEDIA_ROOT, file_id + ".png"),
                 self.grayscaled_image_path,
             ),
-            file_id
+            file_id,
+        )
+
+    def test_worker__image_as_data(self):
+        value = base64.b64encode(open(self.image_path, "rb").read()).decode()
+        result = self.worker_class(pipeline_result=self.pipeline_result).execute(value)
+
+        self.assertTrue(
+            isinstance(result, rest_framework.utils.serializer_helpers.ReturnDict)
+        )
+
+        file_id = result["id"]
+
+        self.assertTrue(
+            filecmp.cmp(
+                os.path.join(settings.MEDIA_ROOT, file_id + ".png"),
+                self.grayscaled_image_path,
+            ),
+            file_id,
         )

@@ -19,84 +19,75 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')$&j_jd!vnscd87t_%a9766399cfkf9x1@+dvz4g2=%1bf0q&k'
+SECRET_KEY = ")$&j_jd!vnscd87t_%a9766399cfkf9x1@+dvz4g2=%1bf0q&k"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG') == 'True'
-DEMO_MODE = os.environ.get('DEMO_MODE') == 'True'
+DEBUG = os.environ.get("DEBUG") == "True"
+DEMO_MODE = os.environ.get("DEMO_MODE") == "True"
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
-LOGS_DIR = os.environ.get(
-    'DJANGO_LOGS_DIR',
-    os.path.join(
-        BASE_DIR,
-        'logs'
-    )
-)
+LOGS_DIR = os.environ.get("DJANGO_LOGS_DIR", os.path.join(BASE_DIR, "logs"))
 
 # Application definition
 
 INSTALLED_APPS = [
-    'rest_framework',
-    'django_filters',
-    'drf_queryfields',
-
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-    'projects',
-    'core',
+    "rest_framework",
+    "django_filters",
+    "drf_queryfields",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "projects",
+    "core",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'core.middleware.cors.CorsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "core.middleware.cors.CorsMiddleware",
 ]
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = "urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'wsgi.application'
+WSGI_APPLICATION = "wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'data_transform'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'Eir4Ooquae'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432')
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("DB_NAME", "data_transform"),
+        "USER": os.environ.get("DB_USER", "postgres"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "Eir4Ooquae"),
+        "HOST": os.environ.get("DB_HOST", "localhost"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
 
@@ -106,16 +97,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -123,9 +114,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -138,112 +129,96 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 APPEND_SLASH = False
 
-API_URL = 'api/'
+API_URL = "api/"
 
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.join(
-    BASE_DIR,
-    'static'
-)
-MEDIA_ROOT = os.path.join(
-    BASE_DIR,
-    'media'
-)
-STATIC_APP_DIR = os.path.join(
-    BASE_DIR,
-    'static'
-)
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+STATIC_APP_DIR = os.path.join(BASE_DIR, "static")
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'core.pagination.CustomPagination',
-    'DEFAULT_AUTHENTICATION_CLASSES': [],
-    'DEFAULT_PERMISSION_CLASSES': [],
-    'PAGE_SIZE': 100,
-    'EXCEPTION_HANDLER': 'core.middleware.exceptions_handler.custom_exception_handler',
-    'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend',
-    )
+    "DEFAULT_PAGINATION_CLASS": "core.pagination.CustomPagination",
+    "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_PERMISSION_CLASSES": [],
+    "PAGE_SIZE": 100,
+    "EXCEPTION_HANDLER": "core.middleware.exceptions_handler.custom_exception_handler",
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
-PAGE_SIZE_QUERY_PARAM = 'page_size'
+PAGE_SIZE_QUERY_PARAM = "page_size"
 
-CELERY_BROKER_URL = os.environ.get(
-    'CELERY_BROKER_URL',
-    'redis://127.0.0.1:6379/0'
-)
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://127.0.0.1:6379/0")
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"
         },
-        'simple': {
-            'format': '%(levelname)s %(asctime)s %(message)s'
-        },
+        "simple": {"format": "%(levelname)s %(asctime)s %(message)s"},
     },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
-        'exceptions-log': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': LOGS_DIR + '/exceptions.log',
-            'formatter': 'verbose',
+        "exceptions-log": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": LOGS_DIR + "/exceptions.log",
+            "formatter": "verbose",
         },
-        'common-log': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': LOGS_DIR + '/common.log',
-            'formatter': 'verbose',
+        "common-log": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": LOGS_DIR + "/common.log",
+            "formatter": "verbose",
         },
-        'django.db.backends-log': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': LOGS_DIR + '/django.db.backends.log',
-            'formatter': 'verbose',
+        "django.db.backends-log": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": LOGS_DIR + "/django.db.backends.log",
+            "formatter": "verbose",
         },
         # 'sentry': {
         #     'level': 'ERROR',
         #     'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
         #     'formatter': 'verbose',
         # },
-        'celery-log': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': LOGS_DIR + '/celery.log',
-            'formatter': 'verbose',
+        "celery-log": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": LOGS_DIR + "/celery.log",
+            "formatter": "verbose",
         },
     },
-    'loggers': {
-        'exceptions': {
-            'handlers': ['exceptions-log'],
-            'level': 'DEBUG',
-            'propagate': False,
+    "loggers": {
+        "exceptions": {
+            "handlers": ["exceptions-log"],
+            "level": "DEBUG",
+            "propagate": False,
         },
-        'common': {
-            'handlers': ['common-log'],
-            'level': 'INFO',
-            'propagate': False,
+        "common": {
+            "handlers": ["common-log"],
+            "level": "INFO",
+            "propagate": False,
         },
-        'celery.tasks': {
-            'handlers': ['celery-log'],
-            'level': 'INFO',
-            'propagate': False,
+        "celery.tasks": {
+            "handlers": ["celery-log"],
+            "level": "INFO",
+            "propagate": False,
         },
-        'django.db.backends': {
-            'handlers': ['django.db.backends-log'],
-            'level': 'DEBUG',
-            'propagate': False,
+        "django.db.backends": {
+            "handlers": ["django.db.backends-log"],
+            "level": "DEBUG",
+            "propagate": False,
         },
-        'django.request': {
-            'handlers': ['exceptions-log'],
-            'level': 'ERROR',
-            'propagate': True,
+        "django.request": {
+            "handlers": ["exceptions-log"],
+            "level": "ERROR",
+            "propagate": True,
         },
     },
 }

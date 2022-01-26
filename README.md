@@ -20,10 +20,8 @@ API Documentation available after a startup under [http://127.0.0.1:8000/api/v1/
 
 ## Requirements
 
-Every Worker may have it's own requirements. By default this package requires:
-
-* Libmagic = Required
-* OpenCV 3+ - Optional ( used by `template_match_image` processor )
+Every Worker may have it's own requirements. 
+Check setup.py for package requirements.
 
 ## Execution
 
@@ -38,20 +36,15 @@ docker-compose up
 or 
 
 ```bash
-pip install -r requirements.txt
+pip install .
 
-mkdir ./media ./logs
 cd src 
 ./manage.py migrate
 ./manage.py collectstatic
 ./manage.py sync_processors
-env DEBUG=True ./manage.py runserver 8000
-```
 
-Then Execute Redis and Celery
-
-```bash
 redis-server
-
 celery -A core worker -l info --concurrency 8 --max-tasks-per-child 2
+
+env DEBUG=True DJANGO_LOGS_DIR=/tmp/ ./manage.py runserver 8000
 ```

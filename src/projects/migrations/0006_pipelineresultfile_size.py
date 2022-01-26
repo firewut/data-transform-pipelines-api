@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0005_auto_20181109_1329'),
+        ("projects", "0005_auto_20181109_1329"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='pipelineresultfile',
-            name='size',
+            model_name="pipelineresultfile",
+            name="size",
             field=models.BigIntegerField(default=0),
         ),
     ]

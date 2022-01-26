@@ -4,6 +4,7 @@ static
 db.sqlite3
 env/
 .DS_Store
+build/
 
 led / optimized / DLL files
 __pycache__/
@@ -54,3 +55,5 @@ docs/_build/
 # IDE
 .idea
 .vscode
+
+dump.rdb

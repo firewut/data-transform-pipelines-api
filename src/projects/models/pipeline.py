@@ -9,9 +9,6 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.validators import URLValidator
-from django.contrib.postgres.fields import (
-    JSONField
-)
 from django.db import models
 import celery
 import magic
@@ -34,7 +31,7 @@ class Pipeline(WithDate, models.Model):
     title = models.CharField(max_length=666, null=False, blank=False)
     description = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(blank=True, default=True)
-    processors = JSONField(null=True, blank=True)
+    processors = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return str(self.id)
@@ -49,25 +46,23 @@ class Pipeline(WithDate, models.Model):
         return False
 
     def create_result(self, data):
-        result_object = PipelineResult.objects.create(
-            pipeline=self
-        )
+        result_object = PipelineResult.objects.create(pipeline=self)
 
         if self.accepts_file() and self.check_is_internal_file(data):
             input_file = result_object.save_file(data)
             data = {
-                'id': input_file.pk,
+                "id": input_file.pk,
             }
 
         # Generate a task to queue processing
         celery.current_app.send_task(
-            'projects.tasks.process_pipeline',
+            "projects.tasks.process_pipeline",
             kwargs={
-                'result_id': result_object.pk,
-                'processors': self.processors,
-                'data': data,
-                'error': None,
-            }
+                "result_id": result_object.pk,
+                "processors": self.processors,
+                "data": data,
+                "error": None,
+            },
         )
 
         return result_object
@@ -82,7 +77,7 @@ class Pipeline(WithDate, models.Model):
     def get_first_processor(self):
         first_processor = None
         if self.processors and len(self.processors) > 0:
-            first_processor = Processor.objects.get(pk=self.processors[0]['id'])
+            first_processor = Processor.objects.get(pk=self.processors[0]["id"])
 
         return first_processor
 
@@ -95,7 +90,7 @@ class Pipeline(WithDate, models.Model):
 
     def accepts_file(self):
         """
-            Helper for first processor input data type
+        Helper for first processor input data type
         """
         first_processor = self.get_first_processor()
         if first_processor:
@@ -106,7 +101,7 @@ class Pipeline(WithDate, models.Model):
     @classmethod
     def housekeeping(cls, conditions: models.Q = None, date_start=None, date_end=None):
         """
-            Mass Results cleanup
+        Mass Results cleanup
         """
         if not conditions:
             conditions = models.Q()
@@ -123,19 +118,17 @@ class Pipeline(WithDate, models.Model):
 
     def remove_results(self, date_start=None, date_end=None):
         """
-            Remove all Results and Associated Files
-                older than some moment
+        Remove all Results and Associated Files
+            older than some moment
         """
         conditions = models.Q(pipeline=self)
         Pipeline.housekeeping(
-            conditions=conditions,
-            date_start=date_start,
-            date_end=date_end
+            conditions=conditions, date_start=date_start, date_end=date_end
         )
 
     def delete(self):
         """
-            Remove all Results and Associated Files
+        Remove all Results and Associated Files
         """
         self.remove_results()
 
@@ -146,32 +139,26 @@ class PipelineResult(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     pipeline = models.ForeignKey(Pipeline, on_delete=models.CASCADE, editable=False)
     ctime = models.DateTimeField(null=True, blank=True, auto_now_add=True)
-    error = JSONField(null=True, blank=True)
-    result = JSONField(null=True, blank=True)
+    error = models.JSONField(null=True, blank=True)
+    result = models.JSONField(null=True, blank=True)
     is_finished = models.BooleanField(blank=True, default=False)
 
     def __str__(self):
         return str(self.id)
 
     def get_last_file(self):
-        return PipelineResultFile.objects.filter(
-            pipeline_result=self
-        ).last()
+        return PipelineResultFile.objects.filter(pipeline_result=self).last()
 
     def delete_unused_files(self):
         if not self.result:
             return
 
-        for _file in PipelineResultFile.objects.filter(
-            pipeline_result=self
-        ):
-            if self.result.get('id') != str(_file.id):
+        for _file in PipelineResultFile.objects.filter(pipeline_result=self):
+            if self.result.get("id") != str(_file.id):
                 _file.delete()
 
     def delete(self):
-        for _file in PipelineResultFile.objects.filter(
-            pipeline_result=self
-        ):
+        for _file in PipelineResultFile.objects.filter(pipeline_result=self):
             _file.delete()
 
         super().delete()
@@ -197,9 +184,7 @@ class PipelineResult(models.Model):
                     is_opened = True
                 except ValidationError:
                     if is_base64(data):
-                        input_file = io.BytesIO(
-                            base64.b64decode(data)
-                        )
+                        input_file = io.BytesIO(base64.b64decode(data))
                         is_opened = True
             except Exception as e:
                 if raise_exception:
@@ -207,11 +192,9 @@ class PipelineResult(models.Model):
                 input_file = data
 
         elif isinstance(data, dict):
-            if 'id' in data:
+            if "id" in data:
                 try:
-                    _file = PipelineResultFile.objects.get(
-                        pk=data['id']
-                    )
+                    _file = PipelineResultFile.objects.get(pk=data["id"])
                     input_file = _file.open()
                     is_opened = True
                 except Exception as e:
@@ -228,10 +211,7 @@ class PipelineResult(models.Model):
         converted_data, is_opened = PipelineResult.open_file(data)
 
         if self.pipeline.check_is_internal_file(data) and is_opened:
-            default_storage.save(
-                input_file.path,
-                ContentFile(converted_data.read())
-            )
+            default_storage.save(input_file.path, ContentFile(converted_data.read()))
             input_file.post_process(self)
 
         return input_file
@@ -241,7 +221,9 @@ class PipelineResultFile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     path = models.CharField(max_length=666, null=False, blank=False)
     extension = models.CharField(max_length=10, null=True, blank=True)
-    pipeline_result = models.ForeignKey(PipelineResult, on_delete=models.CASCADE, editable=False)
+    pipeline_result = models.ForeignKey(
+        PipelineResult, on_delete=models.CASCADE, editable=False
+    )
     md5_hash = models.CharField(max_length=64, editable=False)
     size = models.BigIntegerField(default=0)
     mimetype = models.CharField(max_length=666, null=True, blank=True)
@@ -257,10 +239,7 @@ class PipelineResultFile(models.Model):
         if not file_id:
             return
 
-        file_path = os.path.join(
-            settings.MEDIA_ROOT,
-            file_id
-        )
+        file_path = os.path.join(settings.MEDIA_ROOT, file_id)
         if os.path.exists(file_path):
             os.remove(file_path)
 
@@ -272,10 +251,7 @@ class PipelineResultFile(models.Model):
 
     def prepare(self, *args, **kwargs):
         self.id = random_uuid4()
-        self.path = os.path.join(
-            settings.MEDIA_ROOT,
-            self.id
-        )
+        self.path = os.path.join(settings.MEDIA_ROOT, self.id)
 
         if os.path.isfile(self.path):
             self._saved = True
@@ -304,18 +280,14 @@ class PipelineResultFile(models.Model):
                     pass
 
             if self.mimetype:
-                self.extension = mimetypes.guess_extension(
-                    self.mimetype
-                )
+                self.extension = mimetypes.guess_extension(self.mimetype)
 
             if self.extension:
                 if not self.path.endswith(self.extension):
                     old_path = self.path
                     self.path = self.path + self.extension
 
-                    os.rename(
-                        old_path, self.path
-                    )
+                    os.rename(old_path, self.path)
 
             self.md5_hash = hash_md5.hexdigest()
             self.pipeline_result = pipeline_result
@@ -323,8 +295,8 @@ class PipelineResultFile(models.Model):
             self._saved = True
 
     def open(self):
-        return open(self.path, 'rb')
+        return open(self.path, "rb")
 
     def write(self, data):
-        with open(self.path, 'wb') as e:
+        with open(self.path, "wb") as e:
             e.write(data)

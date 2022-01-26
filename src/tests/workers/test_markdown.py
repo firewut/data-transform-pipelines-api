@@ -7,7 +7,7 @@ class MarkdownTestCase(WorkerBaseTestCase):
     worker_class = Markdown
 
     @BaseTestCase.cases(
-        ('string', '**Hello World**', '<p><strong>Hello World</strong></p>\n'),
+        ("string", "**Hello World**", "<p><strong>Hello World</strong></p>\n"),
     )
     def test_worker(self, value, expectation):
         result = self.worker_class().execute(value)

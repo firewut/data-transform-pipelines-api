@@ -9,12 +9,12 @@ class ReadabilityTestCase(WorkerBaseTestCase):
     def test_worker(self):
         result = self.worker_class().execute(example_com)
         self.assertNotIn(
-            '<title>',
+            "<title>",
             result,
         )
 
 
-example_com = '''
+example_com = """
 <!doctype html>
 <html>
 <head>
@@ -65,4 +65,4 @@ example_com = '''
 </div>
 </body>
 </html>
-'''
+"""

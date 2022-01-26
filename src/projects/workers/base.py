@@ -1,16 +1,11 @@
 import abc
-import base64
 import copy
 import io
 
-from django.core.files.uploadedfile import (
-    InMemoryUploadedFile
-)
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from projects.models import *
-from projects.serializers.pipeline import (
-    PipelineResultFileSerializer
-)
+from projects.serializers.pipeline import PipelineResultFileSerializer
 
 
 class Worker(metaclass=abc.ABCMeta):
@@ -35,28 +30,22 @@ class Worker(metaclass=abc.ABCMeta):
         processor.ui_schema = self.ui_schema
 
         self.processor = processor
-        if 'pipeline_result' in kwargs:
-            result = kwargs['pipeline_result']
+        if "pipeline_result" in kwargs:
+            result = kwargs["pipeline_result"]
             self.pipeline = result.pipeline
             self.pipeline_result = result
 
-        if 'pipeline_processor' in kwargs:
-            self.set_pipeline_processor(
-                kwargs['pipeline_processor']
-            )
+        if "pipeline_processor" in kwargs:
+            self.set_pipeline_processor(kwargs["pipeline_processor"])
 
-    def set_pipeline_processor(self, pipeline_processor: {}):
-        self.pipeline_processor = PipelineProcessor(
-            pipeline_processor
-        )
+    def set_pipeline_processor(self, pipeline_processor: dict):
+        self.pipeline_processor = PipelineProcessor(pipeline_processor)
 
     def check_input_data(self, data):
         return self.processor.check_input_data(data)
 
     def open_file(self, value):
-        _file, _ = self.pipeline_result.open_file(
-            value
-        )
+        _file, _ = self.pipeline_result.open_file(value)
         return _file
 
     def request_file(self):
@@ -70,9 +59,7 @@ class Worker(metaclass=abc.ABCMeta):
             if isinstance(data, PipelineResultFile):
                 _file = copy.deepcopy(data)
                 _file.post_process(self.pipeline_result)
-                serializer = PipelineResultFileSerializer(
-                    instance=_file
-                )
+                serializer = PipelineResultFileSerializer(instance=_file)
                 data = serializer.data
             else:
                 if isinstance(data, io.BufferedReader):
@@ -84,12 +71,12 @@ class Worker(metaclass=abc.ABCMeta):
     def discard_files(self, data):
         if self.input_is_file:
             if isinstance(data, dict):
-                PipelineResultFile.remove_by_id(data.get('id'))
+                PipelineResultFile.remove_by_id(data.get("id"))
 
     def prepare_input_data(self, data):
         """
-            If Processor Input is a File this should convert
-                Input Data into a `file descriptor` object
+        If Processor Input is a File this should convert
+            Input Data into a `file descriptor` object
         """
 
         try:
@@ -99,10 +86,11 @@ class Worker(metaclass=abc.ABCMeta):
             self.raw_input_data = data
             converted_data = data
 
-        if self.processor.input_is_file() and self.pipeline.check_is_internal_file(data):
+        if self.processor.input_is_file() and self.pipeline.check_is_internal_file(
+            data
+        ):
             converted_data, is_opened = self.pipeline_result.open_file(
-                data,
-                self.processor.input_is_file_only()
+                data, self.processor.input_is_file_only()
             )
             self.input_is_file = is_opened
 

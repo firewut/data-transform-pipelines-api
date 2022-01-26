@@ -6,22 +6,17 @@ from projects.workers.exceptions import WorkerNoInputException
 
 
 class ResizeImage(Worker):
-    id = 'resize_image'
-    name = 'resize_image'
-    image = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Resize_small_font_awesome.svg/512px-Resize_small_font_awesome.svg.png'
-    description = 'Resize an image. Tolerates Aspect Ratio'
+    id = "resize_image"
+    name = "resize_image"
+    image = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Resize_small_font_awesome.svg/512px-Resize_small_font_awesome.svg.png"
+    description = "Resize an image. Tolerates Aspect Ratio"
     schema = {
         "type": "object",
-        "required": [
-                "in_config"
-        ],
+        "required": ["in_config"],
         "properties": {
             "in": {
-                "type": [
-                    "file",
-                    "string"
-                ],
-                "description": "object to make a template from"
+                "type": ["file", "string"],
+                "description": "object to make a template from",
             },
             "in_config": {
                 "type": "object",
@@ -39,12 +34,9 @@ class ResizeImage(Worker):
                                 "type": "integer",
                                 "minimum": 0,
                             },
-                            "additionalProperties": False
+                            "additionalProperties": False,
                         },
-                        "required": [
-                            "width",
-                            "height"
-                        ]
+                        "required": ["width", "height"],
                     },
                     "percentage": {
                         "type": "integer",
@@ -53,25 +45,13 @@ class ResizeImage(Worker):
                     },
                 },
                 "oneOf": [
-                    {
-                        "required": ["size"]
-                    },
-                    {
-                        "required": ["percentage"]
-                    },
-                ]
+                    {"required": ["size"]},
+                    {"required": ["percentage"]},
+                ],
             },
-            "in_config_example": {
-                "size": {
-                    "width": 400,
-                    "height": 400
-                }
-            },
-            "out": {
-                "type": "file",
-                "description": "resized file"
-            }
-        }
+            "in_config_example": {"size": {"width": 400, "height": 400}},
+            "out": {"type": "file", "description": "resized file"},
+        },
     }
 
     def process(self, data):
@@ -79,33 +59,24 @@ class ResizeImage(Worker):
         img = None
 
         if image is None:
-            raise WorkerNoInputException(
-                'File Object or Base64 String Input required'
-            )
+            raise WorkerNoInputException("File Object or Base64 String Input required")
 
         in_config = self.pipeline_processor.in_config
 
         percentage = None
-        size = in_config.get('size')
+        size = in_config.get("size")
         if size:
             img = resizeimage.resize_thumbnail(
-                image,
-                [
-                    size.get('width'),
-                    size.get('height')
-                ]
+                image, [size.get("width"), size.get("height")]
             )
         else:
-            percentage = int(in_config.get('percentage'))
+            percentage = int(in_config.get("percentage"))
             new_size = [
                 (image.width * percentage) // 100,
-                (image.height * percentage) // 100
+                (image.height * percentage) // 100,
             ]
 
-            img = resizeimage.resize_thumbnail(
-                image,
-                new_size
-            )
+            img = resizeimage.resize_thumbnail(image, new_size)
 
         _file = self.request_file()
         img.save(_file.path, img.format)

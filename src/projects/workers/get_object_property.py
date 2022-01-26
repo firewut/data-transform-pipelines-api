@@ -3,19 +3,15 @@ from projects.workers.base import Worker
 
 
 class GetObjectProperty(Worker):
-    id = 'get_object_property'
-    name = 'get_object_property'
+    id = "get_object_property"
+    name = "get_object_property"
     image = None
-    description = 'Get Object Property if exists'
+    description = "Get Object Property if exists"
     schema = {
         "type": "object",
-        "required": [
-            "in_config"
-        ],
+        "required": ["in_config"],
         "properties": {
-            "in": {
-                "type": "object"
-            },
+            "in": {"type": "object"},
             "out": {
                 "type": [
                     "array",
@@ -29,25 +25,19 @@ class GetObjectProperty(Worker):
             },
             "in_config": {
                 "type": "object",
-                "required": [
-                    "property"
-                ],
+                "required": ["property"],
                 "properties": {
                     "property": {
                         "type": "string",
-                        "description": "Object Property Name"
+                        "description": "Object Property Name",
                     }
-                }
+                },
             },
-            "in_config_example": {
-                "property": "a.b.c"
-            }
-        }
+            "in_config_example": {"property": "a.b.c"},
+        },
     }
 
     def process(self, data):
-        _property = self.pipeline_processor.in_config.get(
-            'property'
-        )
+        _property = self.pipeline_processor.in_config.get("property")
 
         return dict_finder(data, _property)

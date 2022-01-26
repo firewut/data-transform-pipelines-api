@@ -7,6 +7,4 @@ from projects.models.processor import Processor
 class ProcessorSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = Processor
-        fields = (
-            '__all__'
-        )
+        fields = "__all__"
