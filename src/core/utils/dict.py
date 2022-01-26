@@ -4,7 +4,7 @@
 
 
 def dict_finder(dictionary, element):
-    keys = element.split('.')
+    keys = element.split(".")
     rv = dictionary
     for key in keys:
         rv = rv[key]

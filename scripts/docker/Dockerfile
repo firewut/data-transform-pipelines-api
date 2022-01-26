@@ -3,7 +3,7 @@ FROM python:3.6
 RUN pip3 install -U pip
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install python-opencv uwsgi-plugin-python -y
+RUN apt-get install uwsgi-plugin-python -y
 
 ADD . /project
 WORKDIR /project

@@ -3,25 +3,18 @@ from projects.workers.base import Worker
 
 
 class RandomNumber(Worker):
-    id = 'random_number'
-    name = 'random_number'
-    image = 'https://upload.wikimedia.org/wikipedia/commons/e/e1/Ideal_chain_random_walk.png'
-    description = 'Make a random Number'
+    id = "random_number"
+    name = "random_number"
+    image = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Ideal_chain_random_walk.png"
+    description = "Make a random Number"
     ui_schema = {
-        "ui:order": [
-            "random_type", "minimum", "maximum"
-        ],
+        "ui:order": ["random_type", "minimum", "maximum"],
     }
     schema = {
         "type": "object",
-        "required": [
-                "in_config"
-        ],
+        "required": ["in_config"],
         "properties": {
-            "in": {
-                "type": "null",
-                "description": "takes no input data"
-            },
+            "in": {"type": "null", "description": "takes no input data"},
             "in_config": {
                 "type": "object",
                 "properties": {
@@ -36,41 +29,39 @@ class RandomNumber(Worker):
                     "maximum": {
                         "type": "integer",
                         "description": "Maximum",
-                    }
+                    },
                 },
                 "additionalProperties": False,
-                "required": ["random_type"]
+                "required": ["random_type"],
             },
             "in_config_example": {
                 "random_type": "integer",
                 "minimum": 10,
-                "maximum": 200
+                "maximum": 200,
             },
             "out": {
                 "description": "randomized number",
                 "type": [
                     "number",
                     "integer",
-                ]
-            }
-        }
+                ],
+            },
+        },
     }
 
     def process(self, data=None):
-        result = ''
+        result = ""
         in_config = self.pipeline_processor.in_config
 
-        random_type = in_config.get('random_type')
-        if random_type == 'number':
+        random_type = in_config.get("random_type")
+        if random_type == "number":
             result = random_float(
-                in_config.get('minimum', 1),
-                in_config.get('maximum', 1000000)
+                in_config.get("minimum", 1), in_config.get("maximum", 1000000)
             )
 
-        if random_type == 'integer':
+        if random_type == "integer":
             result = random_int(
-                in_config.get('minimum', 1),
-                in_config.get('maximum', 1000000)
+                in_config.get("minimum", 1), in_config.get("maximum", 1000000)
             )
 
         return result

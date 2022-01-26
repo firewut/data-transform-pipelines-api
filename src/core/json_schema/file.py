@@ -5,20 +5,18 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 import jsonschema
 
 FILE_TYPE_SCHEMA = {
-    'type': 'object',
-    'properties': {
-        'id': {
-            'type': 'string'
-        },
+    "type": "object",
+    "properties": {
+        "id": {"type": "string"},
     },
-    'additionalProperties': True
+    "additionalProperties": True,
 }
 
 
 def check_is_internal_file(data):
     """
-        Use this only if you know why. 
-        Check Pipeline method with same name
+    Use this only if you know why.
+    Check Pipeline method with same name
     """
     return isinstance(
         data,
@@ -26,12 +24,14 @@ def check_is_internal_file(data):
             io.BytesIO,
             io.BufferedReader,
             InMemoryUploadedFile,
-        )
+        ),
     )
 
 
 def is_base64(value: str):
-    match = re.compile('^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$').match(value)
+    match = re.compile(
+        "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$"
+    ).match(value)
     if match:
         return match.pos == 0
     return False
@@ -42,7 +42,8 @@ def file_checker(checker, instance):
         return is_base64(instance)
 
     if not isinstance(
-        instance, (
+        instance,
+        (
             # internally provided
             io.BytesIO,
             io.BufferedReader,
@@ -50,7 +51,7 @@ def file_checker(checker, instance):
             InMemoryUploadedFile,
             # JSON in case if file uploaded recently
             dict,
-        )
+        ),
     ):
         return False
 

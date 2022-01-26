@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0003_pipelineresultfile'),
+        ("projects", "0003_pipelineresultfile"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='pipelineresultfile',
-            name='mimetype',
+            model_name="pipelineresultfile",
+            name="mimetype",
             field=models.CharField(blank=True, max_length=666, null=True),
         ),
     ]

@@ -14,12 +14,8 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **options):
-        now = datetime.datetime.utcnow().replace(
-            tzinfo=pytz.utc
-        )
+        now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
 
         ten_hours_ago = now - datetime.timedelta(hours=10)
 
-        Pipeline.housekeeping(
-            date_end=ten_hours_ago
-        )
+        Pipeline.housekeeping(date_end=ten_hours_ago)

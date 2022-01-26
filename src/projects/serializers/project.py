@@ -7,7 +7,7 @@ from projects.serializers.pipeline import *
 
 class ProjectSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     pipelines = PipelineSerializer(
-        source='pipeline_set',
+        source="pipeline_set",
         many=True,
         read_only=True,
     )

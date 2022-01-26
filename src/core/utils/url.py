@@ -9,12 +9,12 @@ def urljoin(*args):
     stripped for each argument.
     """
 
-    url = "/".join(map(lambda x: str(x).rstrip('/'), args))
-    if '/' in args[-1]:
-        url += '/'
-    if '/' not in args[0]:
-        url = '/' + url
+    url = "/".join(map(lambda x: str(x).rstrip("/"), args))
+    if "/" in args[-1]:
+        url += "/"
+    if "/" not in args[0]:
+        url = "/" + url
 
-    url = url.replace('//', '/')
+    url = url.replace("//", "/")
 
     return url

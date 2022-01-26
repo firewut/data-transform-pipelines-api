@@ -1,6 +1,6 @@
 import json
 import importlib
-import random
+import os
 
 from django.conf import settings
 from django.core.management import call_command
@@ -12,23 +12,20 @@ import requests
 
 from core.utils import *
 from core.utils.url import urljoin
-from projects.views import (
-    ProjectsViewSet
-)
+from projects.views import ProjectsViewSet
 
 
 class TestMetaClass(type):
     def __new__(mcs, name, bases, dct):
         for attr_name in list(dct.keys()):
-            if hasattr(dct[attr_name], 'test_cases'):
+            if hasattr(dct[attr_name], "test_cases"):
                 cases = dct[attr_name].test_cases
                 del dct[attr_name].test_cases
-                hidden_name = '__' + attr_name
+                hidden_name = "__" + attr_name
                 mcs._move_method(dct, attr_name, hidden_name)
 
                 for case in cases:
-                    mcs._add_test_method(
-                        dct, attr_name, hidden_name, case[0], case[1:])
+                    mcs._add_test_method(dct, attr_name, hidden_name, case[0], case[1:])
 
         return super(TestMetaClass, mcs).__new__(mcs, name, bases, dct)
 
@@ -40,10 +37,11 @@ class TestMetaClass(type):
 
     @classmethod
     def _add_test_method(mcs, dct, orig_name, hidden_name, postfix, params):
-        test_method_name = '{}__{}'.format(orig_name, postfix)
+        test_method_name = "{}__{}".format(orig_name, postfix)
 
         def test_method(self):
             return getattr(self, hidden_name)(*params)
+
         test_method.__name__ = str(test_method_name)
         dct[test_method_name] = test_method
 
@@ -51,7 +49,10 @@ class TestMetaClass(type):
 class BaseTestCase(TestCase, metaclass=TestMetaClass):
     viewset = None
     user = None
-    page_size = settings.REST_FRAMEWORK['PAGE_SIZE']
+    page_size = settings.REST_FRAMEWORK["PAGE_SIZE"]
+
+    images_dir = os.path.join(os.path.dirname(__file__), "data")
+    image_path = os.path.join(images_dir, "image.png")
 
     @classmethod
     def cases(cls, *cases):
@@ -85,30 +86,20 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
         super().setUp()
 
         # Sync processors
-        call_command('sync_processors')
+        call_command("sync_processors")
 
         def send_task_apply(*args, **kwargs):
-            task_name = args[0].split('.')[-1]
-            module = importlib.import_module(
-                '.'.join(args[0].split('.')[:-1])
-            )
+            task_name = args[0].split(".")[-1]
+            module = importlib.import_module(".".join(args[0].split(".")[:-1]))
 
-            task = getattr(module, task_name).s(
-                **kwargs['kwargs']
-            ).apply()
+            task = getattr(module, task_name).s(**kwargs["kwargs"]).apply()
 
-            if task.status == 'FAILURE':
-                raise Exception(
-                    "{}.{} {}".format(
-                        module,
-                        task_name,
-                        task.result
-                    )
-                )
+            if task.status == "FAILURE":
+                raise Exception("{}.{} {}".format(module, task_name, task.result))
 
         mock.patch.object(
             celery.current_app,
-            'send_task',
+            "send_task",
             side_effect=send_task_apply,
             return_value=True,
         ).start()
@@ -124,21 +115,17 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
 
     def random_url(self):
         return "http://{}.{}/{}".format(
-            self.random_string(7),
-            self.random_string(3),
-            self.random_string(5)
+            self.random_string(7), self.random_string(3), self.random_string(5)
         )
 
-    def put_create(self, data, user=None, action='create', viewset=None, _format='json'):
+    def put_create(
+        self, data, user=None, action="create", viewset=None, _format="json"
+    ):
         if viewset is None:
             viewset = self.viewset
 
         factory = APIRequestFactory()
-        created = viewset.as_view(
-            actions={
-                'put': action
-            }
-        )
+        created = viewset.as_view(actions={"put": action})
 
         request = factory.put("", data=data, format=_format)
         response = created(request)
@@ -151,14 +138,16 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             pass
         return response, as_dict
 
-    def put_update(self, pk: str, data, action='update', user=None, viewset=None, _format='json'):
+    def put_update(
+        self, pk: str, data, action="update", user=None, viewset=None, _format="json"
+    ):
         if viewset is None:
             viewset = self.viewset
 
         factory = APIRequestFactory()
         updated = viewset.as_view(
             actions={
-                'put': action,
+                "put": action,
             }
         )
 
@@ -173,16 +162,14 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             pass
         return response, as_dict
 
-    def post_create(self, data, pk=None, user=None, action='create', viewset=None, _format='json'):
+    def post_create(
+        self, data, pk=None, user=None, action="create", viewset=None, _format="json"
+    ):
         if viewset is None:
             viewset = self.viewset
 
         factory = APIRequestFactory()
-        created = viewset.as_view(
-            actions={
-                'post': action
-            }
-        )
+        created = viewset.as_view(actions={"post": action})
 
         request = factory.post("", data=data, format=_format)
         response = created(request, pk=pk)
@@ -195,16 +182,12 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             pass
         return response, as_dict
 
-    def get_item(self, pk: str, data=None, user=None, action='retrieve', viewset=None):
+    def get_item(self, pk: str, data=None, user=None, action="retrieve", viewset=None):
         if not viewset:
             viewset = self.viewset
 
         factory = APIRequestFactory()
-        retrieved = viewset.as_view(
-            actions={
-                'get': action
-            }
-        )
+        retrieved = viewset.as_view(actions={"get": action})
 
         request = factory.get("", data=data)
         response = retrieved(request, pk=pk)
@@ -222,11 +205,7 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
             viewset = self.viewset
 
         factory = APIRequestFactory()
-        listed = viewset.as_view(
-            actions={
-                'get': 'list'
-            }
-        )
+        listed = viewset.as_view(actions={"get": "list"})
 
         request = factory.get("")
         response = listed(request)
@@ -243,25 +222,20 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
         if not user:
             user = self.user
 
-        data = {
-            'title': self.random_string(),
-            'description': self.random_string(50)
-        }
+        data = {"title": self.random_string(), "description": self.random_string(50)}
         data.update(kwargs)
-        return self.post_create(
-            data,
-            user=user,
-            viewset=ProjectsViewSet
-        )
+        return self.post_create(data, user=user, viewset=ProjectsViewSet)
 
-    def patch_update(self, pk: str, data: dict, user=None, viewset=None, _format='json'):
+    def patch_update(
+        self, pk: str, data: dict, user=None, viewset=None, _format="json"
+    ):
         if viewset is None:
             viewset = self.viewset
 
         factory = APIRequestFactory()
         patched = viewset.as_view(
             actions={
-                'patch': 'partial_update',
+                "patch": "partial_update",
             }
         )
 
@@ -286,15 +260,11 @@ class BaseTestCase(TestCase, metaclass=TestMetaClass):
         headers=None,
     ):
         response = requests.Response()
-        response.code = 'Ok'
+        response.code = "Ok"
         if headers:
             response.headers = headers
         response.status_code = status
-        response._content = str.encode(
-            json.dumps(json_data)
-        )
-        response.cookies = cookies or {
-            'CookieKey': 'CookieValue'
-        }
+        response._content = str.encode(json.dumps(json_data))
+        response.cookies = cookies or {"CookieKey": "CookieValue"}
 
         return response

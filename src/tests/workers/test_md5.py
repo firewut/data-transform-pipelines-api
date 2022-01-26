@@ -9,10 +9,10 @@ class Md5TestCase(WorkerBaseTestCase):
     worker_class = Md5
 
     @BaseTestCase.cases(
-        ('integer', 123, None),
-        ('string', '123', '202cb962ac59075b964b07152d234b70'),
-        ('boolean', True, None),
-        ('dict', {1: 2}, None),
+        ("integer", 123, None),
+        ("string", "123", "202cb962ac59075b964b07152d234b70"),
+        ("boolean", True, None),
+        ("dict", {1: 2}, None),
     )
     def test_worker(self, value, expectation):
         if expectation:

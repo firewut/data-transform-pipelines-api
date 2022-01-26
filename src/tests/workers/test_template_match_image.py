@@ -15,54 +15,37 @@ class TemplateMatchImageTestCase(WorkerBaseTestCase):
 
     data_location = os.path.join(
         os.path.dirname(__file__),
-        '../',
-        'data',
+        "../",
+        "data",
     )
 
-    image_file_location = os.path.join(
-        data_location,
-        'watermarked_center.png'
-    )
+    image_file_location = os.path.join(data_location, "watermarked_center.png")
 
-    template_file_location = os.path.join(
-        data_location,
-        'watermark.png'
-    )
+    template_file_location = os.path.join(data_location, "watermark.png")
 
-    image_as_file = open(image_file_location, 'rb')
-    template_as_file = open(template_file_location, 'rb')
+    image_as_file = open(image_file_location, "rb")
+    template_as_file = open(template_file_location, "rb")
 
     image_as_data = base64.b64encode(
-        open(
-            os.path.join(data_location, 'watermarked_center.png'),
-            'rb'
-        ).read()
+        open(os.path.join(data_location, "watermarked_center.png"), "rb").read()
     ).decode()
     template_as_data = base64.b64encode(
-        open(
-            os.path.join(data_location, 'watermark.png'),
-            'rb'
-        ).read()
+        open(os.path.join(data_location, "watermark.png"), "rb").read()
     ).decode()
 
     def test_worker(self):
         result = self.worker_class(
             pipeline_result=self.pipeline_result,
             pipeline_processor={
-                'id': 'template_match_image',
-                'in_config': {
-                    'template_image': self.template_as_data
-                }
-            }
+                "id": "template_match_image",
+                "in_config": {"template_image": self.template_as_data},
+            },
         ).execute(
             self.image_as_data,
         )
 
         self.assertTrue(
-            isinstance(
-                result,
-                rest_framework.utils.serializer_helpers.ReturnDict
-            )
+            isinstance(result, rest_framework.utils.serializer_helpers.ReturnDict)
         )
 
         # Different Systems may generatee different image

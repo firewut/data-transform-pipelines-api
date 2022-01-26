@@ -7,9 +7,9 @@ from projects.workers.exceptions import *
 
 
 class FetchURL(Worker):
-    id = 'fetch_url'
-    name = 'fetch_url'
-    image = ''
+    id = "fetch_url"
+    name = "fetch_url"
+    image = ""
     description = """
         Fetch URL Ccntent. Limitations:
           1. Uses HTTP GET Method
@@ -22,16 +22,10 @@ class FetchURL(Worker):
             "in": {
                 "type": "string",
                 "format": "url",
-                "description": "URL to fetch content from"
+                "description": "URL to fetch content from",
             },
-            "out": {
-                "type": [
-                    "string",
-                    "null"
-                ],
-                "description": "URL content"
-            }
-        }
+            "out": {"type": ["string", "null"], "description": "URL content"},
+        },
     }
 
     def process(self, data):
@@ -43,15 +37,13 @@ class FetchURL(Worker):
 
         # OPTIONS request
         options = session.options(data)
-        if 'GET' not in options.headers.get('Allow'):
-            raise WorkerNoInputException(
-                'Remote endpoint has no GET in Options'
-            )
+        if "GET" not in options.headers.get("Allow"):
+            raise WorkerNoInputException("Remote endpoint has no GET in Options")
 
         head = session.head(data)
-        if int(head.headers.get('Content-Length', 0)) > max_file_size:
+        if int(head.headers.get("Content-Length", 0)) > max_file_size:
             raise WorkerNoInputException(
-                'Remote endpoint response size exceeds 10 Megabytes'
+                "Remote endpoint response size exceeds 10 Megabytes"
             )
 
         response = session.get(data)

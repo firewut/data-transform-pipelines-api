@@ -6,9 +6,7 @@ class WorkerBaseTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
 
-        self.project = Project.objects.create(
-            title=self.random_string(30)
-        )
+        self.project = Project.objects.create(title=self.random_string(30))
         self.pipeline = Pipeline.objects.create(
             title=self.random_string(),
             project=self.project,

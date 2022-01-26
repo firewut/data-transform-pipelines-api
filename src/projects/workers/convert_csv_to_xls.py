@@ -10,10 +10,10 @@ from projects.workers.base import Worker
 
 
 class ConvertCSVtoXLS(Worker):
-    id = 'convert_csv_to_xls'
-    name = 'convert_csv_to_xls'
-    image = ''
-    description = 'Convert CSV file to XLS Spreadsheet'
+    id = "convert_csv_to_xls"
+    name = "convert_csv_to_xls"
+    image = ""
+    description = "Convert CSV file to XLS Spreadsheet"
     schema = {
         "type": "object",
         "properties": {
@@ -22,7 +22,7 @@ class ConvertCSVtoXLS(Worker):
                     "file",
                     "string",
                 ],
-                "description": "Original CSV to convert"
+                "description": "Original CSV to convert",
             },
             "in_config": {
                 "type": "object",
@@ -32,44 +32,36 @@ class ConvertCSVtoXLS(Worker):
                         "description": "values delimiter",
                         "default": ";",
                     },
-                    "quotechar": {
-                        "type": "string",
-                        "description": "quotechar"
-                    }
-                }
+                    "quotechar": {"type": "string", "description": "quotechar"},
+                },
             },
             "in_config_example": {
                 "delimiter": ";",
             },
-            "out": {
-                "type": [
-                    "file"
-                ],
-                "description": "XLS Spreadsheet"
-            }
+            "out": {"type": ["file"], "description": "XLS Spreadsheet"},
         },
-        "required": [
-            "in_config"
-        ]
+        "required": ["in_config"],
     }
 
     def process(self, data):
         in_config = self.pipeline_processor.in_config
 
-        delimiter = in_config.get('delimiter', ';')
-        quotechar = in_config.get('quotechar', None)
+        delimiter = in_config.get("delimiter", ";")
+        quotechar = in_config.get("quotechar", None)
 
         if isinstance(data, str):
-            data = io.BytesIO(data.encode('utf-8'))
+            data = io.BytesIO(data.encode("utf-8"))
 
         csv_reader = csv.reader(
-            codecs.iterdecode(data, 'utf-8'),
+            codecs.iterdecode(data, "utf-8"),
             delimiter=delimiter,
             quotechar=quotechar,
         )
 
         _file = self.request_file()
-        _file.mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        _file.mimetype = (
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
 
         workbook = xlsxwriter.Workbook(_file.path)
         self.active_sheet = workbook.add_worksheet()
@@ -90,8 +82,8 @@ class ConvertCSVtoXLS(Worker):
     row_width_ratio = 1.05
 
     def write_row(self, *args, **kwargs):
-        col = int(kwargs.get('col', self.col))
-        row = int(kwargs.get('row', self.row))
+        col = int(kwargs.get("col", self.col))
+        row = int(kwargs.get("row", self.row))
 
         data = []
         for column_index, arg in enumerate(list(*args)):
@@ -108,15 +100,12 @@ class ConvertCSVtoXLS(Worker):
             string_width = self.excel_string_width("%s" % _arg)
             if string_width > min_width:
                 max_width = self.active_sheet.max_column_widths.get(
-                    column_index,
-                    min_width
+                    column_index, min_width
                 )
                 if string_width > max_width:
                     self.active_sheet.max_column_widths[column_index] = string_width
 
-        self.active_sheet.write_row(
-            row, col, data
-        )
+        self.active_sheet.write_row(row, col, data)
 
         self.row += 1
 

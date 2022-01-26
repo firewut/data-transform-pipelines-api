@@ -1,9 +1,9 @@
 language: python
 python:
-  - "3.6"
   - "3.7"
   - "3.8"
   - "3.9"
+  - "3.10"
 services:
   - docker
 env:
@@ -14,27 +14,24 @@ env:
     - DB_HOST=localhost
     - DB_PORT=5433
     - CELERY_BROKER_URL=
+    - DJANGO_LOGS_DIR=/tmp
 cache:
   pip: true
-  directories:
-    - opencv/
 before_script:
-  - bash build_opencv.sh
-  - cd opencv/build/
   - sudo make install
   - cd ../../
   - sudo apt-get install python-dev
 before_install:
-  - docker pull postgres:10
+  - docker pull postgres:12
   - docker run -d -p 127.0.0.1:5433:5432 
     -e POSTGRES_DB=$DB_NAME 
     -e POSTGRES_USER=$DB_USER 
     -e POSTGRES_PASSWORD=$DB_PASSWORD 
-    postgres:10
+    postgres:12
 install:
   - pip install -r requirements.txt
 script:
-  - mkdir media
-  - mkdir logs
+  - mkdir /tmp/media
+  - mkdir /tmp/logs
   - mkdir static
   - cd src && ./manage.py test
